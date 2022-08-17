@@ -1,2 +1,2 @@
 # ccplayer
-A  media player for OpenHarmony.
+A media player for OpenHarmony.

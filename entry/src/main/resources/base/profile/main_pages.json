@@ -1,0 +1,7 @@
+{
+  "src": [
+    "pages/index",
+    "pages/audio",
+    "pages/video"
+  ]
+}

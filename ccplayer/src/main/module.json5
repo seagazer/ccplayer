@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "ccplayer",
+    "type": "har",
+    "deviceTypes": [
+      "phone",
+      "tablet"
+    ],
+    "uiSyntax": "ets"
+  }
+}
