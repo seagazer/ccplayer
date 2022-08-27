@@ -8,7 +8,7 @@ const TAG = "BasePlayer"
  * Base player
  */
 export class BasePlayer implements IPlayer {
-    protected currentState = PlayerState.STATE_IDLE
+    protected currentState = PlayerState.STATE_NOT_INIT
     protected preparedListeners: Array<any> = []
     protected completedListeners: Array<any> = []
     protected progressChangedListeners: Array<any> = []
@@ -59,6 +59,41 @@ export class BasePlayer implements IPlayer {
 
     addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
         this.stateChangedListeners.push(listener)
+        return this
+    }
+
+    removeOnPreparedListener(listener: () => void): IPlayer{
+        this.preparedListeners.splice(this.preparedListeners.indexOf(listener), 1)
+        return this
+    }
+
+    removeOnCompletionListener(listener: () => void): IPlayer{
+        this.completedListeners.splice(this.completedListeners.indexOf(listener), 1)
+        return this
+    }
+
+    removeOnErrorListener(listener: (code: number, message: string) => void): IPlayer{
+        this.errorListeners.splice(this.errorListeners.indexOf(listener), 1)
+        return this
+    }
+
+    removeOnProgressChangedListener(listener: (duration: number) => void): IPlayer{
+        this.progressChangedListeners.splice(this.progressChangedListeners.indexOf(listener), 1)
+        return this
+    }
+
+    removeOnSeekChangedListener(listener: (duration: number) => void): IPlayer{
+        this.seekChangedListeners.splice(this.seekChangedListeners.indexOf(listener), 1)
+        return this
+    }
+
+    removeOnVolumeChangedListener(listener: () => void): IPlayer{
+        this.volumeChangedListeners.splice(this.volumeChangedListeners.indexOf(listener), 1)
+        return this
+    }
+
+    removeOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
+        this.stateChangedListeners.splice(this.stateChangedListeners.indexOf(listener), 1)
         return this
     }
 
@@ -139,6 +174,7 @@ export class BasePlayer implements IPlayer {
     }
 
     release() {
+        this.changePlayerState(PlayerState.STATE_NOT_INIT)
         this.stopProgressTimer()
         this.preparedListeners = []
         this.completedListeners = []

@@ -112,6 +112,55 @@ export interface IPlayer {
     addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer
 
     /**
+     * Remove a listener to observe the prepared state.
+     * @param listener The listener to observe the prepared state.
+     * @return The player instance.
+     */
+    removeOnPreparedListener(listener: () => void): IPlayer
+
+    /**
+     * Remove a listener to observe the completed state.
+     * @param listener The listener to observe the completed state.
+     * @return The player instance.
+     */
+    removeOnCompletionListener(listener: () => void): IPlayer
+
+    /**
+     * Remove a listener to observe the error state.
+     * @param listener The listener to observe the error state.
+     * @return The player instance.
+     */
+    removeOnErrorListener(listener: (code: number, message: string) => void): IPlayer
+
+    /**
+     * Remove a listener to observe the player progress.
+     * @param listener The listener to observe the player progress.
+     * @return The player instance.
+     */
+    removeOnProgressChangedListener(listener: (duration: number) => void): IPlayer
+
+    /**
+     * Remove a listener to observe the seeking state.
+     * @param listener The listener to observe the seeking state.
+     * @return The player instance.
+     */
+    removeOnSeekChangedListener(listener: (duration: number) => void): IPlayer
+
+    /**
+     * Remove a listener to observe the volume changed.
+     * @param listener The listener to observe the volume changed.
+     * @return The player instance.
+     */
+    removeOnVolumeChangedListener(listener: () => void): IPlayer
+
+    /**
+     * Remove a listener to observe the state changed of player.
+     * @param listener The listener to observe the state changed of player.
+     * @return The player instance.
+     */
+    removeOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer
+
+    /**
      * Check the player is playing.
      * @return The player is playing or not.
      */

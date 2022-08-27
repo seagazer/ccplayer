@@ -22,6 +22,7 @@ export class OhosAudioPlayer extends BasePlayer {
     }
 
     init() {
+        this.changePlayerState(PlayerState.STATE_IDLE)
         this.player.on('reset', () => {
             Logger.d(TAG, "System callback: reset")
             this.isPrepared = false
