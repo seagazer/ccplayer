@@ -12,6 +12,7 @@ struct Index {
     @State duration: number= 0
     private player: MediaPlayer= MediaPlayer.create(PlayerType.AUDIO)
     private isSeeking = false
+    private dataSource: string  = ""
 
     aboutToAppear() {
         this.player.addOnPreparedListener(() => {
@@ -45,6 +46,16 @@ struct Index {
 
     build() {
         Column() {
+            TextInput()
+                .fontSize(30)
+                .width("70%")
+                .height(60)
+                .fontColor(Color.Black)
+                .onChange((value) => {
+                    this.dataSource = value
+                    Logger.d(TAG, "input = " + this.dataSource)
+                })
+
             Row() {
                 Button("setDataSource")
                     .fontSize(30)
@@ -52,9 +63,16 @@ struct Index {
                     .height(60)
                     .fontColor(Color.White)
                     .onClick(() => {
-                        MediaSource.createAssets(globalThis.context, "../../resources/rawfile/test.mp3").then((fd) => {
-                            this.player.setDataSourceFile(fd)
-                        })
+                        Logger.d(TAG, "dataSource = " + this.dataSource)
+                        if (this.dataSource.length > 0) {
+                            MediaSource.createFile(this.dataSource).then((fd) => {
+                                this.player.setDataSourceFile(fd)
+                            })
+                        } else {
+                            MediaSource.createAssets(globalThis.context, "../../resources/rawfile/test.mp3").then((fd) => {
+                                this.player.setDataSourceFile(fd)
+                            })
+                        }
                     })
                 Button("start")
                     .fontSize(30)
@@ -77,6 +95,7 @@ struct Index {
             }
             .justifyContent(FlexAlign.Center)
             .width("100%")
+            .margin({ top: 20 })
 
             Row() {
                 Text("" + this.position)
@@ -84,9 +103,6 @@ struct Index {
                     .padding(10)
                     .margin({ left: 20 })
                     .fontColor(Color.Blue)
-                    .onClick(() => {
-                        this.player.release()
-                    })
                 Slider({
                     max: this.duration,
                     min: 0,
@@ -94,6 +110,7 @@ struct Index {
                     style: SliderStyle.InSet,
                     value: this.position
                 })
+                    .width("60%")
                     .selectedColor(Color.Blue)
                     .trackColor(Color.Orange)
                     .borderColor(Color.Pink)
@@ -112,10 +129,8 @@ struct Index {
                     .padding(10)
                     .margin({ left: 20 })
                     .fontColor(Color.Blue)
-                    .onClick(() => {
-                        this.player.release()
-                    })
-            }.justifyContent(FlexAlign.Center)
+            }
+            .justifyContent(FlexAlign.Center)
             .width("100%")
             .margin({ top: 20 })
         }

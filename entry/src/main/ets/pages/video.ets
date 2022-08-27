@@ -14,6 +14,7 @@ struct Index {
     private controller = new XComponentController()
     private surfaceId: string = null
     private player: MediaPlayer= MediaPlayer.create(PlayerType.VIDEO)
+    private dataSource: string  = ""
 
     aboutToAppear() {
         this.player.addOnPreparedListener(() => {
@@ -60,8 +61,21 @@ struct Index {
             }).onDestroy(() => {
                 Logger.d(TAG, "surface view destroy")
 
-            }).width(720)
+            })
+                .width(720)
                 .height(480)
+
+            TextInput()
+                .fontSize(30)
+                .width("70%")
+                .height(60)
+                .fontColor(Color.Black)
+                .onChange((value) => {
+                    this.dataSource = value
+                    Logger.d(TAG, "input = " + this.dataSource)
+                })
+                .margin({ top: 50 })
+
             Row() {
                 Button("setDataSource")
                     .fontSize(30)
@@ -71,9 +85,16 @@ struct Index {
                     .onClick(() => {
                         // if bind surface, set data source to play
                         if (this.surfaceId != null) {
-                            MediaSource.createAssets(globalThis.context, "../../resources/rawfile/test.mp4").then((fd) => {
-                                this.player.setDataSourceFile(fd)
-                            })
+                            Logger.d(TAG, "dataSource = " + this.dataSource)
+                            if (this.dataSource.length > 0) {
+                                MediaSource.createFile(this.dataSource).then((fd) => {
+                                    this.player.setDataSourceFile(fd)
+                                })
+                            } else {
+                                MediaSource.createAssets(globalThis.context, "../../resources/rawfile/test.mp4").then((fd) => {
+                                    this.player.setDataSourceFile(fd)
+                                })
+                            }
                         }
                     })
                 Button("start")
@@ -105,9 +126,6 @@ struct Index {
                     .padding(10)
                     .margin({ left: 20 })
                     .fontColor(Color.Blue)
-                    .onClick(() => {
-                        this.player.release()
-                    })
                 Slider({
                     max: this.duration,
                     min: 0,
@@ -133,9 +151,6 @@ struct Index {
                     .padding(10)
                     .margin({ left: 20 })
                     .fontColor(Color.Blue)
-                    .onClick(() => {
-                        this.player.release()
-                    })
             }.justifyContent(FlexAlign.Center)
             .width("100%")
             .margin({ top: 20 })
