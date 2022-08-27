@@ -20,6 +20,7 @@ export class OhosVideoPlayer extends BasePlayer {
             if (err) {
                 Logger.e(TAG, "init video player error = " + JSON.stringify(err))
             }
+            this.changePlayerState(PlayerState.STATE_IDLE)
             this.player = data
             this.player.on("playbackCompleted", () => {
                 Logger.d(TAG, "System callback: completed")

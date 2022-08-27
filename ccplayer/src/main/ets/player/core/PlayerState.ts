@@ -1,4 +1,5 @@
 export enum PlayerState {
+    STATE_NOT_INIT = "NOT_INIT",
     STATE_IDLE = "IDLE",
     STATE_PREPARED = "PREPARED",
     STATE_STARTED = "STARTED",

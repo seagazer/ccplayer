@@ -4,7 +4,7 @@ const domain = 110
 
 export class Logger {
     private static DEBUG = true
-    private static FILTER_NAME = "[ZPlayer]: "
+    private static FILTER_NAME = "[ccplayer]: "
 
     static setDebugger(debug: boolean) {
         this.DEBUG = debug

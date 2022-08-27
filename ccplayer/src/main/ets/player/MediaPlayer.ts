@@ -105,6 +105,41 @@ export class MediaPlayer implements IPlayer {
         return this
     }
 
+    removeOnPreparedListener(listener: () => void): IPlayer{
+        this.player.removeOnPreparedListener(listener)
+        return this
+    }
+
+    removeOnCompletionListener(listener: () => void): IPlayer{
+        this.player.removeOnCompletionListener(listener)
+        return this
+    }
+
+    removeOnErrorListener(listener: (code: number, message: string) => void): IPlayer{
+        this.player.removeOnErrorListener(listener)
+        return this
+    }
+
+    removeOnProgressChangedListener(listener: (duration: number) => void): IPlayer{
+        this.player.removeOnProgressChangedListener(listener)
+        return this
+    }
+
+    removeOnSeekChangedListener(listener: (duration: number) => void): IPlayer{
+        this.player.removeOnSeekChangedListener(listener)
+        return this
+    }
+
+    removeOnVolumeChangedListener(listener: () => void): IPlayer{
+        this.player.removeOnVolumeChangedListener(listener)
+        return this
+    }
+
+    removeOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
+        this.player.removeOnStateChangedListener(listener)
+        return this
+    }
+
     isPlaying(): boolean{
         return this.player.isPlaying()
     }
