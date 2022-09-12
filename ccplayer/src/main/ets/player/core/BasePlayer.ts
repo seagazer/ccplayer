@@ -174,6 +174,7 @@ export class BasePlayer implements IPlayer {
     }
 
     release() {
+        Logger.d(TAG, "release")
         this.changePlayerState(PlayerState.STATE_NOT_INIT)
         this.stopProgressTimer()
         this.preparedListeners = []

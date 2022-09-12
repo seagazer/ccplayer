@@ -24,6 +24,16 @@ struct Index {
                     })
                 })
                 .margin({ top: 50 })
+            Button("PlayerView")
+                .fontSize(30)
+                .width(300)
+                .height(60)
+                .onClick(() => {
+                    router.push({
+                        uri: "pages/player_view"
+                    })
+                })
+                .margin({ top: 50 })
         }
         .width("100%")
         .height("100%")

@@ -7,7 +7,7 @@ const TAG = "VideoPage"
 
 @Entry
 @Component
-struct Index {
+struct VideoPage {
     @State position: number= 0
     @State duration: number= 0
     private isSeeking = false

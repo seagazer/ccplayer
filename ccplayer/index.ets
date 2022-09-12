@@ -7,3 +7,6 @@ export { PlayerState } from './src/main/ets/player/core/PlayerState'
 export { MediaSource } from './src/main/ets/player/helper/MediaSource'
 
 export { Logger } from './src/main/ets/player/helper/Logger'
+
+export { LitePlayerView } from './src/main/ets/player/widget/LitePlayerView'
+

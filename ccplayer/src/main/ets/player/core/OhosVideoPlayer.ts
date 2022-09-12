@@ -141,6 +141,7 @@ export class OhosVideoPlayer extends BasePlayer {
 
     release() {
         Logger.d(TAG, ">> release")
+        this.player.stop()
         this.player.release((err) => {
             Logger.d(TAG, "System callback: release")
             if (this.unError(err)) {

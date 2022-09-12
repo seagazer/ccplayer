@@ -2,6 +2,7 @@
   "src": [
     "pages/index",
     "pages/audio",
-    "pages/video"
+    "pages/video",
+    "pages/player_view"
   ]
 }
