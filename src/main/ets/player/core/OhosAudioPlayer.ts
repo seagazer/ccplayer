@@ -1,7 +1,7 @@
+import media from '@ohos.multimedia.media'
 import { BasePlayer } from './baseplayer';
 import { Logger } from '../helper/logger'
-import media from '@ohos.multimedia.media'
-import { PlayerState } from './playerstate'
+import { PlayerState } from '../config/PlayerState'
 
 const TAG = "OhosAudioPlayer"
 
@@ -167,6 +167,14 @@ export class OhosAudioPlayer extends BasePlayer {
 
     setSurface(surfaceId: string) {
         throw new Error(`The audio player not support to bind this surface: ${surfaceId}!`)
+    }
+
+    addOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
+        throw new Error(`The audio player not support to observe the video size!`)
+    }
+
+    removeOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
+        throw new Error(`The audio player not support to observe the video size!`)
     }
 }
 

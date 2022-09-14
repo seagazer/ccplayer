@@ -1,7 +1,7 @@
-import { Logger } from '../helper/logger';
-import { PlayerState } from './playerstate'
-import { BasePlayer } from './baseplayer';
 import media from '@ohos.multimedia.media'
+import { Logger } from '../helper/logger';
+import { PlayerState } from '../config/PlayerState'
+import { BasePlayer } from './BasePlayer';
 
 const TAG = "OhosVideoPlayer"
 
@@ -32,11 +32,47 @@ export class OhosVideoPlayer extends BasePlayer {
                     })
                 }
             })
+            this.player.on("videoSizeChanged", (width: number, height: number) => {
+                Logger.d(TAG, "System callback: videoSizeChanged: " + width + " x " + height)
+                if (this.videoSizeChangedListeners.length > 0) {
+                    this.videoSizeChangedListeners.forEach((callback) => {
+                        callback(width, height)
+                    })
+                }
+            })
+            this.player.on("startRenderFrame", () => {
+                Logger.d(TAG, "System callback: render first frame ")
+                if (this.renderFirstFrameListeners.length > 0) {
+                    this.renderFirstFrameListeners.forEach((callback) => {
+                        callback()
+                    })
+                }
+            })
+            this.player.on("error", (error) => {
+                Logger.d(TAG, "System callback: error ")
+                if (this.errorListeners.length > 0) {
+                    this.errorListeners.forEach((callback) => {
+                        callback(error.code, error.message)
+                    })
+                }
+            })
         })
     }
 
     static create(): OhosVideoPlayer{
         return new OhosVideoPlayer()
+    }
+
+    private getVideoSize() {
+        this.player.getTrackDescription((err, propList) => {
+            if (propList != null) {
+                propList.forEach((value) => {
+                    Logger.d(TAG, "1-------" + value[media.MediaDescriptionKey.MD_KEY_WIDTH])
+                    Logger.d(TAG, "2-------" + value[media.MediaDescriptionKey.MD_KEY_HEIGHT])
+
+                })
+            }
+        })
     }
 
     setDataSourceUrl(url: string) {
@@ -141,6 +177,7 @@ export class OhosVideoPlayer extends BasePlayer {
 
     release() {
         Logger.d(TAG, ">> release")
+        this.player.stop()
         this.player.release((err) => {
             Logger.d(TAG, "System callback: release")
             if (this.unError(err)) {

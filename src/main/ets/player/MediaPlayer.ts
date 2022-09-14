@@ -1,14 +1,16 @@
 import { OhosVideoPlayer } from './core/OhosVideoPlayer';
 import { OhosAudioPlayer } from './core/OhosAudioPlayer';
-import { PlayerState } from './core/PlayerState';
-import { IPlayer } from './core/IPlayer'
-import { PlayerType } from './core/PlayerType'
+import { PlayerState } from './config/PlayerState';
+import { IPlayer } from './interface/IPlayer'
+import { IRender } from './interface/IRender'
+import { PlayerType } from './config/Playertype'
+import { BasePlayer } from './core/BasePlayer'
 
 /**
  * The player for audio or video.
  */
-export class MediaPlayer implements IPlayer {
-    private player: IPlayer
+export class MediaPlayer implements IPlayer, IRender {
+    private player
 
     private constructor(type: PlayerType) {
         if (type == PlayerType.AUDIO) {
@@ -20,7 +22,7 @@ export class MediaPlayer implements IPlayer {
 
     /**
      * Create a instance of MediaPlayer.
-     * @param type PlayerType.[AUDIO, VIDEO]
+     * @param type The type of player. [PlayerType.AUDIO, PlayerType.VIDEO]
      */
     public static create(type: PlayerType) {
         return new MediaPlayer(type)
@@ -75,38 +77,13 @@ export class MediaPlayer implements IPlayer {
         return this
     }
 
-    addOnCompletionListener(listener: () => void): IPlayer {
-        this.player.addOnCompletionListener(listener)
-        return this
-    }
-
-    addOnErrorListener(listener: (code: number, message: string) => void): IPlayer{
-        this.player.addOnErrorListener(listener)
-        return this
-    }
-
-    addOnProgressChangedListener(listener: (duration: number) => void): IPlayer {
-        this.player.addOnProgressChangedListener(listener)
-        return this
-    }
-
-    addOnSeekChangedListener(listener: (duration: number) => void): IPlayer {
-        this.player.addOnSeekChangedListener(listener)
-        return this
-    }
-
-    addOnVolumeChangedListener(listener: () => void): IPlayer{
-        this.player.addOnVolumeChangedListener(listener)
-        return this
-    }
-
-    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
-        this.player.addOnStateChangedListener(listener)
-        return this
-    }
-
     removeOnPreparedListener(listener: () => void): IPlayer{
         this.player.removeOnPreparedListener(listener)
+        return this
+    }
+
+    addOnCompletionListener(listener: () => void): IPlayer {
+        this.player.addOnCompletionListener(listener)
         return this
     }
 
@@ -115,8 +92,18 @@ export class MediaPlayer implements IPlayer {
         return this
     }
 
+    addOnErrorListener(listener: (code: number, message: string) => void): IPlayer{
+        this.player.addOnErrorListener(listener)
+        return this
+    }
+
     removeOnErrorListener(listener: (code: number, message: string) => void): IPlayer{
         this.player.removeOnErrorListener(listener)
+        return this
+    }
+
+    addOnProgressChangedListener(listener: (duration: number) => void): IPlayer {
+        this.player.addOnProgressChangedListener(listener)
         return this
     }
 
@@ -125,8 +112,18 @@ export class MediaPlayer implements IPlayer {
         return this
     }
 
+    addOnSeekChangedListener(listener: (duration: number) => void): IPlayer {
+        this.player.addOnSeekChangedListener(listener)
+        return this
+    }
+
     removeOnSeekChangedListener(listener: (duration: number) => void): IPlayer{
         this.player.removeOnSeekChangedListener(listener)
+        return this
+    }
+
+    addOnVolumeChangedListener(listener: () => void): IPlayer{
+        this.player.addOnVolumeChangedListener(listener)
         return this
     }
 
@@ -135,9 +132,30 @@ export class MediaPlayer implements IPlayer {
         return this
     }
 
+    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
+        this.player.addOnStateChangedListener(listener)
+        return this
+    }
+
     removeOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
         this.player.removeOnStateChangedListener(listener)
         return this
+    }
+
+    addOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
+        this.player.addOnVideoSizeChangedListener(listener)
+    }
+
+    removeOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
+        this.player.removeOnVideoSizeChangedListener(listener)
+    }
+
+    addOnRenderFirstFrameListener(listener: () => void) {
+        this.player.addOnRenderFirstFrameListener(listener)
+    }
+
+    removeOnRenderFirstFrameListener(listener: () => void) {
+        this.player.removeOnRenderFirstFrameListener(listener)
     }
 
     isPlaying(): boolean{

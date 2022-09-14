@@ -1,8 +1,11 @@
-import { Logger } from './logger';
+import { Logger } from './Logger';
 import fileIO from '@ohos.fileio'
 
 const TAG = "MediaSource"
 
+/**
+ * Helper to create media source from file and assets.
+ */
 export class MediaSource {
     /**
      * Create a media source for local file.
@@ -20,7 +23,7 @@ export class MediaSource {
     /**
      * Create a media source for assets file.
      * @param abilityContext The context of ability.
-     * @param assetsPath The path of assets file.
+     * @param assetsPath The path of raw assets file.
      */
     public static async createAssets(abilityContext, assetsPath: string): Promise<string> {
         if (abilityContext == undefined) {

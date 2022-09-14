@@ -1,13 +1,14 @@
 import { Logger } from '../helper/Logger'
-import { IPlayer } from './Iplayer'
-import { PlayerState } from './PlayerState'
+import { IPlayer } from '../interface/Iplayer'
+import { IRender } from '../interface/IRender'
+import { PlayerState } from '../config/Playerstate'
 
 const TAG = "BasePlayer"
 
 /**
  * Base player
  */
-export class BasePlayer implements IPlayer {
+export class BasePlayer implements IPlayer, IRender {
     protected currentState = PlayerState.STATE_NOT_INIT
     protected preparedListeners: Array<any> = []
     protected completedListeners: Array<any> = []
@@ -16,6 +17,8 @@ export class BasePlayer implements IPlayer {
     protected seekChangedListeners: Array<any> = []
     protected volumeChangedListeners: Array<any> = []
     protected stateChangedListeners: Array<any> = []
+    protected videoSizeChangedListeners: Array<any> = []
+    protected renderFirstFrameListeners: Array<any> = []
     protected isPrepared = false
     protected progressTimer = null
     protected startPosition = -1
@@ -32,38 +35,13 @@ export class BasePlayer implements IPlayer {
         return this
     }
 
-    addOnCompletionListener(listener: () => void): IPlayer{
-        this.completedListeners.push(listener)
-        return this
-    }
-
-    addOnErrorListener(listener: (code: number, message: string) => void): IPlayer {
-        this.errorListeners.push(listener)
-        return this
-    }
-
-    addOnProgressChangedListener(listener: (duration: number) => void): IPlayer {
-        this.progressChangedListeners.push(listener)
-        return this
-    }
-
-    addOnSeekChangedListener(listener: (duration: number) => void): IPlayer{
-        this.seekChangedListeners.push(listener)
-        return this
-    }
-
-    addOnVolumeChangedListener(listener: () => void): IPlayer {
-        this.volumeChangedListeners.push(listener)
-        return this
-    }
-
-    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
-        this.stateChangedListeners.push(listener)
-        return this
-    }
-
     removeOnPreparedListener(listener: () => void): IPlayer{
         this.preparedListeners.splice(this.preparedListeners.indexOf(listener), 1)
+        return this
+    }
+
+    addOnCompletionListener(listener: () => void): IPlayer{
+        this.completedListeners.push(listener)
         return this
     }
 
@@ -72,8 +50,18 @@ export class BasePlayer implements IPlayer {
         return this
     }
 
+    addOnErrorListener(listener: (code: number, message: string) => void): IPlayer {
+        this.errorListeners.push(listener)
+        return this
+    }
+
     removeOnErrorListener(listener: (code: number, message: string) => void): IPlayer{
         this.errorListeners.splice(this.errorListeners.indexOf(listener), 1)
+        return this
+    }
+
+    addOnProgressChangedListener(listener: (duration: number) => void): IPlayer {
+        this.progressChangedListeners.push(listener)
         return this
     }
 
@@ -82,8 +70,18 @@ export class BasePlayer implements IPlayer {
         return this
     }
 
+    addOnSeekChangedListener(listener: (duration: number) => void): IPlayer{
+        this.seekChangedListeners.push(listener)
+        return this
+    }
+
     removeOnSeekChangedListener(listener: (duration: number) => void): IPlayer{
         this.seekChangedListeners.splice(this.seekChangedListeners.indexOf(listener), 1)
+        return this
+    }
+
+    addOnVolumeChangedListener(listener: () => void): IPlayer {
+        this.volumeChangedListeners.push(listener)
         return this
     }
 
@@ -92,9 +90,30 @@ export class BasePlayer implements IPlayer {
         return this
     }
 
+    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
+        this.stateChangedListeners.push(listener)
+        return this
+    }
+
     removeOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
         this.stateChangedListeners.splice(this.stateChangedListeners.indexOf(listener), 1)
         return this
+    }
+
+    addOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
+        this.videoSizeChangedListeners.push(listener)
+    }
+
+    removeOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
+        this.videoSizeChangedListeners.splice(this.videoSizeChangedListeners.indexOf(listener), 1)
+    }
+
+    addOnRenderFirstFrameListener(listener: () => void) {
+        this.renderFirstFrameListeners.push(listener)
+    }
+
+    removeOnRenderFirstFrameListener(listener: () => void) {
+        this.renderFirstFrameListeners.splice(this.renderFirstFrameListeners.indexOf(listener), 1)
     }
 
     getDuration(): number {
@@ -174,6 +193,7 @@ export class BasePlayer implements IPlayer {
     }
 
     release() {
+        Logger.d(TAG, "release")
         this.changePlayerState(PlayerState.STATE_NOT_INIT)
         this.stopProgressTimer()
         this.preparedListeners = []
