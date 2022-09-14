@@ -24,7 +24,7 @@ struct Index {
                     })
                 })
                 .margin({ top: 50 })
-            Button("PlayerView")
+            Button("LitePlayerView")
                 .fontSize(30)
                 .width(300)
                 .height(60)

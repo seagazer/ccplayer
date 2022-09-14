@@ -1,4 +1,4 @@
-import { Logger } from './logger';
+import { Logger } from './Logger';
 import fileIO from '@ohos.fileio'
 
 const TAG = "MediaSource"

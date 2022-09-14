@@ -1,5 +1,8 @@
-import { PlayerState } from './playerstate'
+import { PlayerState } from '../config/PlayerState'
 
+/**
+ * The action of media player.
+ */
 export interface IPlayer {
     /**
      * Start play or resume play.
@@ -70,53 +73,18 @@ export interface IPlayer {
     addOnPreparedListener(listener: () => void): IPlayer
 
     /**
-     * Add a listener to observe the completed state.
-     * @param listener The listener to observe the completed state.
-     * @return The player instance.
-     */
-    addOnCompletionListener(listener: () => void): IPlayer
-
-    /**
-     * Add a listener to observe the error state.
-     * @param listener The listener to observe the error state.
-     * @return The player instance.
-     */
-    addOnErrorListener(listener: (code: number, message: string) => void): IPlayer
-
-    /**
-     * Add a listener to observe the player progress.
-     * @param listener The listener to observe the player progress.
-     * @return The player instance.
-     */
-    addOnProgressChangedListener(listener: (duration: number) => void): IPlayer
-
-    /**
-     * Add a listener to observe the seeking state.
-     * @param listener The listener to observe the seeking state.
-     * @return The player instance.
-     */
-    addOnSeekChangedListener(listener: (duration: number) => void): IPlayer
-
-    /**
-     * Add a listener to observe the volume changed.
-     * @param listener The listener to observe the volume changed.
-     * @return The player instance.
-     */
-    addOnVolumeChangedListener(listener: () => void): IPlayer
-
-    /**
-     * Add a listener to observe the state changed of player.
-     * @param listener The listener to observe the state changed of player.
-     * @return The player instance.
-     */
-    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer
-
-    /**
      * Remove a listener to observe the prepared state.
      * @param listener The listener to observe the prepared state.
      * @return The player instance.
      */
     removeOnPreparedListener(listener: () => void): IPlayer
+
+    /**
+     * Add a listener to observe the completed state.
+     * @param listener The listener to observe the completed state.
+     * @return The player instance.
+     */
+    addOnCompletionListener(listener: () => void): IPlayer
 
     /**
      * Remove a listener to observe the completed state.
@@ -126,11 +94,25 @@ export interface IPlayer {
     removeOnCompletionListener(listener: () => void): IPlayer
 
     /**
+     * Add a listener to observe the error state.
+     * @param listener The listener to observe the error state.
+     * @return The player instance.
+     */
+    addOnErrorListener(listener: (code: number, message: string) => void): IPlayer
+
+    /**
      * Remove a listener to observe the error state.
      * @param listener The listener to observe the error state.
      * @return The player instance.
      */
     removeOnErrorListener(listener: (code: number, message: string) => void): IPlayer
+
+    /**
+     * Add a listener to observe the player progress.
+     * @param listener The listener to observe the player progress.
+     * @return The player instance.
+     */
+    addOnProgressChangedListener(listener: (duration: number) => void): IPlayer
 
     /**
      * Remove a listener to observe the player progress.
@@ -140,6 +122,13 @@ export interface IPlayer {
     removeOnProgressChangedListener(listener: (duration: number) => void): IPlayer
 
     /**
+     * Add a listener to observe the seeking state.
+     * @param listener The listener to observe the seeking state.
+     * @return The player instance.
+     */
+    addOnSeekChangedListener(listener: (duration: number) => void): IPlayer
+
+    /**
      * Remove a listener to observe the seeking state.
      * @param listener The listener to observe the seeking state.
      * @return The player instance.
@@ -147,11 +136,25 @@ export interface IPlayer {
     removeOnSeekChangedListener(listener: (duration: number) => void): IPlayer
 
     /**
+     * Add a listener to observe the volume changed.
+     * @param listener The listener to observe the volume changed.
+     * @return The player instance.
+     */
+    addOnVolumeChangedListener(listener: () => void): IPlayer
+
+    /**
      * Remove a listener to observe the volume changed.
      * @param listener The listener to observe the volume changed.
      * @return The player instance.
      */
     removeOnVolumeChangedListener(listener: () => void): IPlayer
+
+    /**
+     * Add a listener to observe the state changed of player.
+     * @param listener The listener to observe the state changed of player.
+     * @return The player instance.
+     */
+    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer
 
     /**
      * Remove a listener to observe the state changed of player.
@@ -183,10 +186,4 @@ export interface IPlayer {
      * @return The current state of player.
      */
     getPlayerState(): PlayerState
-
-    /**
-     * Set a surface to render picture for video player.
-     * @param surfaceId The surface of XComponent to be bind the media player.
-     */
-    setSurface(surfaceId: string)
 }

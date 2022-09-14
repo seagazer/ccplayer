@@ -7,6 +7,6 @@ export default class MainAbility extends Ability {
     }
 
     onWindowStageCreate(windowStage) {
-        windowStage.setUIContent(this.context, "pages/index", null)
+        windowStage.setUIContent(this.context, "pages/main", null)
     }
 };

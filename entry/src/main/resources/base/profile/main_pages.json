@@ -1,6 +1,6 @@
 {
   "src": [
-    "pages/index",
+    "pages/main",
     "pages/audio",
     "pages/video",
     "pages/player_view"
