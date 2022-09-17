@@ -1,8 +1,7 @@
-import display from '@ohos.display';
+import { timeToString } from '../common/Extentions';
 import brightness from '@ohos.brightness';
 import audio from '@ohos.multimedia.audio';
-import { Logger } from '../helper/Logger';
-import { TimeConverter } from '../helper/TimeConverter';
+import { Logger } from '../common/Logger';
 import { MediaPlayer } from '../MediaPlayer';
 import { AspectRatio } from '../config/AspectRatio'
 
@@ -11,6 +10,12 @@ const TAG = "LitePlayerView"
 enum ControlType {
     BRIGHTNESS, PROGRESS, VOLUME
 }
+
+const TOUCH_SHOT = 10
+
+// todo 设置画面沉浸
+// todo 控制栏
+// todo 标题栏
 
 /**
  * A component to play video, you can use gesture to control the mediaplayer.
@@ -23,14 +28,6 @@ enum ControlType {
  * |    |              |    |
  * |____|____|____|____|____|
  */
-
-
-// todo 设置画面沉浸
-// todo 控制栏
-// todo 标题栏
-
-const TOUCH_SHOT = 10
-
 @Component
 export struct LitePlayerView {
     /*----------------------------outer settings-----------------------------------*/
@@ -44,7 +41,7 @@ export struct LitePlayerView {
     private surfaceId: string
     private videoWidth: number = 0
     private videoHeight: number = 0
-    private controllerWidth = 200
+    private controllerWidth = 250
     private controllerHeight = 80
     @State isShowController: boolean = false
     private controlType: ControlType = ControlType.PROGRESS
@@ -121,7 +118,7 @@ export struct LitePlayerView {
             // progress gesture
             if (this.isShowController) {
                 if (this.controlType == ControlType.PROGRESS) { // action: seek progress
-                    Text(TimeConverter.timeToString(this.targetDuration) + " / " + TimeConverter.timeToString(this.totalDuration))
+                    Text(timeToString(this.targetDuration) + " / " + timeToString(this.totalDuration))
                         .fontColor("#d9ffffff")
                         .fontSize(20)
                         .width(this.controllerWidth)
@@ -132,6 +129,7 @@ export struct LitePlayerView {
                         .border({ radius: 12 })
                 } else if (this.controlType == ControlType.BRIGHTNESS) { // action: brightness
                     Row() {
+                        Text("亮度").fontColor("#d9ffffff").margin({ right: 10 })
                         Progress({ style: ProgressStyle.Capsule, value: this.targetBrightness, total: 255 })
                             .height("10%")
                             .layoutWeight(1)
@@ -144,6 +142,7 @@ export struct LitePlayerView {
                     .border({ radius: 12 })
                 } else if (this.controlType == ControlType.VOLUME) { // action: volume
                     Row() {
+                        Text("音量").fontColor("#d9ffffff").margin({ right: 10 })
                         Progress({ style: ProgressStyle.Capsule, value: this.targetVolume, total: this.maxVolume })
                             .height("10%")
                             .layoutWeight(1)
@@ -229,10 +228,8 @@ export struct LitePlayerView {
     }
 
     private handleTouchMove(touchEvent) {
-        let curX = touchEvent.x
-        let curY = touchEvent.y
-        let dx = curX - this.downX
-        let dy = curY - this.downY
+        let dx = touchEvent.x - this.downX
+        let dy = touchEvent.y - this.downY
         if (Math.abs(dx) > TOUCH_SHOT || Math.abs(dy) > TOUCH_SHOT) {
             this.isShowController = true
             switch (this.controlType) {
@@ -241,37 +238,45 @@ export struct LitePlayerView {
                     let moveDistance = Math.floor(dx)
                     let percent = moveDistance / (this.width - 2 * this.edge)
                     let seekValue = Math.floor(this.totalDuration / this.seekSpeed * percent)
-                    Logger.d(TAG, `startDuration = ${this.startDuration}, seekValue = ${seekValue}`)
                     let temp = this.startDuration + seekValue
-                    if (temp > this.totalDuration) {
+                    if (temp >= this.totalDuration) {
                         this.targetDuration = this.totalDuration
-                    } else if (temp < 0) {
+                    } else if (temp <= 0) {
                         this.targetDuration = 0
                     } else {
                         this.targetDuration = temp
                     }
-                    Logger.d(TAG, `targetDuration = ${this.targetDuration}`)
                     break
             // handle set brightness
                 case ControlType.BRIGHTNESS:
-                    let moveDistance2 = Math.floor(dy)
-                    let percent2 = moveDistance2 / (this.height / 2)
-                    this.targetBrightness = 255 * percent2
-                    brightness.setValue(Math.floor(255 * this.targetBrightness / 100))
+                    let moveDistance2 = -Math.floor(dy)
+                    let percent2 = moveDistance2 / this.height
+                    let temp2 = 255 * percent2
+                    if (temp2 >= 255) {
+                        this.targetBrightness = 255
+                    } else if (temp2 <= 0) {
+                        this.targetBrightness = 0
+                    } else {
+                        this.targetBrightness = temp2
+                    }
+                    brightness.setValue(this.targetBrightness)
+                    Logger.d(TAG, `targetBrightness = ${this.targetBrightness}, percent = ${percent2}`)
                     break
             // handle set volume
                 case ControlType.VOLUME:
                     let moveDistance3 = -Math.floor(dy)
-                    let percent3 = moveDistance3 / (this.height / 2)
+                    let percent3 = moveDistance3 / this.height
                     let setValue = this.maxVolume * percent3
-                    this.targetVolume += setValue
-                    if (this.targetVolume < 0) {
-                        this.targetVolume = 0
-                    } else if (this.targetVolume > this.maxVolume) {
+                    let temp3 = this.targetVolume + setValue
+                    if (temp3 >= this.maxVolume) {
                         this.targetVolume = this.maxVolume
+                    } else if (temp3 <= 0) {
+                        this.targetVolume = 0
+                    } else {
+                        this.targetVolume = temp3
                     }
-                    Logger.d(TAG, `targetVolume = ${this.targetVolume}, percent3 = ${percent3}`)
                     this.audioManager.setVolume(audio.AudioVolumeType.MEDIA, this.targetVolume)
+                    Logger.d(TAG, `targetVolume = ${this.targetVolume}, percent = ${percent3}`)
                     break
             }
         }
@@ -281,8 +286,10 @@ export struct LitePlayerView {
         switch (this.controlType) {
             case ControlType.PROGRESS:
                 this.player.seekTo(this.targetDuration)
+                Logger.d(TAG, `seek targetDuration = ${this.targetDuration}`)
                 break
             case ControlType.BRIGHTNESS:
+            // do nothing, the brightness is changed when touch move
                 break
             case ControlType.VOLUME:
             // do nothing, the volume is changed when touch move
@@ -292,6 +299,6 @@ export struct LitePlayerView {
         this.downY = -1
         this.hideTaskId = setTimeout(() => {
             this.isShowController = false
-        }, 1500)
+        }, 1000)
     }
 }

@@ -1,3 +1,4 @@
+import { MediaSource } from '../data/MediaSource';
 import { PlayerState } from '../config/PlayerState'
 
 /**
@@ -43,15 +44,9 @@ export interface IPlayer {
 
     /**
      * Set the dataSource.
-     * @param url The network data source.
+     * @param dataSource The dataSource, use MediaSourceFactory to create a dataSource.
      */
-    setDataSourceUrl(url: string)
-
-    /**
-     * Set the dataSource.
-     * @param sourcePath The local data source, use MediaSource to create a local sourcePath.
-     */
-    setDataSourceFile(sourcePath: string)
+    setDataSource(dataSource: MediaSource)
 
     /**
      * Set loop mode.
