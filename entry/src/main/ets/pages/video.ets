@@ -1,4 +1,4 @@
-import { MediaSource } from '@seagazer/ccplayer';
+import { MediaSourceFactory } from '@seagazer/ccplayer';
 import { Logger } from '@seagazer/ccplayer';
 import { MediaPlayer } from '@seagazer/ccplayer';
 import { PlayerType } from '@seagazer/ccplayer';
@@ -14,7 +14,7 @@ struct VideoPage {
     private controller = new XComponentController()
     private surfaceId: string = null
     private player: MediaPlayer= MediaPlayer.create(PlayerType.VIDEO)
-    private dataSource: string  = ""
+    private filePath: string  = ""
 
     aboutToAppear() {
         this.player.addOnPreparedListener(() => {
@@ -65,14 +65,14 @@ struct VideoPage {
                 .width(720)
                 .height(480)
 
-            TextInput()
+            TextInput({ placeholder: "../../resources/rawfile/test.mp4" })
                 .fontSize(30)
                 .width("70%")
                 .height(60)
                 .fontColor(Color.Black)
                 .onChange((value) => {
-                    this.dataSource = value
-                    Logger.d(TAG, "input = " + this.dataSource)
+                    this.filePath = value
+                    Logger.d(TAG, "input = " + this.filePath)
                 })
                 .margin({ top: 50 })
 
@@ -85,14 +85,14 @@ struct VideoPage {
                     .onClick(() => {
                         // if bind surface, set data source to play
                         if (this.surfaceId != null) {
-                            Logger.d(TAG, "dataSource = " + this.dataSource)
-                            if (this.dataSource.length > 0) {
-                                MediaSource.createFile(this.dataSource).then((fd) => {
-                                    this.player.setDataSourceFile(fd)
+                            Logger.d(TAG, "filePath = " + this.filePath)
+                            if (this.filePath.length > 0) {
+                                MediaSourceFactory.createFile(this.filePath).then((data) => {
+                                    this.player.setDataSource(data)
                                 })
                             } else {
-                                MediaSource.createAssets(globalThis.context, "../../resources/rawfile/test.mp4").then((fd) => {
-                                    this.player.setDataSourceFile(fd)
+                                MediaSourceFactory.createAssets(globalThis.context, "../../resources/rawfile/test.mp4").then((data) => {
+                                    this.player.setDataSource(data)
                                 })
                             }
                         }

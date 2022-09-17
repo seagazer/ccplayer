@@ -1,5 +1,5 @@
 import { LitePlayerView } from '@seagazer/ccplayer';
-import { MediaSource } from '@seagazer/ccplayer';
+import { MediaSourceFactory } from '@seagazer/ccplayer';
 import { Logger } from '@seagazer/ccplayer';
 import { MediaPlayer } from '@seagazer/ccplayer';
 import { PlayerType } from '@seagazer/ccplayer';
@@ -63,28 +63,28 @@ struct PlayerViewPage {
                 Row() {
                     Radio({ value: "21:9", group: "ratio" }).width(45).height(45).onChange(() => {
                         this.videoRatio = AspectRatio.W_21_9
-                    })
+                    }).checked(false)
                     Text("21:9").fontSize(30)
                 }.margin({ left: 10 })
 
                 Row() {
                     Radio({ value: "4:3", group: "ratio" }).width(45).height(45).onChange(() => {
                         this.videoRatio = AspectRatio.W_4_3
-                    })
+                    }).checked(false)
                     Text("4:3").fontSize(30)
                 }.margin({ left: 10 })
 
                 Row() {
                     Radio({ value: "16:9", group: "ratio" }).width(45).height(45).onChange(() => {
                         this.videoRatio = AspectRatio.W_16_9
-                    })
+                    }).checked(false)
                     Text("16:9").fontSize(30)
                 }.margin({ left: 10 })
 
                 Row() {
                     Radio({ value: "fill", group: "ratio" }).width(45).height(45).onChange(() => {
                         this.videoRatio = AspectRatio.FILL
-                    })
+                    }).checked(false)
                     Text("fill").fontSize(30)
                 }.margin({ left: 10 })
             }.margin({ top: 50 })
@@ -97,8 +97,8 @@ struct PlayerViewPage {
                     .fontColor(Color.White)
                     .onClick(() => {
                         // if bind surface, set data source to play
-                        MediaSource.createAssets(globalThis.context, "../../resources/rawfile/test.mp4").then((fd) => {
-                            this.player.setDataSourceFile(fd)
+                        MediaSourceFactory.createAssets(globalThis.context, "../../resources/rawfile/test.mp4").then((data) => {
+                            this.player.setDataSource(data)
                         })
                     })
                 Button("start")

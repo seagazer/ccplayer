@@ -1,4 +1,4 @@
-import { MediaSource } from '@seagazer/ccplayer';
+import { MediaSourceFactory } from '@seagazer/ccplayer';
 import { Logger } from '@seagazer/ccplayer';
 import { MediaPlayer } from '@seagazer/ccplayer';
 import { PlayerType } from '@seagazer/ccplayer';
@@ -12,7 +12,7 @@ struct AudioPage {
     @State duration: number= 0
     private player: MediaPlayer= MediaPlayer.create(PlayerType.AUDIO)
     private isSeeking = false
-    private dataSource: string  = ""
+    private filePath: string  = ""
 
     aboutToAppear() {
         this.player.addOnPreparedListener(() => {
@@ -46,14 +46,14 @@ struct AudioPage {
 
     build() {
         Column() {
-            TextInput()
+            TextInput({ placeholder: "../../resources/rawfile/test.mp3" })
                 .fontSize(30)
                 .width("70%")
                 .height(60)
                 .fontColor(Color.Black)
                 .onChange((value) => {
-                    this.dataSource = value
-                    Logger.d(TAG, "input = " + this.dataSource)
+                    this.filePath = value
+                    Logger.d(TAG, "input = " + this.filePath)
                 })
 
             Row() {
@@ -63,14 +63,14 @@ struct AudioPage {
                     .height(60)
                     .fontColor(Color.White)
                     .onClick(() => {
-                        Logger.d(TAG, "dataSource = " + this.dataSource)
-                        if (this.dataSource.length > 0) {
-                            MediaSource.createFile(this.dataSource).then((fd) => {
-                                this.player.setDataSourceFile(fd)
+                        Logger.d(TAG, "filePath = " + this.filePath)
+                        if (this.filePath.length > 0) {
+                            MediaSourceFactory.createFile(this.filePath).then((data) => {
+                                this.player.setDataSource(data)
                             })
                         } else {
-                            MediaSource.createAssets(globalThis.context, "../../resources/rawfile/test.mp3").then((fd) => {
-                                this.player.setDataSourceFile(fd)
+                            MediaSourceFactory.createAssets(globalThis.context, "../../resources/rawfile/test.mp3").then((data) => {
+                                this.player.setDataSource(data)
                             })
                         }
                     })
