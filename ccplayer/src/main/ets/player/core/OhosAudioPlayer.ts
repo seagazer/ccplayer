@@ -1,6 +1,7 @@
+import { MediaSource } from '../data/MediaSource';
 import media from '@ohos.multimedia.media'
 import { BasePlayer } from './baseplayer';
-import { Logger } from '../helper/logger'
+import { Logger } from '../common/Logger'
 import { PlayerState } from '../config/PlayerState'
 
 const TAG = "OhosAudioPlayer"
@@ -93,15 +94,10 @@ export class OhosAudioPlayer extends BasePlayer {
         })
     }
 
-    setDataSourceUrl(url: string) {
-        // TODO support network player
-        throw new Error("Not support now")
-    }
-
-    setDataSourceFile(sourcePath: string) {
+    setDataSource(dataSource: MediaSource) {
         this.reset()
-        this.player.src = sourcePath
-        Logger.d(TAG, "set data source = " + sourcePath)
+        this.player.src = dataSource.source
+        Logger.d(TAG, "set data source = " + dataSource.source)
     }
 
     start() {

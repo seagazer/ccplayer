@@ -1,3 +1,4 @@
+import { MediaSource } from './data/MediaSource';
 import { OhosVideoPlayer } from './core/OhosVideoPlayer';
 import { OhosAudioPlayer } from './core/OhosAudioPlayer';
 import { PlayerState } from './config/PlayerState';
@@ -56,12 +57,8 @@ export class MediaPlayer implements IPlayer, IRender {
         this.player.seekTo(position)
     }
 
-    setDataSourceUrl(url: string) {
-        this.player.setDataSourceUrl(url)
-    }
-
-    setDataSourceFile(sourcePath: string) {
-        this.player.setDataSourceFile(sourcePath)
+    setDataSource(dataSource: MediaSource) {
+        this.player.setDataSource(dataSource)
     }
 
     setLooper(isLoop: boolean) {

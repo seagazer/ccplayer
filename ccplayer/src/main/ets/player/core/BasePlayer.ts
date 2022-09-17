@@ -1,4 +1,5 @@
-import { Logger } from '../helper/Logger'
+import { MediaSource } from '../data/MediaSource';
+import { Logger } from '../common/Logger'
 import { IPlayer } from '../interface/Iplayer'
 import { IRender } from '../interface/IRender'
 import { PlayerState } from '../config/Playerstate'
@@ -133,12 +134,8 @@ export class BasePlayer implements IPlayer, IRender {
         return this.currentState
     }
 
-    setDataSourceUrl(url: string) {
-        Logger.d(TAG, ">> setDataSourceUrl: " + url)
-    }
-
-    setDataSourceFile(sourcePath: string) {
-        Logger.d(TAG, ">> setDataSourceUrl: " + sourcePath)
+    setDataSource(dataSource: MediaSource) {
+        Logger.d(TAG, ">> setDataSource: " + JSON.stringify(dataSource))
     }
 
     start() {

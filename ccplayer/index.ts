@@ -4,9 +4,11 @@ export { PlayerType } from './src/main/ets/player/config/PlayerType'
 
 export { PlayerState } from './src/main/ets/player/config/PlayerState'
 
-export { MediaSource } from './src/main/ets/player/helper/MediaSource'
+export { MediaSourceFactory } from './src/main/ets/player/data/MediaSourceFactory'
 
-export { Logger } from './src/main/ets/player/helper/Logger'
+export { MediaSource } from './src/main/ets/player/data/MediaSource'
+
+export { Logger } from './src/main/ets/player/common/Logger'
 
 export { AspectRatio } from './src/main/ets/player/config/AspectRatio'
 

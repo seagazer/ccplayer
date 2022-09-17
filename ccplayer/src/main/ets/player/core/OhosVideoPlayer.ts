@@ -1,5 +1,6 @@
+import { MediaSource } from '../data/MediaSource';
 import media from '@ohos.multimedia.media'
-import { Logger } from '../helper/logger';
+import { Logger } from '../common/Logger';
 import { PlayerState } from '../config/PlayerState'
 import { BasePlayer } from './BasePlayer';
 
@@ -75,11 +76,7 @@ export class OhosVideoPlayer extends BasePlayer {
         })
     }
 
-    setDataSourceUrl(url: string) {
-        this.setDataSourceFile(url)
-    }
-
-    setDataSourceFile(sourcePath: string) {
+    setDataSource(dataSource: MediaSource) {
         this.player.reset((err) => {
             if (this.unError(err)) {
                 if (this.curSurfaceId == null) {
@@ -92,7 +89,7 @@ export class OhosVideoPlayer extends BasePlayer {
                         Logger.d(TAG, ">> set surface error: " + JSON.stringify(err))
                     })
                 }
-                this.player.url = sourcePath
+                this.player.url = dataSource.source
             }
         })
     }
