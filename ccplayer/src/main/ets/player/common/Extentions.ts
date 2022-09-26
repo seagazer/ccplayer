@@ -2,7 +2,7 @@
  * Converter time duration to display string like 00:00.
  * @param time The duration by million seconds.
  */
-export function timeToString(time: number): String {
+export function timeToString(time: number): string {
     let seconds = Math.floor((time / 1000))
     let minute = Math.floor(seconds / 60)
     seconds %= 60

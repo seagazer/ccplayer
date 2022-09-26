@@ -138,34 +138,48 @@ export class BasePlayer implements IPlayer, IRender {
         Logger.d(TAG, ">> setDataSource: " + JSON.stringify(dataSource))
     }
 
-    start() {
-    }
-
     startTo(position: number) {
         Logger.d(TAG, ">> start to: " + position)
         this.startPosition = position
         this.start()
     }
 
+    start() {
+        // do action in sub class
+        this.changePlayerState(PlayerState.STATE_STARTED)
+    }
+
     pause() {
+        // do action in sub class
+        this.stopProgressTimer()
+        this.changePlayerState(PlayerState.STATE_PAUSED)
     }
 
     stop() {
+        // do action in sub class
+        this.stopProgressTimer()
+        this.changePlayerState(PlayerState.STATE_STOPPED)
     }
 
     reset() {
+        // do action in sub class
+        this.changePlayerState(PlayerState.STATE_IDLE)
     }
 
     seekTo(position: number) {
+        // do action in sub class
     }
 
     setVolume(vol: number) {
+        // do action in sub class
     }
 
     setLooper(isLoop: boolean) {
+        // do action in sub class
     }
 
     setSurface(surfaceId: string) {
+        // do action in sub class
     }
 
     protected startProgressTimer() {

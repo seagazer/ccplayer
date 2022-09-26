@@ -130,55 +130,47 @@ export class OhosVideoPlayer extends BasePlayer {
                 }
             })
         }
-    }
-
-    startTo(position: number) {
-        Logger.d(TAG, ">> start to: " + position)
-        this.startPosition = position
-        this.start()
+        super.start()
     }
 
     pause() {
         Logger.d(TAG, ">> pause")
         this.player.pause((err) => {
-            Logger.d(TAG, "System callback: pause")
+            Logger.d(TAG, "System callback: pause: " + JSON.stringify(err))
             if (this.unError(err)) {
-                this.changePlayerState(PlayerState.STATE_PAUSED)
-                this.stopProgressTimer()
             }
         })
+        super.pause()
     }
 
     stop() {
         Logger.d(TAG, ">> stop")
         this.player.stop((err) => {
-            Logger.d(TAG, "System callback: stop")
-            this.isPrepared = false
+            Logger.d(TAG, "System callback: stop: " + JSON.stringify(err))
             if (this.unError(err)) {
-                this.changePlayerState(PlayerState.STATE_STOPPED)
-                this.stopProgressTimer()
             }
         })
+        this.isPrepared = false
+        super.stop()
     }
 
     reset() {
         Logger.d(TAG, ">> reset")
         this.player.reset((err) => {
-            Logger.d(TAG, "System callback: reset")
-            this.isPrepared = false
+            Logger.d(TAG, "System callback: reset: " + JSON.stringify(err))
             if (this.unError(err)) {
-                this.changePlayerState(PlayerState.STATE_IDLE)
             }
         })
+        this.isPrepared = false
+        super.reset()
     }
 
     release() {
         Logger.d(TAG, ">> release")
         this.player.stop()
         this.player.release((err) => {
-            Logger.d(TAG, "System callback: release")
+            Logger.d(TAG, "System callback: release: " + JSON.stringify(err))
             if (this.unError(err)) {
-                this.changePlayerState(PlayerState.STATE_IDLE)
             }
         })
         super.release()
