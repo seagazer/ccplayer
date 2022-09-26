@@ -1,7 +1,9 @@
+import { timeToString } from '../Extentions';
 import { MediaSourceFactory } from '@seagazer/ccplayer';
 import { Logger } from '@seagazer/ccplayer';
 import { MediaPlayer } from '@seagazer/ccplayer';
 import { PlayerType } from '@seagazer/ccplayer';
+import { PlayerState } from '@seagazer/ccplayer';
 
 const TAG = "VideoPage"
 
@@ -13,37 +15,54 @@ struct VideoPage {
     private isSeeking = false
     private controller = new XComponentController()
     private surfaceId: string = null
-    private player: MediaPlayer= MediaPlayer.create(PlayerType.VIDEO)
+    private player: MediaPlayer = null
     private filePath: string  = ""
+    private prepareListener = () => {
+        Logger.d(TAG, "prepared")
+        this.duration = this.player.getDuration()
+    }
+    private completedListener = () => {
+        Logger.d(TAG, "play completed")
+    }
+    private errorListener = (code, message) => {
+        Logger.d(TAG, "err =  " + code + ", " + message)
+    }
+    private progressChangedListener = (duration) => {
+        Logger.d(TAG, "position = " + duration)
+        if (!this.isSeeking) {
+            this.position = duration
+        }
+    }
+    private seekChangedListener = (duration) => {
+        this.isSeeking = false
+        Logger.d(TAG, "seek completed: " + duration)
+    }
+    private stateChangedListener = (newState) => {
+        Logger.d(TAG, "new state: " + newState)
+    }
 
     aboutToAppear() {
-        this.player.addOnPreparedListener(() => {
-            Logger.d(TAG, "prepared")
-            this.duration = this.player.getDuration()
-        })
-            .addOnProgressChangedListener((duration) => {
-                Logger.d(TAG, "position = " + duration)
-                if (!this.isSeeking) {
-                    this.position = duration
-                }
-            })
-            .addOnCompletionListener(() => {
-                Logger.d(TAG, "play completed")
-            })
-            .addOnErrorListener((code, message) => {
-                Logger.d(TAG, "err =  " + code + ", " + message)
-            })
-            .addOnSeekChangedListener((duration) => {
-                this.isSeeking = false
-                Logger.d(TAG, "seek completed: " + duration)
-            })
-            .addOnStateChangedListener((newState) => {
-                Logger.d(TAG, "new state: " + newState)
-            })
+        if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
+            this.player = MediaPlayer.create(PlayerType.VIDEO)
+        }
+        this.player
+            .addOnPreparedListener(this.prepareListener)
+            .addOnProgressChangedListener(this.progressChangedListener)
+            .addOnCompletionListener(this.completedListener)
+            .addOnErrorListener(this.errorListener)
+            .addOnSeekChangedListener(this.seekChangedListener)
+            .addOnStateChangedListener(this.stateChangedListener)
     }
 
     aboutToDisappear() {
-        this.player.release()
+        this.player
+            .removeOnPreparedListener(this.prepareListener)
+            .removeOnProgressChangedListener(this.progressChangedListener)
+            .removeOnCompletionListener(this.completedListener)
+            .removeOnErrorListener(this.errorListener)
+            .removeOnSeekChangedListener(this.seekChangedListener)
+            .removeOnStateChangedListener(this.stateChangedListener)
+            .release()
     }
 
     build() {
@@ -87,13 +106,14 @@ struct VideoPage {
                         if (this.surfaceId != null) {
                             Logger.d(TAG, "filePath = " + this.filePath)
                             if (this.filePath.length > 0) {
-                                MediaSourceFactory.createFile(this.filePath).then((data) => {
+                                MediaSourceFactory.createFile("", this.filePath).then((data) => {
                                     this.player.setDataSource(data)
                                 })
                             } else {
-                                MediaSourceFactory.createAssets(globalThis.context, "../../resources/rawfile/test.mp4").then((data) => {
-                                    this.player.setDataSource(data)
-                                })
+                                MediaSourceFactory.createAssets(getContext(this), "test.mp4", "../../resources/rawfile/test.mp4")
+                                    .then((data) => {
+                                        this.player.setDataSource(data)
+                                    })
                             }
                         }
                     })
@@ -121,7 +141,7 @@ struct VideoPage {
             .margin({ top: 50 })
 
             Row() {
-                Text("" + this.position)
+                Text(timeToString(this.position))
                     .fontSize(30)
                     .padding(10)
                     .margin({ left: 20 })
@@ -146,7 +166,7 @@ struct VideoPage {
                             this.position = Math.floor(value)
                         }
                     })
-                Text("" + this.duration)
+                Text(timeToString(this.duration))
                     .fontSize(30)
                     .padding(10)
                     .margin({ left: 20 })
