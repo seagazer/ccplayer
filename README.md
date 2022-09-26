@@ -6,9 +6,10 @@ A media player for OpenHarmony   一个为OpenHarmony设计，支持音视频媒
 1. 框架代码结构
 ```typescript
 player
-  |----config // 框架属性定义，包括播放状态，媒体类型，视频比例
+  |----config // 框架属性定义，包括播放状态，媒体类型，视频模式
   |----core //  框架核心，包括音频，视频播放具体实现
-  |----helper // 辅助工具
+  |----common // 日志，扩展函数等公共业务
+  |----data // 媒体资源定义，提供与本地文件和url的转换接口
   |----inteface // 音频，视频业务能力定义
   |----widget // 视频播放组件
   |----MediaPlayer.ts // 媒体播放器，对外提供播放能力的统一入口
@@ -95,7 +96,7 @@ player
   | FILL    | 拉伸填充                 |
   | ORIGIN  | 原始像素(渲染区域内显示) |
 
-* PlayerState
+* PlayerState 播放器状态
 
   | 属性            | 说明                   |
   | --------------- | ---------------------- |
