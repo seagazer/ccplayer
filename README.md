@@ -46,8 +46,8 @@ player
   |reset|void|void|重置播放器|
   |release|void|void|释放播放器|
   |seekTo|position 目标进度时间戳|void|跳转至指定进度|
-  |setDataSourceUrl|url 网络媒体链接地址|void|设置网络媒体资源|
-  |setDataSourceFile|sourcePath 本地媒体资源路径|void|释放播放器|
+  |setDataSource|dataSource 媒体资源|void|设置媒体资源|
+  |getMediaSource|void|MediaSource|获取当前播放的媒体资源|
   |setLooper|isLoop 是否循环播放|void|设置循环播放|
   |setVolume|vol 音量大小|void|设置音量|
   |isPlaying|void|boolean|是否正在播放|
@@ -100,7 +100,7 @@ player
 
   | 属性            | 说明                   |
   | --------------- | ---------------------- |
-  | STATE_NOT_INIT  | 初始状态               |
+  | STATE_NOT_INIT  | 初始状态(未实例化)               |
   | STATE_IDLE      | 播放器实例化且闲置状态 |
   | STATE_PREPARED  | 播放器加载资源完成状态 |
   | STATE_STARTED   | 播放器正在播放状态     |
@@ -126,4 +126,4 @@ player
   
 
 ### 示例工程
-可以切换到**dev**分支下载代码，工程中内置了示例模块，包含音频播放，视频播放，LitePlayerView组件的使用。
+可以切换到**dev**分支下载代码，工程中内置了示例模块，包含音频播放，视频播放，LitePlayerView组件的使用和常见场景的业务处理方式。
