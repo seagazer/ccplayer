@@ -112,18 +112,19 @@ export class OhosAudioPlayer extends BasePlayer {
     pause() {
         Logger.d(TAG, ">> pause")
         this.player.pause()
-        this.stopProgressTimer()
+        super.pause()
     }
 
     stop() {
         Logger.d(TAG, ">> stop")
         this.player.stop()
-        this.stopProgressTimer()
+        super.stop()
     }
 
     reset() {
         Logger.d(TAG, ">> reset")
         this.player.reset()
+        super.reset()
     }
 
     release() {

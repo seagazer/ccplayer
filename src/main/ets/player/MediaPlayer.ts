@@ -11,6 +11,7 @@ import { BasePlayer } from './core/BasePlayer'
  * The player for audio or video.
  */
 export class MediaPlayer implements IPlayer, IRender {
+    private mediaSource: MediaSource = null
     private player
 
     private constructor(type: PlayerType) {
@@ -58,6 +59,7 @@ export class MediaPlayer implements IPlayer, IRender {
     }
 
     setDataSource(dataSource: MediaSource) {
+        this.mediaSource = dataSource
         this.player.setDataSource(dataSource)
     }
 
@@ -173,5 +175,13 @@ export class MediaPlayer implements IPlayer, IRender {
 
     setSurface(surfaceId: string) {
         this.player.setSurface(surfaceId)
+    }
+
+    /**
+     * Get the playing media source.
+     * @return MediaSource The media source which is playing.
+     */
+    public getMediaSource(): MediaSource{
+        return this.mediaSource
     }
 }
