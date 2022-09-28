@@ -10,7 +10,7 @@ import { BasePlayer } from './core/BasePlayer'
 /**
  * The player for audio or video.
  */
-export class MediaPlayer implements IPlayer, IRender {
+export class CcPlayer implements IPlayer, IRender {
     private mediaSource: MediaSource = null
     private player
 
@@ -23,11 +23,11 @@ export class MediaPlayer implements IPlayer, IRender {
     }
 
     /**
-     * Create a instance of MediaPlayer.
+     * Create a instance of CcPlayer.
      * @param type The type of player. [PlayerType.AUDIO, PlayerType.VIDEO]
      */
     public static create(type: PlayerType) {
-        return new MediaPlayer(type)
+        return new CcPlayer(type)
     }
 
     start() {

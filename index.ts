@@ -1,4 +1,4 @@
-export { MediaPlayer } from './src/main/ets/player/MediaPlayer'
+export { CcPlayer } from './src/main/ets/player/CcPlayer'
 
 export { PlayerType } from './src/main/ets/player/config/PlayerType'
 
@@ -12,5 +12,5 @@ export { Logger } from './src/main/ets/player/common/Logger'
 
 export { AspectRatio } from './src/main/ets/player/config/AspectRatio'
 
-export { LitePlayerView } from './src/main/ets/player/widget/LitePlayerView'
+export { CcPlayerView } from './src/main/ets/player/widget/CcPlayerView'
 
