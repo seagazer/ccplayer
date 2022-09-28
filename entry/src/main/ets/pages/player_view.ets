@@ -1,7 +1,7 @@
-import { LitePlayerView } from '@seagazer/ccplayer';
+import { CcPlayerView } from '@seagazer/ccplayer';
 import { MediaSourceFactory } from '@seagazer/ccplayer';
 import { Logger } from '@seagazer/ccplayer';
-import { MediaPlayer } from '@seagazer/ccplayer';
+import { CcPlayer } from '@seagazer/ccplayer';
 import { PlayerType } from '@seagazer/ccplayer';
 import { PlayerState } from '@seagazer/ccplayer';
 import { AspectRatio } from '@seagazer/ccplayer';
@@ -15,7 +15,7 @@ struct PlayerViewPage {
     @State videoTitle: string = ""
     @State showTitleBar: boolean = false
     private autoHildeTaskId = -1
-    private player: MediaPlayer = null
+    private player: CcPlayer = null
     private prepareListener = () => {
         Logger.d(TAG, "prepared")
         this.videoTitle = this.player.getMediaSource().title
@@ -32,7 +32,7 @@ struct PlayerViewPage {
 
     aboutToAppear() {
         if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
-            this.player = MediaPlayer.create(PlayerType.VIDEO)
+            this.player = CcPlayer.create(PlayerType.VIDEO)
         }
         this.player
             .addOnPreparedListener(this.prepareListener)
@@ -54,7 +54,7 @@ struct PlayerViewPage {
         Column() {
             // render surface view
             Stack() {
-                LitePlayerView({
+                CcPlayerView({
                     player: this.player,
                     width: 800,
                     height: 480,

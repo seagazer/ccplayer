@@ -2,7 +2,7 @@ import { timeToString } from '../common/Extentions';
 import brightness from '@ohos.brightness';
 import audio from '@ohos.multimedia.audio';
 import { Logger } from '../common/Logger';
-import { MediaPlayer } from '../MediaPlayer';
+import { CcPlayer } from '../CcPlayer';
 import { AspectRatio } from '../config/AspectRatio'
 
 const TAG = "LitePlayerView"
@@ -17,7 +17,7 @@ const GESTURE_BACKGROUND = "#cc1a1a1a"
 const CONTENT_COLOR = "#d9ffffff"
 
 /**
- * A component to play video, you can use gesture to control the mediaplayer.
+ * A component to play video, you can use gesture to control the media player.
  *
  * The controller area define:
  * |----  Widget Width  ----|
@@ -28,9 +28,9 @@ const CONTENT_COLOR = "#d9ffffff"
  * |____|____|____|____|____|
  */
 @Component
-export struct LitePlayerView {
+export struct CcPlayerView {
     /*----------------------------outer settings-----------------------------------*/
-    private player: MediaPlayer
+    private player: CcPlayer
     private width: number = 0
     private height: number  = 0
     private isSupportGesture: boolean = false

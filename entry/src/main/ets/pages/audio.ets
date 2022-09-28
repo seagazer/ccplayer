@@ -1,7 +1,7 @@
 import { timeToString } from '../Extentions';
 import { MediaSourceFactory } from '@seagazer/ccplayer';
 import { Logger } from '@seagazer/ccplayer';
-import { MediaPlayer } from '@seagazer/ccplayer';
+import { CcPlayer } from '@seagazer/ccplayer';
 import { PlayerType } from '@seagazer/ccplayer';
 import { PlayerState } from '@seagazer/ccplayer';
 
@@ -12,7 +12,7 @@ const TAG = "AudioPage"
 struct AudioPage {
     @State position: number= 0
     @State duration: number= 0
-    private player: MediaPlayer = null
+    private player: CcPlayer = null
     private isSeeking = false
     private filePath: string  = ""
     private prepareListener = () => {
@@ -41,7 +41,7 @@ struct AudioPage {
 
     aboutToAppear() {
         if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
-            this.player = MediaPlayer.create(PlayerType.AUDIO)
+            this.player = CcPlayer.create(PlayerType.AUDIO)
         }
         this.player
             .addOnPreparedListener(this.prepareListener)

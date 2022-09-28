@@ -1,7 +1,7 @@
 import { timeToString } from '../Extentions';
 import { MediaSourceFactory } from '@seagazer/ccplayer';
 import { Logger } from '@seagazer/ccplayer';
-import { MediaPlayer } from '@seagazer/ccplayer';
+import { CcPlayer } from '@seagazer/ccplayer';
 import { PlayerType } from '@seagazer/ccplayer';
 import { PlayerState } from '@seagazer/ccplayer';
 
@@ -15,7 +15,7 @@ struct VideoPage {
     private isSeeking = false
     private controller = new XComponentController()
     private surfaceId: string = null
-    private player: MediaPlayer = null
+    private player: CcPlayer = null
     private filePath: string  = ""
     private prepareListener = () => {
         Logger.d(TAG, "prepared")
@@ -43,7 +43,7 @@ struct VideoPage {
 
     aboutToAppear() {
         if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
-            this.player = MediaPlayer.create(PlayerType.VIDEO)
+            this.player = CcPlayer.create(PlayerType.VIDEO)
         }
         this.player
             .addOnPreparedListener(this.prepareListener)
