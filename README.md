@@ -12,7 +12,7 @@ player
   |----data // 媒体资源定义，提供与本地文件和url的转换接口
   |----inteface // 音频，视频业务能力定义
   |----widget // 视频播放组件
-  |----MediaPlayer.ts // 媒体播放器，对外提供播放能力的统一入口
+  |----CcPlayer.ts // 媒体播放器，对外提供播放能力的统一入口
 ```
 2. 框架核心类图
 
@@ -35,10 +35,10 @@ player
 
 
 ### 接口能力
-* MediaPlayer 媒体播放器
+* CcPlayer 媒体播放器
   |接口|参数|返回值|说明|
   |----|----|----|----|
-  |create|PlayerType 媒体类型|MediaPlayer|创建播放器实例|
+  |create|PlayerType 媒体类型|CcPlayer|创建播放器实例|
   |start|void|void|开始/恢复播放|
   |startTo|position 起播时间戳 | void | 从指定时间戳开始播放|
   |pause |void|void|暂停播放|
@@ -74,11 +74,11 @@ player
   |addOnRenderFirstFrameListener|listener|void|添加首帧画面渲染监听|
   |removeOnRenderFirstFrameListener|listener|void|移除首帧画面渲染监听|
 
-* LitePlayerView 视频播放组件
+* CcPlayerView 视频播放组件
 
   | 属性             | 类型        | 说明             |
   | ---------------- | ----------- | ---------------- |
-  | player           | MediaPlayer | 媒体播放器       |
+  | player           | CcPlayer | 媒体播放器       |
   | width            | number      | 组件宽度         |
   | height           | number      | 组件高度         |
   | isSupportGesture | boolean     | 是否支持手势操作 |
@@ -120,8 +120,8 @@ player
 
   | 接口         | 参数                                            | 返回值          | 说明                     |
   | ------------ | ----------------------------------------------- | --------------- | ------------------------ |
-  | createFile   | filePath 文件绝对路径                           | Promise<string> | 通过本地文件创建媒体资源 |
-  | createAssets | abilityContext 上下文,  assetsPath 资源相对路径 | Promise<string> | 通过Raw文件创建媒体资源  |
+  | createFile   | filePath 文件绝对路径                           | Promise<MediaSource> | 通过本地文件创建媒体资源 |
+  | createAssets | abilityContext 上下文,  assetsPath 资源相对路径 | Promise<MediaSource> | 通过Raw文件创建媒体资源  |
 
   
 
