@@ -108,7 +108,7 @@ export struct CcPlayerView {
     @Builder
     RenderSurface() {
         XComponent({
-            id: "liteplayerview",
+            id: "ccplayer",
             controller: this.controller,
             type: "surface"
         })
