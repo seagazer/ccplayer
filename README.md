@@ -46,7 +46,7 @@ player
   |reset|void|void|重置播放器|
   |release|void|void|释放播放器|
   |seekTo|position 目标进度时间戳|void|跳转至指定进度|
-  |setMediaSource|mediaSource MediaSource|void|设置媒体资源|
+  |setMediaSource|mediaSource 媒体资源|void|设置媒体资源|
   |getMediaSource|void|MediaSource|获取当前播放的媒体资源|
   |setLooper|isLoop 是否循环播放|void|设置循环播放|
   |setVolume|vol 音量大小|void|设置音量|
