@@ -134,8 +134,8 @@ export class BasePlayer implements IPlayer, IRender {
         return this.currentState
     }
 
-    setDataSource(dataSource: MediaSource) {
-        Logger.d(TAG, ">> setDataSource: " + JSON.stringify(dataSource))
+    setMediaSource(mediaSource: MediaSource) {
+        Logger.d(TAG, ">> setMediaSource: " + JSON.stringify(mediaSource))
     }
 
     startTo(position: number) {

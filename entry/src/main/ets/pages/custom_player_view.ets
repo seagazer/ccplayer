@@ -181,7 +181,7 @@ struct CustomPlayerViewPage {
             }.margin({ top: 50 })
             // play actions
             Row() {
-                Button("setDataSource")
+                Button("setMediaSource")
                     .fontSize(30)
                     .width(300)
                     .height(60)
@@ -189,7 +189,7 @@ struct CustomPlayerViewPage {
                     .onClick(() => {
                         // if bind surface, set data source to play
                         MediaSourceFactory.createAssets(getContext(this), "test.mp4", "../../resources/rawfile/test.mp4").then((data) => {
-                            this.player.setDataSource(data)
+                            this.player.setMediaSource(data)
                         })
                     })
                 Button("start")

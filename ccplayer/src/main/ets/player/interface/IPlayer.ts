@@ -43,10 +43,10 @@ export interface IPlayer {
     seekTo(position: number)
 
     /**
-     * Set the dataSource.
-     * @param dataSource The dataSource, use MediaSourceFactory to create a dataSource.
+     * Set the mediaSource.
+     * @param mediaSource The mediaSource, use MediaSourceFactory to create a mediaSource.
      */
-    setDataSource(dataSource: MediaSource)
+    setMediaSource(mediaSource: MediaSource)
 
     /**
      * Set loop mode.

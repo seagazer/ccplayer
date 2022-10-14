@@ -58,9 +58,9 @@ export class CcPlayer implements IPlayer, IRender {
         this.player.seekTo(position)
     }
 
-    setDataSource(dataSource: MediaSource) {
-        this.mediaSource = dataSource
-        this.player.setDataSource(dataSource)
+    setMediaSource(mediaSource: MediaSource) {
+        this.mediaSource = mediaSource
+        this.player.setMediaSource(mediaSource)
     }
 
     setLooper(isLoop: boolean) {

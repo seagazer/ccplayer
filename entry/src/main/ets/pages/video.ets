@@ -96,7 +96,7 @@ struct VideoPage {
                 .margin({ top: 50 })
 
             Row() {
-                Button("setDataSource")
+                Button("setMediaSource")
                     .fontSize(30)
                     .width(300)
                     .height(60)
@@ -107,12 +107,12 @@ struct VideoPage {
                             Logger.d(TAG, "filePath = " + this.filePath)
                             if (this.filePath.length > 0) {
                                 MediaSourceFactory.createFile("", this.filePath).then((data) => {
-                                    this.player.setDataSource(data)
+                                    this.player.setMediaSource(data)
                                 })
                             } else {
                                 MediaSourceFactory.createAssets(getContext(this), "test.mp4", "../../resources/rawfile/test.mp4")
                                     .then((data) => {
-                                        this.player.setDataSource(data)
+                                        this.player.setMediaSource(data)
                                     })
                             }
                         }

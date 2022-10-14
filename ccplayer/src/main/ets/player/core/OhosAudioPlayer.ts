@@ -94,10 +94,10 @@ export class OhosAudioPlayer extends BasePlayer {
         })
     }
 
-    setDataSource(dataSource: MediaSource) {
+    setMediaSource(mediaSource: MediaSource) {
         this.reset()
-        this.player.src = dataSource.source
-        Logger.d(TAG, "set data source = " + dataSource.source)
+        this.player.src = mediaSource.source
+        Logger.d(TAG, "set media source = " + mediaSource.source)
     }
 
     start() {
