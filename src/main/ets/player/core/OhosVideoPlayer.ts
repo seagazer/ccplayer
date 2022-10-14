@@ -8,7 +8,7 @@ const TAG = "OhosVideoPlayer"
 
 /**
  * Video player for ohos.
- * reset -> setSurface/setDataSource -> prepare -> play
+ * reset -> setSurface/setMediaSource -> prepare -> play
  */
 export class OhosVideoPlayer extends BasePlayer {
     private player: media.VideoPlayer = null
@@ -76,7 +76,7 @@ export class OhosVideoPlayer extends BasePlayer {
         })
     }
 
-    setDataSource(dataSource: MediaSource) {
+    setMediaSource(mediaSource: MediaSource) {
         this.player.reset((err) => {
             if (this.unError(err)) {
                 if (this.curSurfaceId == null) {
@@ -89,7 +89,7 @@ export class OhosVideoPlayer extends BasePlayer {
                         Logger.d(TAG, ">> set surface error: " + JSON.stringify(err))
                     })
                 }
-                this.player.url = dataSource.source
+                this.player.url = mediaSource.source
             }
         })
     }
