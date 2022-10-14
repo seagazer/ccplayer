@@ -405,6 +405,6 @@ export struct CcPlayerView {
         this.downY = -1
         this.hideControllerTaskId = setTimeout(() => {
             this.isShowController = false
-        }, autoHideControllerDelay)
+        }, this.autoHideControllerDelay)
     }
 }
