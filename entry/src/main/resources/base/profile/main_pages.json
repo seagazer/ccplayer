@@ -3,6 +3,7 @@
     "pages/main",
     "pages/audio",
     "pages/video",
-    "pages/player_view"
+    "pages/player_view",
+    "pages/custom_player_view"
   ]
 }

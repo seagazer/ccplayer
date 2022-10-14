@@ -24,13 +24,23 @@ struct Index {
                     })
                 })
                 .margin({ top: 50 })
-            Button("LitePlayerView")
+            Button("CcPlayerView")
                 .fontSize(30)
                 .width(300)
                 .height(60)
                 .onClick(() => {
                     router.push({
                         uri: "pages/player_view"
+                    })
+                })
+                .margin({ top: 50 })
+            Button("CustomPlayerView")
+                .fontSize(30)
+                .width(300)
+                .height(60)
+                .onClick(() => {
+                    router.push({
+                        uri: "pages/custom_player_view"
                     })
                 })
                 .margin({ top: 50 })
