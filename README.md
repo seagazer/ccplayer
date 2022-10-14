@@ -46,7 +46,7 @@ player
   |reset|void|void|重置播放器|
   |release|void|void|释放播放器|
   |seekTo|position 目标进度时间戳|void|跳转至指定进度|
-  |setDataSource|dataSource 媒体资源|void|设置媒体资源|
+  |setMediaSource|mediaSource MediaSource|void|设置媒体资源|
   |getMediaSource|void|MediaSource|获取当前播放的媒体资源|
   |setLooper|isLoop 是否循环播放|void|设置循环播放|
   |setVolume|vol 音量大小|void|设置音量|
@@ -76,13 +76,20 @@ player
 
 * CcPlayerView 视频播放组件
 
-  | 属性             | 类型        | 说明             |
-  | ---------------- | ----------- | ---------------- |
-  | player           | CcPlayer | 媒体播放器       |
-  | width            | number      | 组件宽度         |
-  | height           | number      | 组件高度         |
-  | isSupportGesture | boolean     | 是否支持手势操作 |
-  | aspectRatio      | AspectRatio | 视频画面比例     |
+  | 属性             | 类型        | 说明             |是否必填|
+  | ---------------- | ----------- | ---------------- |----|
+  | player           | CcPlayer | 媒体播放器       |是|
+  | width            | number      | 组件宽度         |是|
+  | height           | number      | 组件高度         |是|
+  | aspectRatio      | AspectRatio | 视频画面比例     |是|
+  | autoHideControllerDelay|number|自动隐藏手势UI的延时|否|
+  | isSupportGesture | boolean     | 是否支持手势操作 |否|  
+  | onTouchCallback|(event: TouchEvent) => void|触摸事件回调|否|
+  | isDefaultGestureUI|boolean|是否使用内置默认手势UI|否|
+  | gestureUIListener|(isVisible: boolean) => void|自定义UI显隐回调|否|
+  | gestureSeekAction|(seekPosition: number, max: number) => void|手势seek进度回调|否|
+  | gestureBrightnessAction|(brightness: number, max: number) => void|手势Brightness进度回调|否|
+  |gestureVolumeAction|(volume: number, max: number) => void|手势Volume进度回调|否|
 
 * AspectRatio 视频画面比例
 
