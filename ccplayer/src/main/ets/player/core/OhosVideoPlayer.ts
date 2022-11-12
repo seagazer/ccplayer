@@ -138,6 +138,7 @@ export class OhosVideoPlayer extends BasePlayer {
         this.player.pause((err) => {
             Logger.d(TAG, "System callback: pause: " + JSON.stringify(err))
             if (this.unError(err)) {
+                this.changePlayerState(PlayerState.STATE_PAUSED)
             }
         })
         super.pause()
@@ -148,6 +149,7 @@ export class OhosVideoPlayer extends BasePlayer {
         this.player.stop((err) => {
             Logger.d(TAG, "System callback: stop: " + JSON.stringify(err))
             if (this.unError(err)) {
+                this.changePlayerState(PlayerState.STATE_STOPPED)
             }
         })
         this.isPrepared = false
@@ -159,6 +161,7 @@ export class OhosVideoPlayer extends BasePlayer {
         this.player.reset((err) => {
             Logger.d(TAG, "System callback: reset: " + JSON.stringify(err))
             if (this.unError(err)) {
+                this.changePlayerState(PlayerState.STATE_IDLE)
             }
         })
         this.isPrepared = false
@@ -171,6 +174,7 @@ export class OhosVideoPlayer extends BasePlayer {
         this.player.release((err) => {
             Logger.d(TAG, "System callback: release: " + JSON.stringify(err))
             if (this.unError(err)) {
+                this.changePlayerState(PlayerState.STATE_NOT_INIT)
             }
         })
         super.release()
