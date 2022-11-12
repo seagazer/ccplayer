@@ -106,11 +106,15 @@ struct VideoPage {
                         if (this.surfaceId != null) {
                             Logger.d(TAG, "filePath = " + this.filePath)
                             if (this.filePath.length > 0) {
-                                MediaSourceFactory.createFile("", this.filePath).then((data) => {
-                                    this.player.setMediaSource(data)
-                                })
+                                if (this.filePath.startsWith("http")) {
+                                    this.player.setMediaSource(MediaSourceFactory.createUrl(this.filePath))
+                                } else {
+                                    MediaSourceFactory.createFile(this.filePath).then((data) => {
+                                        this.player.setMediaSource(data)
+                                    })
+                                }
                             } else {
-                                MediaSourceFactory.createAssets(getContext(this), "test.mp4", "../../resources/rawfile/test.mp4")
+                                MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4")
                                     .then((data) => {
                                         this.player.setMediaSource(data)
                                     })

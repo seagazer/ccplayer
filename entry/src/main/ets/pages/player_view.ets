@@ -110,7 +110,7 @@ struct PlayerViewPage {
                     .fontColor(Color.White)
                     .onClick(() => {
                         // if bind surface, set data source to play
-                        MediaSourceFactory.createAssets(getContext(this), "test.mp4", "../../resources/rawfile/test.mp4").then((data) => {
+                        MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4").then((data) => {
                             this.player.setMediaSource(data)
                         })
                     })

@@ -26,7 +26,6 @@ struct AudioPage {
         Logger.d(TAG, "err =  " + code + ", " + message)
     }
     private progressChangedListener = (duration) => {
-        Logger.d(TAG, "position = " + duration)
         if (!this.isSeeking) {
             this.position = duration
         }
@@ -84,11 +83,14 @@ struct AudioPage {
                     .onClick(() => {
                         Logger.d(TAG, "filePath = " + this.filePath)
                         if (this.filePath.length > 0) {
-                            MediaSourceFactory.createFile("", this.filePath).then((data) => {
-                                this.player.setMediaSource(data)
-                            })
+                            if (this.filePath.startsWith("http")) {
+                            } else {
+                                MediaSourceFactory.createFile(this.filePath).then((data) => {
+                                    this.player.setMediaSource(data)
+                                })
+                            }
                         } else {
-                            MediaSourceFactory.createAssets(getContext(this), "test.mp3", "../../resources/rawfile/test.mp3")
+                            MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp3", "test.mp3")
                                 .then((data) => {
                                     this.player.setMediaSource(data)
                                 })
