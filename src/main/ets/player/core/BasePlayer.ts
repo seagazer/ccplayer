@@ -146,24 +146,20 @@ export class BasePlayer implements IPlayer, IRender {
 
     start() {
         // do action in sub class
-        this.changePlayerState(PlayerState.STATE_STARTED)
     }
 
     pause() {
         // do action in sub class
         this.stopProgressTimer()
-        this.changePlayerState(PlayerState.STATE_PAUSED)
     }
 
     stop() {
         // do action in sub class
         this.stopProgressTimer()
-        this.changePlayerState(PlayerState.STATE_STOPPED)
     }
 
     reset() {
         // do action in sub class
-        this.changePlayerState(PlayerState.STATE_IDLE)
     }
 
     seekTo(position: number) {
@@ -205,7 +201,6 @@ export class BasePlayer implements IPlayer, IRender {
 
     release() {
         Logger.d(TAG, "release")
-        this.changePlayerState(PlayerState.STATE_NOT_INIT)
         this.stopProgressTimer()
         this.preparedListeners = []
         this.completedListeners = []

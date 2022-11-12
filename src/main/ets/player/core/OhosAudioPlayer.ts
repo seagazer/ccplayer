@@ -124,12 +124,14 @@ export class OhosAudioPlayer extends BasePlayer {
     reset() {
         Logger.d(TAG, ">> reset")
         this.player.reset()
+        this.changePlayerState(PlayerState.STATE_IDLE)
         super.reset()
     }
 
     release() {
         Logger.d(TAG, ">> release")
         this.player.release()
+        this.changePlayerState(PlayerState.STATE_NOT_INIT)
         super.release()
     }
 
