@@ -14,7 +14,6 @@ player
   |----widget // 视频播放组件
   |----CcPlayer.ts // 媒体播放器，对外提供播放能力的统一入口
 ```
-2. 框架核心类图
 
 
 ### 使用方式
@@ -33,6 +32,13 @@ player
   npm install https://github.com/seagazer/ccplayer
 ```
 
+### 注意事项
+由于官方接口在频繁迭代修改，很多接口的变更不向前兼容（存在一些新增接口，并直接删除旧接口的修改），因此使用不同版本及环境可能会导致项目中的部分接口废弃，不存在，进而导致项目无法运行。本项目基于以下环境开发，为了避免兼容性问题，使用本库时建议保持开发环境一致。
+* IDE版本： **DevEco Studio 3.0.0.900**
+* SDK版本： **SDK API9 5.0.1.0**
+* 编译工具链依赖版本：  **@ohos/hvigor-ohos-plugin 1.0.6**
+* 编译工具链依赖版本：  **hypium ^1.0.0**
+* 编译工具链依赖版本：  **@ohos/hvigor 1.0.6**
 
 ### 接口能力
 * CcPlayer 媒体播放器
@@ -85,8 +91,9 @@ player
   | autoHideControllerDelay|number|自动隐藏手势UI的延时|否|
   | isSupportGesture | boolean     | 是否支持手势操作 |否|  
   | onTouchCallback|(event: TouchEvent) => void|触摸事件回调|否|
+  | onSurfaceDestroy|() => void|Surface销毁事件回调|否|
   | isDefaultGestureUI|boolean|是否使用内置默认手势UI|否|
-  | gestureUIListener|(isVisible: boolean) => void|自定义UI显隐回调|否|
+  | gestureUIListener|(isVisible: boolean) => void|手势UI显示/隐藏回调|否|
   | gestureSeekAction|(seekPosition: number, max: number) => void|手势seek进度回调|否|
   | gestureBrightnessAction|(brightness: number, max: number) => void|手势Brightness进度回调|否|
   |gestureVolumeAction|(volume: number, max: number) => void|手势Volume进度回调|否|
@@ -127,10 +134,11 @@ player
 
   | 接口         | 参数                                            | 返回值          | 说明                     |
   | ------------ | ----------------------------------------------- | --------------- | ------------------------ |
-  | createFile   | filePath 文件绝对路径                           | Promise<MediaSource> | 通过本地文件创建媒体资源 |
-  | createAssets | abilityContext 上下文,  assetsPath 资源相对路径 | Promise<MediaSource> | 通过Raw文件创建媒体资源  |
+  | createFile   | filePath 文件绝对路径, title? 媒体标题                           | Promise<MediaSource> | 通过本地文件创建媒体资源 |
+  | createAssets | abilityContext 上下文,  assetsPath 资源相对路径, title? 媒体标题 | Promise<MediaSource> | 通过Raw文件创建媒体资源  |
+  | createUrl | url 媒体链接地址, title? 媒体标题 | Promise<MediaSource> | 通过Raw文件创建媒体资源  |
 
   
 
 ### 示例工程
-可以切换到**dev**分支下载代码，工程中内置了示例模块，包含音频播放，视频播放，CcPlayerView组件的使用和常见场景的业务处理方式。
+可以切换到**dev**分支下载代码，工程中内置了示例模块，包含音频播放，视频播放，CcPlayerView组件，及自定义播放器UI的使用和常见场景的业务处理方式。
