@@ -16,7 +16,7 @@ const GESTURE_BACKGROUND = "#cc1a1a1a"
 const CONTENT_COLOR = "#d9ffffff"
 
 /**
- * A component to play video, you can use gesture to control the media player.
+ * A component to play video, you can control media player with gesture.
  *
  * The controller area define:
  * |----  Widget Width  ----|
@@ -57,7 +57,11 @@ export struct CcPlayerView {
     /**
      * Set a callback to observe the touch event of this player view.
      */
-    onTouchCallback: (event: TouchEvent) => void = null
+    onTouchCallback?: (event: TouchEvent) => void = null
+    /**
+     * Set a callback to observe the surface when destroy.
+     */
+    onSurfaceDestroy?: () => void = null
     /**
      * Set use the default gesture ui or not. If set false, you should define your custom ui by # gestureSeekAction, # gestureBrightnessAction and # gestureVolumeAction.
      */
@@ -65,19 +69,19 @@ export struct CcPlayerView {
     /**
      * Set a listener to handle the gesture ui visible.
      */
-    gestureUIListener: (isVisible: boolean) => void = null
+    gestureUIListener?: (isVisible: boolean) => void = null
     /**
      * If the isDefaultGestureUI is false, you should set this callback to handle custom gesture ui for seek action.
      */
-    gestureSeekAction: (seekPosition: number, max: number) => void = null
+    gestureSeekAction?: (seekPosition: number, max: number) => void = null
     /**
      * If the isDefaultGestureUI is false, you should set this callback to handle custom gesture ui for brightness action.
      */
-    gestureBrightnessAction: (brightness: number, max: number) => void = null
+    gestureBrightnessAction?: (brightness: number, max: number) => void = null
     /**
      * If the isDefaultGestureUI is false, you should set this callback to handle custom gesture ui for volume action.
      */
-    gestureVolumeAction: (volume: number, max: number) => void = null
+    gestureVolumeAction?: (volume: number, max: number) => void = null
     /*-----------------------------------------------------------------------------------------------*/
     private controller = new XComponentController()
     private surfaceId: string
@@ -167,6 +171,11 @@ export struct CcPlayerView {
             .onLoad(() => {
                 this.surfaceId = this.controller.getXComponentSurfaceId()
                 this.player.setSurface(this.surfaceId)
+            })
+            .onDestroy(() => {
+                if (this.onSurfaceDestroy != null) {
+                    this.onSurfaceDestroy()
+                }
             })
             .aspectRatio(this.videoRatio)
     }

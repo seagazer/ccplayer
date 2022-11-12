@@ -4,11 +4,11 @@
  * @param source The filePath, assetsPath or url for media.
  */
 export class MediaSource {
-    title: string
     source: string
+    title: string
 
-    constructor(title: string, source: string) {
-        this.title = title
+    constructor(source: string, title?: string) {
         this.source = source
+        this.title = title
     }
 }

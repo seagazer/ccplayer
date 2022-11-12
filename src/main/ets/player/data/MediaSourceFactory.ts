@@ -10,42 +10,43 @@ const TAG = "MediaSourceFactory"
 export class MediaSourceFactory {
     /**
      * Create a media source for local file.
-     * @param title The title of media file.
      * @param filePath The path of media file.
+     * @param title The title of media file, maybe null.
      */
-    public static async createFile(title: string, filePath: string): Promise<MediaSource> {
+    public static async createFile(filePath: string, title?: string): Promise<MediaSource> {
         let fdPath = 'fd://'
         Logger.d(TAG, "filePath = " + filePath)
         let fd = await fileIO.open(filePath)
-        let result = fdPath + '' + fd
+        let result = fdPath + fd
         Logger.d(TAG, "createFile = " + result)
-        return new MediaSource(title, result)
+        return new MediaSource(result, title)
     }
 
     /**
      * Create a media source for assets file.
      * @param abilityContext The context of ability.
-     * @param title The title of media file.
      * @param assetsPath The path of raw assets file.
+     * @param title The title of media file, maybe null.
      */
-    public static async createAssets(abilityContext, title: string, assetsPath: string): Promise<MediaSource> {
+    public static async createAssets(abilityContext, assetsPath: string, title?: string): Promise<MediaSource> {
         if (abilityContext == undefined) {
             Logger.e(TAG, "The context is null!!!")
+            return null
         }
         let fdPath = 'fd://'
         Logger.d(TAG, "assetsPath = " + assetsPath)
         let rfd = await abilityContext.resourceManager.getRawFileDescriptor(assetsPath)
-        let result = fdPath + '' + rfd.fd
+        let result = fdPath + rfd.fd
         Logger.d(TAG, "createAssets = " + result)
-        return new MediaSource(title, result)
+        return new MediaSource(result, title)
     }
 
     /**
      * Create a media source for network url.
-     * @param title The title of media file.
      * @param url The url of media file.
+     * @param title The title of media file, maybe null.
      */
-    public static createUrl(title: string, url: string): MediaSource{
-        return new MediaSource(title, url)
+    public static createUrl(url: string, title?: string): MediaSource{
+        return new MediaSource(url, title)
     }
 }
