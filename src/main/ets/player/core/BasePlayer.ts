@@ -134,7 +134,7 @@ export class BasePlayer implements IPlayer, IRender {
         return this.currentState
     }
 
-    setMediaSource(mediaSource: MediaSource) {
+    setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
         Logger.d(TAG, ">> setMediaSource: " + JSON.stringify(mediaSource))
     }
 
@@ -209,6 +209,10 @@ export class BasePlayer implements IPlayer, IRender {
         this.seekChangedListeners = []
         this.volumeChangedListeners = []
         this.stateChangedListeners = []
+    }
+
+    getSystemPlayer(): any {
+        return null
     }
 }
 

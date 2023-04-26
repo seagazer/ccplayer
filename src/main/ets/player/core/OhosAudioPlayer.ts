@@ -11,6 +11,7 @@ const TAG = "OhosAudioPlayer"
  */
 export class OhosAudioPlayer extends BasePlayer {
     private player: media.AudioPlayer = null
+    private isPlayed = false
 
     private constructor() {
         super()
@@ -94,14 +95,20 @@ export class OhosAudioPlayer extends BasePlayer {
         })
     }
 
-    setMediaSource(mediaSource: MediaSource) {
-        this.reset()
+    setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
+        if (this.isPlayed) {
+            this.reset()
+        }
+        this.isPlayed = true
         this.player.src = mediaSource.source
         Logger.d(TAG, "set media source = " + mediaSource.source)
     }
 
     start() {
         if (this.isPrepared) {
+            if (this.currentState == PlayerState.STATE_STARTED) {
+                return
+            }
             Logger.d(TAG, ">> start")
             this.player.play()
         } else {
@@ -110,12 +117,18 @@ export class OhosAudioPlayer extends BasePlayer {
     }
 
     pause() {
+        if (this.currentState != PlayerState.STATE_STARTED) {
+            return
+        }
         Logger.d(TAG, ">> pause")
         this.player.pause()
         super.pause()
     }
 
     stop() {
+        if (this.currentState == PlayerState.STATE_STOPPED) {
+            return
+        }
         Logger.d(TAG, ">> stop")
         this.player.stop()
         super.stop()
@@ -174,6 +187,10 @@ export class OhosAudioPlayer extends BasePlayer {
 
     removeOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
         throw new Error(`The audio player not support to observe the video size!`)
+    }
+
+    getSystemPlayer(): any{
+        return this.player
     }
 }
 

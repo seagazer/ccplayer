@@ -8,12 +8,13 @@ const TAG = "OhosVideoPlayer"
 
 /**
  * Video player for ohos.
- * reset -> setSurface/setMediaSource -> prepare -> play
+ * The process is: reset -> setMediaSource -> setSurface -> prepare -> play
  */
 export class OhosVideoPlayer extends BasePlayer {
     private player: media.VideoPlayer = null
     private curSurfaceId: string = null
     private lastSurfaceId: string = null
+    private isPlayed = false
 
     private constructor() {
         super()
@@ -64,37 +65,44 @@ export class OhosVideoPlayer extends BasePlayer {
         return new OhosVideoPlayer()
     }
 
-    private getVideoSize() {
-        this.player.getTrackDescription((err, propList) => {
-            if (propList != null) {
-                propList.forEach((value) => {
-                    Logger.d(TAG, "1-------" + value[media.MediaDescriptionKey.MD_KEY_WIDTH])
-                    Logger.d(TAG, "2-------" + value[media.MediaDescriptionKey.MD_KEY_HEIGHT])
-
-                })
-            }
-        })
+    setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
+        if (this.isPlayed) {
+            this.player.reset((err) => {
+                if (this.unError(err)) {
+                    this.setMediaSourceInner(mediaSource, onReady)
+                }
+            })
+        } else {
+            this.setMediaSourceInner(mediaSource, onReady)
+        }
     }
 
-    setMediaSource(mediaSource: MediaSource) {
-        this.player.reset((err) => {
-            if (this.unError(err)) {
-                if (this.curSurfaceId == null) {
-                    throw new Error("You must call setSurfaceId(surfaceId) before call this function.")
+    private setMediaSourceInner(mediaSource: MediaSource, onReady?: () => void) {
+        if (this.curSurfaceId == null) {
+            throw new Error("You must call setSurfaceId(surfaceId) before call this function.")
+        }
+        Logger.d(TAG, "set url = " + mediaSource.source)
+        // the action set surface must between set url and prepare.
+        this.player.url = mediaSource.source
+        if (this.curSurfaceId != this.lastSurfaceId) {
+            this.lastSurfaceId = this.curSurfaceId
+            Logger.d(TAG, ">> set surface: " + this.curSurfaceId)
+            this.player.setDisplaySurface(this.curSurfaceId, (err) => {
+                if (this.unError(err)) {
+                    if (onReady) {
+                        onReady?.()
+                    }
                 }
-                if (this.curSurfaceId != this.lastSurfaceId) {
-                    this.lastSurfaceId = this.curSurfaceId
-                    Logger.d(TAG, ">> set surface: " + this.curSurfaceId)
-                    this.player.setDisplaySurface(this.curSurfaceId, (err) => {
-                        Logger.d(TAG, ">> set surface error: " + JSON.stringify(err))
-                    })
-                }
-                this.player.url = mediaSource.source
-            }
-        })
+            })
+        }else{
+            onReady?.()
+        }
     }
 
     start() {
+        if (this.currentState == PlayerState.STATE_STARTED) {
+            return
+        }
         Logger.d(TAG, ">> start")
         if (this.isPrepared == false) {
             this.player.prepare((err) => {
@@ -110,6 +118,7 @@ export class OhosVideoPlayer extends BasePlayer {
                     this.player.play((err) => {
                         Logger.d(TAG, "System callback: play")
                         if (this.unError(err)) {
+                            this.isPlayed = true
                             this.changePlayerState(PlayerState.STATE_STARTED)
                             if (this.startPosition != -1) {
                                 this.seekTo(this.startPosition)
@@ -134,9 +143,12 @@ export class OhosVideoPlayer extends BasePlayer {
     }
 
     pause() {
+        if (this.currentState != PlayerState.STATE_STARTED) {
+            return
+        }
         Logger.d(TAG, ">> pause")
         this.player.pause((err) => {
-            Logger.d(TAG, "System callback: pause: " + JSON.stringify(err))
+            Logger.d(TAG, "System callback: pause")
             if (this.unError(err)) {
                 this.changePlayerState(PlayerState.STATE_PAUSED)
             }
@@ -147,7 +159,7 @@ export class OhosVideoPlayer extends BasePlayer {
     stop() {
         Logger.d(TAG, ">> stop")
         this.player.stop((err) => {
-            Logger.d(TAG, "System callback: stop: " + JSON.stringify(err))
+            Logger.d(TAG, "System callback: stop")
             if (this.unError(err)) {
                 this.changePlayerState(PlayerState.STATE_STOPPED)
             }
@@ -159,7 +171,7 @@ export class OhosVideoPlayer extends BasePlayer {
     reset() {
         Logger.d(TAG, ">> reset")
         this.player.reset((err) => {
-            Logger.d(TAG, "System callback: reset: " + JSON.stringify(err))
+            Logger.d(TAG, "System callback: reset")
             if (this.unError(err)) {
                 this.changePlayerState(PlayerState.STATE_IDLE)
             }
@@ -172,7 +184,7 @@ export class OhosVideoPlayer extends BasePlayer {
         Logger.d(TAG, ">> release")
         this.player.stop()
         this.player.release((err) => {
-            Logger.d(TAG, "System callback: release: " + JSON.stringify(err))
+            Logger.d(TAG, "System callback: release")
             if (this.unError(err)) {
                 this.changePlayerState(PlayerState.STATE_NOT_INIT)
             }
@@ -226,6 +238,7 @@ export class OhosVideoPlayer extends BasePlayer {
 
     private unError(err): boolean {
         if (typeof (err) != "undefined") {
+            Logger.e(TAG, "system error = " + JSON.stringify(err))
             this.changePlayerState(PlayerState.STATE_ERROR)
             this.isPrepared = false
             if (this.errorListeners.length > 0) {
@@ -236,5 +249,9 @@ export class OhosVideoPlayer extends BasePlayer {
             return false
         }
         return true
+    }
+
+    getSystemPlayer(): any{
+        return this.player
     }
 }

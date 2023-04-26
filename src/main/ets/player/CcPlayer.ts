@@ -58,9 +58,9 @@ export class CcPlayer implements IPlayer, IRender {
         this.player.seekTo(position)
     }
 
-    setMediaSource(mediaSource: MediaSource) {
+    setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
         this.mediaSource = mediaSource
-        this.player.setMediaSource(mediaSource)
+        this.player.setMediaSource(mediaSource, onReady)
     }
 
     setLooper(isLoop: boolean) {
@@ -183,5 +183,9 @@ export class CcPlayer implements IPlayer, IRender {
      */
     public getMediaSource(): MediaSource{
         return this.mediaSource
+    }
+
+    getSystemPlayer(): any{
+        return this.player.getSystemPlayer()
     }
 }
