@@ -54,9 +54,9 @@ struct PlayerViewPage {
             Stack() {
                 CcPlayerView({
                     player: this.player,
-                    width: 800,
-                    height: 480,
-                    aspectRatio: $videoRatio,
+                    w: 800,
+                    h: 480,
+                    asRatio: $videoRatio,
                     isSupportGesture: true,
                 })
             }
@@ -111,7 +111,9 @@ struct PlayerViewPage {
                     .onClick(() => {
                         // if bind surface, set data source to play
                         MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4").then((data) => {
-                            this.player.setMediaSource(data)
+                            this.player.setMediaSource(data, () => {
+                                this.player.start()
+                            })
                         })
                     })
                 Button("start")

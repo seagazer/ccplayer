@@ -10,7 +10,7 @@ const TAG = "AudioPage"
 @Entry
 @Component
 struct AudioPage {
-    @State position: number= 0
+    @State pos: number= 0
     @State duration: number= 0
     private player: CcPlayer = null
     private isSeeking = false
@@ -27,7 +27,7 @@ struct AudioPage {
     }
     private progressChangedListener = (duration) => {
         if (!this.isSeeking) {
-            this.position = duration
+            this.pos = duration
         }
     }
     private seekChangedListener = (duration) => {
@@ -120,7 +120,7 @@ struct AudioPage {
             .margin({ top: 20 })
 
             Row() {
-                Text(timeToString(this.position))
+                Text(timeToString(this.pos))
                     .fontSize(30)
                     .padding(10)
                     .margin({ left: 20 })
@@ -130,7 +130,7 @@ struct AudioPage {
                     min: 0,
                     step: 1,
                     style: SliderStyle.InSet,
-                    value: this.position
+                    value: this.pos
                 })
                     .width("60%")
                     .selectedColor(Color.Blue)
@@ -143,7 +143,7 @@ struct AudioPage {
                         if (mode == SliderChangeMode.End || mode == 3) {
                             this.isSeeking = true
                             this.player.seekTo(Math.floor(value))
-                            this.position = Math.floor(value)
+                            this.pos = Math.floor(value)
                         }
                     })
                 Text(timeToString(this.duration))

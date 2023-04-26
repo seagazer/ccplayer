@@ -1,22 +1,18 @@
 import { timeToString } from '../Extentions';
-import { MediaSourceFactory } from '@seagazer/ccplayer';
-import { Logger } from '@seagazer/ccplayer';
-import { CcPlayer } from '@seagazer/ccplayer';
-import { PlayerType } from '@seagazer/ccplayer';
-import { PlayerState } from '@seagazer/ccplayer';
+import { CcPlayer, Logger, MediaSourceFactory, PlayerState, PlayerType } from '@seagazer/ccplayer';
 
 const TAG = "VideoPage"
 
 @Entry
 @Component
 struct VideoPage {
-    @State position: number= 0
-    @State duration: number= 0
+    @State pos: number = 0
+    @State duration: number = 0
     private isSeeking = false
     private controller = new XComponentController()
     private surfaceId: string = null
     private player: CcPlayer = null
-    private filePath: string  = ""
+    private filePath: string = ""
     private prepareListener = () => {
         Logger.d(TAG, "prepared")
         this.duration = this.player.getDuration()
@@ -30,7 +26,7 @@ struct VideoPage {
     private progressChangedListener = (duration) => {
         Logger.d(TAG, "position = " + duration)
         if (!this.isSeeking) {
-            this.position = duration
+            this.pos = duration
         }
     }
     private seekChangedListener = (duration) => {
@@ -107,16 +103,22 @@ struct VideoPage {
                             Logger.d(TAG, "filePath = " + this.filePath)
                             if (this.filePath.length > 0) {
                                 if (this.filePath.startsWith("http")) {
-                                    this.player.setMediaSource(MediaSourceFactory.createUrl(this.filePath))
+                                    this.player.setMediaSource(MediaSourceFactory.createUrl(this.filePath), () => {
+                                        this.player.start()
+                                    })
                                 } else {
                                     MediaSourceFactory.createFile(this.filePath).then((data) => {
-                                        this.player.setMediaSource(data)
+                                        this.player.setMediaSource(data, () => {
+                                            this.player.start()
+                                        })
                                     })
                                 }
                             } else {
                                 MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4")
                                     .then((data) => {
-                                        this.player.setMediaSource(data)
+                                        this.player.setMediaSource(data, () => {
+                                            this.player.start()
+                                        })
                                     })
                             }
                         }
@@ -137,7 +139,15 @@ struct VideoPage {
                     .margin({ left: 30 })
                     .fontColor(Color.White)
                     .onClick(() => {
-                        this.player.pause()
+//                        this.player.pause()
+                        // mock play next
+                        MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/rotor_rotation.mp4", "rotor_rotation.mp4")
+                            .then((data) => {
+                                this.player.stop()
+                                this.player.setMediaSource(data, () => {
+                                    this.player.start()
+                                })
+                            })
                     })
             }
             .justifyContent(FlexAlign.Center)
@@ -145,7 +155,7 @@ struct VideoPage {
             .margin({ top: 50 })
 
             Row() {
-                Text(timeToString(this.position))
+                Text(timeToString(this.pos))
                     .fontSize(30)
                     .padding(10)
                     .margin({ left: 20 })
@@ -155,7 +165,7 @@ struct VideoPage {
                     min: 0,
                     step: 1,
                     style: SliderStyle.InSet,
-                    value: this.position
+                    value: this.pos
                 })
                     .selectedColor(Color.Blue)
                     .trackColor(Color.Orange)
@@ -167,7 +177,7 @@ struct VideoPage {
                         if (mode == SliderChangeMode.End || mode == 3) {
                             this.isSeeking = true
                             this.player.seekTo(Math.floor(value))
-                            this.position = Math.floor(value)
+                            this.pos = Math.floor(value)
                         }
                     })
                 Text(timeToString(this.duration))

@@ -1,14 +1,15 @@
 {
-	"license": "Apache License 2.0",
-	"types": "",
-	"devDependencies": {},
-	"name": "@seagazer/ccplayer",
-	"description": "A media player for OpenHarmony.",
-	"ohos": {
-		"org": "seagazer"
-	},
-	"main": "index.ts",
-	"repository": {},
-	"version": "1.0.0",
-	"dependencies": {}
+  "license": "Apache License 2.0",
+  "types": "",
+  "devDependencies": {},
+  "name": "@seagazer/ccplayer",
+  "description": "A media player for OpenHarmony.",
+  "ohos": {
+    "org": "seagazer"
+  },
+  "main": "index.ts",
+  "repository": {},
+  "type": "module",
+  "version": "1.0.0",
+  "dependencies": {}
 }
