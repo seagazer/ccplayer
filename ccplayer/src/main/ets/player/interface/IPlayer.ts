@@ -45,8 +45,9 @@ export interface IPlayer {
     /**
      * Set the mediaSource.
      * @param mediaSource The mediaSource, use MediaSourceFactory to create a mediaSource.
+     * @param onReady The callback when video is bind surface and set src success, null for audio player.
      */
-    setMediaSource(mediaSource: MediaSource)
+    setMediaSource(mediaSource: MediaSource, onReady?: () => void)
 
     /**
      * Set loop mode.
@@ -181,4 +182,10 @@ export interface IPlayer {
      * @return The current state of player.
      */
     getPlayerState(): PlayerState
+
+    /**
+     * Get the instance of system player, the instance is media.AudioPlayer or media.VideoPlayer.
+     * @return The instance of system player.
+     */
+    getSystemPlayer(): any
 }
