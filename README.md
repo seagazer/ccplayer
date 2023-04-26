@@ -50,7 +50,7 @@ player
 - 编译工具链依赖版本： **hypium ^1.0.0**
 - 编译工具链依赖版本： **@ohos/hvigor 1.0.6**
 
-新增：从 ecc5c7d85aab3095a09e3021928064f0ca4d9ceb 开始，已经适配 OpenHarmony3.2 环境：
+新增：从 734b9b74230f015aafa63a125812cdc6dc5f2798 开始，已经适配 OpenHarmony3.2 环境：
 
 - IDE 版本： **DevEco Studio 3.1.0.200**
 - SDK 版本： **SDK API9 3.2.11.9**
