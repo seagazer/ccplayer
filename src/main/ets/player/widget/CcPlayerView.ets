@@ -1,6 +1,4 @@
-// @ts-ignore
 import { timeToString } from '../common/Extentions';
-// @ts-ignore
 import brightness from '@ohos.brightness';
 import audio from '@ohos.multimedia.audio';
 import { Logger } from '../common/Logger';
@@ -129,7 +127,7 @@ export struct CcPlayerView {
 
     private onAspectRatioChanged() {
         this.videoRatio = this.getVideoRatio()
-        Logger.d(TAG, "aspectRatioChanged = " + this.videoRatio)
+        Logger.i(TAG, "aspectRatioChanged = " + this.videoRatio)
     }
 
     private onControllerVisibleChanged() {
@@ -143,23 +141,29 @@ export struct CcPlayerView {
         this.player.addOnVideoSizeChangedListener(this.videoSizeChangedListener)
         this.audioManager = audio.getAudioManager()
         this.audioManager.getVolume(audio.AudioVolumeType.MEDIA, (err, cur) => {
+            if (err) {
+                Logger.e(TAG, "getVolume error = " + JSON.stringify(err))
+            }
             this.targetVolume = cur
-            Logger.d(TAG, "current volume = " + this.targetVolume)
+            Logger.i(TAG, "current volume = " + this.targetVolume)
         })
         this.audioManager.getMaxVolume(audio.AudioVolumeType.MEDIA, (err, max) => {
+            if (err) {
+                Logger.e(TAG, "getMaxVolume error = " + JSON.stringify(err))
+            }
             this.maxVolume = max
-            Logger.d(TAG, "max volume = " + this.maxVolume)
+            Logger.i(TAG, "max volume = " + this.maxVolume)
         })
         if (this.w == 0 || this.h == 0) {
             // TODO 主动抛出异常js程序不会崩溃，如何提醒开发者?
             throw new Error("You must set the width and height when create a instance of CcPlayerView!")
         }
-        Logger.d(TAG, "The ccPlayerView size is: " + this.w + " x " + this.h)
+        Logger.i(TAG, "The ccPlayerView size is: " + this.w + " x " + this.h)
         this.controlEdge = this.w / 5
     }
 
     aboutToDisappear() {
-        Logger.d(TAG, "release, remove the listeners")
+        Logger.i(TAG, "release, remove the listeners")
         this.player.removeOnPreparedListener(this.preparedListener)
         this.player.removeOnVideoSizeChangedListener(this.videoSizeChangedListener)
     }
@@ -238,7 +242,7 @@ export struct CcPlayerView {
         .gesture(TapGesture({ count: 2 }).onAction(() => {
             // the player is prepared
             if (this.totalDuration > 0) {
-                Logger.d(TAG, "current state = " + this.player.getPlayerState())
+                Logger.i(TAG, "current state = " + this.player.getPlayerState())
                 if (this.player.isPlaying()) {
                     this.player.pause()
                 } else {
@@ -315,11 +319,14 @@ export struct CcPlayerView {
             this.controlType = ControlType.PROGRESS
             this.targetDuration = this.player.getCurrentPosition()
             this.startDuration = this.targetDuration
-            Logger.d(TAG, "down: start duration = " + this.startDuration)
+            Logger.i(TAG, "down: start duration = " + this.startDuration)
         } else if (this.downX > (this.w - this.controlEdge)) {
             this.controlType = ControlType.VOLUME
             this.audioManager.getVolume(audio.AudioVolumeType.MEDIA, (err, cur) => {
-                Logger.d(TAG, "down: start volume = " + this.targetVolume)
+                if (err) {
+                    Logger.e(TAG, "getVolume error = " + JSON.stringify(err))
+                }
+                Logger.i(TAG, "down: start volume = " + this.targetVolume)
                 this.targetVolume = cur
                 this.startBrightness = this.targetBrightness
             })
@@ -365,7 +372,7 @@ export struct CcPlayerView {
                         this.targetVolume = volumeTemp
                     }
                     this.audioManager.setVolume(audio.AudioVolumeType.MEDIA, this.targetVolume)
-                    Logger.d(TAG, `targetVolume = ${this.targetVolume}`)
+                    Logger.i(TAG, `targetVolume = ${this.targetVolume}`)
                 // callback volume action for custom ui
                     if (this.gestureVolumeAction != null) {
                         this.gestureVolumeAction(this.targetVolume, this.maxVolume)
@@ -384,7 +391,7 @@ export struct CcPlayerView {
                     } else {
                         this.targetBrightness = brightnessTemp
                     }
-                    Logger.d(TAG, `targetBrightness = ${this.targetBrightness}`)
+                    Logger.i(TAG, `targetBrightness = ${this.targetBrightness}`)
                     brightness.setValue(this.targetBrightness)
                 // callback brightness action for custom ui
                     if (this.gestureBrightnessAction != null) {
@@ -405,7 +412,7 @@ export struct CcPlayerView {
         switch (this.controlType) {
             case ControlType.PROGRESS:
                 this.player.seekTo(this.targetDuration)
-                Logger.d(TAG, `seek targetDuration = ${this.targetDuration}`)
+                Logger.i(TAG, `seek targetDuration = ${this.targetDuration}`)
                 break
             case ControlType.BRIGHTNESS:
             // do nothing, the brightness is changed when touch move

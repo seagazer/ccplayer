@@ -1,5 +1,7 @@
+import media from '@ohos.multimedia.media';
 import { MediaSource } from '../data/MediaSource';
 import { PlayerState } from '../config/PlayerState'
+
 
 /**
  * The action of media player.
@@ -187,5 +189,5 @@ export interface IPlayer {
      * Get the instance of system player, the instance is media.AudioPlayer or media.VideoPlayer.
      * @return The instance of system player.
      */
-    getSystemPlayer(): any
+    getSystemPlayer(): media.AVPlayer | media.VideoPlayer | media.AudioPlayer
 }
