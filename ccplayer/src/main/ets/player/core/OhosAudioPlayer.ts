@@ -7,11 +7,12 @@ import { PlayerState } from '../config/PlayerState'
 const TAG = "OhosAudioPlayer"
 
 /**
- * Audio player for ohos.
+ * Audio player impl for OpenHarmony 3.0+.
  */
 export class OhosAudioPlayer extends BasePlayer {
     private player: media.AudioPlayer = null
     private isPlayed = false
+    private onReady: () => void = null
 
     private constructor() {
         super()
@@ -19,19 +20,19 @@ export class OhosAudioPlayer extends BasePlayer {
         this.init()
     }
 
-    static create(): OhosAudioPlayer{
+    static create(): OhosAudioPlayer {
         return new OhosAudioPlayer()
     }
 
     init() {
         this.changePlayerState(PlayerState.STATE_IDLE)
         this.player.on('reset', () => {
-            Logger.d(TAG, "System callback: reset")
+            Logger.i(TAG, "System callback: reset")
             this.isPrepared = false
             this.changePlayerState(PlayerState.STATE_IDLE)
         })
         this.player.on('dataLoad', () => {
-            Logger.d(TAG, "System callback: dataLoad")
+            Logger.i(TAG, "System callback: dataLoad")
             this.isPrepared = true
             this.changePlayerState(PlayerState.STATE_PREPARED)
             if (this.preparedListeners.length > 0) {
@@ -39,27 +40,29 @@ export class OhosAudioPlayer extends BasePlayer {
                     callback()
                 })
             }
+            this.onReady?.()
+            this.onReady = null
+        })
+        this.player.on('play', () => {
+            Logger.i(TAG, "System callback: play")
+            this.changePlayerState(PlayerState.STATE_STARTED)
+            this.startProgressTimer()
             if (this.startPosition != -1) {
                 this.seekTo(this.startPosition)
                 this.startPosition = -1
             }
         })
-        this.player.on('play', () => {
-            Logger.d(TAG, "System callback: play")
-            this.changePlayerState(PlayerState.STATE_STARTED)
-            this.startProgressTimer()
-        })
         this.player.on('pause', () => {
-            Logger.d(TAG, "System callback: pause")
+            Logger.i(TAG, "System callback: pause")
             this.changePlayerState(PlayerState.STATE_PAUSED)
         })
         this.player.on('stop', () => {
-            Logger.d(TAG, "System callback: stop")
+            Logger.i(TAG, "System callback: stop")
             this.isPrepared = false
             this.changePlayerState(PlayerState.STATE_STOPPED)
         })
         this.player.on('finish', () => {
-            Logger.d(TAG, "System callback: finish")
+            Logger.i(TAG, "System callback: finish")
             this.changePlayerState(PlayerState.STATE_COMPLETED)
             this.stopProgressTimer()
             if (this.completedListeners.length > 0) {
@@ -69,20 +72,12 @@ export class OhosAudioPlayer extends BasePlayer {
             }
         })
         this.player.on('error', (error) => {
-            Logger.d(TAG, "System callback: error = " + JSON.stringify(error))
+            Logger.e(TAG, "System callback: error = " + JSON.stringify(error))
             this.isPrepared = false
             this.changePlayerState(PlayerState.STATE_ERROR)
             if (this.errorListeners.length > 0) {
                 this.errorListeners.forEach((callback) => {
                     callback(error.code, error.message)
-                })
-            }
-        })
-        this.player.on('timeUpdate', (duration) => {
-            Logger.d(TAG, "System callback: timeUpdate = " + duration)
-            if (this.seekChangedListeners.length > 0) {
-                this.seekChangedListeners.forEach((callback) => {
-                    callback(duration)
                 })
             }
         })
@@ -96,19 +91,17 @@ export class OhosAudioPlayer extends BasePlayer {
     }
 
     setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
+        Logger.d(TAG, "setMediaSource = " + JSON.stringify(mediaSource))
+        this.onReady = onReady
         if (this.isPlayed) {
             this.reset()
         }
         this.isPlayed = true
         this.player.src = mediaSource.source
-        Logger.d(TAG, "set media source = " + mediaSource.source)
     }
 
     start() {
         if (this.isPrepared) {
-            if (this.currentState == PlayerState.STATE_STARTED) {
-                return
-            }
             Logger.d(TAG, ">> start")
             this.player.play()
         } else {
@@ -117,18 +110,12 @@ export class OhosAudioPlayer extends BasePlayer {
     }
 
     pause() {
-        if (this.currentState != PlayerState.STATE_STARTED) {
-            return
-        }
         Logger.d(TAG, ">> pause")
         this.player.pause()
         super.pause()
     }
 
     stop() {
-        if (this.currentState == PlayerState.STATE_STOPPED) {
-            return
-        }
         Logger.d(TAG, ">> stop")
         this.player.stop()
         super.stop()
@@ -151,6 +138,11 @@ export class OhosAudioPlayer extends BasePlayer {
     seekTo(position: number) {
         Logger.d(TAG, ">> seek to: " + position)
         this.player.seek(position)
+        if (this.seekChangedListeners.length > 0) {
+            this.seekChangedListeners.forEach((callback) => {
+                callback(position)
+            })
+        }
     }
 
     setVolume(vol: number) {
@@ -181,15 +173,15 @@ export class OhosAudioPlayer extends BasePlayer {
         throw new Error(`The audio player not support to bind this surface: ${surfaceId}!`)
     }
 
-    addOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
+    addOnVideoSizeChangedListener(_: (newWidth, newHeight) => void) {
         throw new Error(`The audio player not support to observe the video size!`)
     }
 
-    removeOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
+    removeOnVideoSizeChangedListener(_: (newWidth, newHeight) => void) {
         throw new Error(`The audio player not support to observe the video size!`)
     }
 
-    getSystemPlayer(): any{
+    getSystemPlayer(): media.AudioPlayer {
         return this.player
     }
 }

@@ -15,7 +15,7 @@ export class MediaSourceFactory {
      */
     public static async createFile(filePath: string, title?: string): Promise<MediaSource> {
         let fdPath = 'fd://'
-        Logger.d(TAG, "filePath = " + filePath)
+        Logger.i(TAG, "filePath = " + filePath)
         let fd = await fileIO.open(filePath)
         let result = fdPath + fd
         Logger.d(TAG, "createFile = " + result)
@@ -34,7 +34,7 @@ export class MediaSourceFactory {
             return null
         }
         let fdPath = 'fd://'
-        Logger.d(TAG, "assetsPath = " + assetsPath)
+        Logger.i(TAG, "assetsPath = " + assetsPath)
         let rfd = await abilityContext.resourceManager.getRawFileDescriptor(assetsPath)
         let result = fdPath + rfd.fd
         Logger.d(TAG, "createAssets = " + result)

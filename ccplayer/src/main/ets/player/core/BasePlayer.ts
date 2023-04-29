@@ -1,3 +1,4 @@
+import media from '@ohos.multimedia.media';
 import { MediaSource } from '../data/MediaSource';
 import { Logger } from '../common/Logger'
 import { IPlayer } from '../interface/Iplayer'
@@ -11,17 +12,17 @@ const TAG = "BasePlayer"
  */
 export class BasePlayer implements IPlayer, IRender {
     protected currentState = PlayerState.STATE_NOT_INIT
-    protected preparedListeners: Array<any> = []
-    protected completedListeners: Array<any> = []
-    protected progressChangedListeners: Array<any> = []
-    protected errorListeners: Array<any> = []
-    protected seekChangedListeners: Array<any> = []
-    protected volumeChangedListeners: Array<any> = []
-    protected stateChangedListeners: Array<any> = []
-    protected videoSizeChangedListeners: Array<any> = []
-    protected renderFirstFrameListeners: Array<any> = []
+    protected preparedListeners: Array<() => void> = []
+    protected completedListeners: Array<() => void> = []
+    protected progressChangedListeners: Array<(position: number) => void> = []
+    protected errorListeners: Array<(code: number, message: string) => void> = []
+    protected seekChangedListeners: Array<(position: number) => void> = []
+    protected volumeChangedListeners: Array<() => void> = []
+    protected stateChangedListeners: Array<(newState: PlayerState) => void> = []
+    protected videoSizeChangedListeners: Array<(width: number, height: number) => void> = []
+    protected renderFirstFrameListeners: Array<() => void> = []
     protected isPrepared = false
-    protected progressTimer = null
+    protected progressTimer = -1
     protected startPosition = -1
 
     protected changePlayerState(state: PlayerState) {
@@ -36,17 +37,17 @@ export class BasePlayer implements IPlayer, IRender {
         return this
     }
 
-    removeOnPreparedListener(listener: () => void): IPlayer{
+    removeOnPreparedListener(listener: () => void): IPlayer {
         this.preparedListeners.splice(this.preparedListeners.indexOf(listener), 1)
         return this
     }
 
-    addOnCompletionListener(listener: () => void): IPlayer{
+    addOnCompletionListener(listener: () => void): IPlayer {
         this.completedListeners.push(listener)
         return this
     }
 
-    removeOnCompletionListener(listener: () => void): IPlayer{
+    removeOnCompletionListener(listener: () => void): IPlayer {
         this.completedListeners.splice(this.completedListeners.indexOf(listener), 1)
         return this
     }
@@ -56,7 +57,7 @@ export class BasePlayer implements IPlayer, IRender {
         return this
     }
 
-    removeOnErrorListener(listener: (code: number, message: string) => void): IPlayer{
+    removeOnErrorListener(listener: (code: number, message: string) => void): IPlayer {
         this.errorListeners.splice(this.errorListeners.indexOf(listener), 1)
         return this
     }
@@ -66,17 +67,17 @@ export class BasePlayer implements IPlayer, IRender {
         return this
     }
 
-    removeOnProgressChangedListener(listener: (duration: number) => void): IPlayer{
+    removeOnProgressChangedListener(listener: (duration: number) => void): IPlayer {
         this.progressChangedListeners.splice(this.progressChangedListeners.indexOf(listener), 1)
         return this
     }
 
-    addOnSeekChangedListener(listener: (duration: number) => void): IPlayer{
+    addOnSeekChangedListener(listener: (duration: number) => void): IPlayer {
         this.seekChangedListeners.push(listener)
         return this
     }
 
-    removeOnSeekChangedListener(listener: (duration: number) => void): IPlayer{
+    removeOnSeekChangedListener(listener: (duration: number) => void): IPlayer {
         this.seekChangedListeners.splice(this.seekChangedListeners.indexOf(listener), 1)
         return this
     }
@@ -86,17 +87,17 @@ export class BasePlayer implements IPlayer, IRender {
         return this
     }
 
-    removeOnVolumeChangedListener(listener: () => void): IPlayer{
+    removeOnVolumeChangedListener(listener: () => void): IPlayer {
         this.volumeChangedListeners.splice(this.volumeChangedListeners.indexOf(listener), 1)
         return this
     }
 
-    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
+    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer {
         this.stateChangedListeners.push(listener)
         return this
     }
 
-    removeOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer{
+    removeOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer {
         this.stateChangedListeners.splice(this.stateChangedListeners.indexOf(listener), 1)
         return this
     }
@@ -130,12 +131,12 @@ export class BasePlayer implements IPlayer, IRender {
     }
 
     getPlayerState(): PlayerState {
-        Logger.d(TAG, ">> currentState: " + this.currentState)
+        Logger.i(TAG, ">> currentState: " + this.currentState)
         return this.currentState
     }
 
     setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
-        Logger.d(TAG, ">> setMediaSource: " + JSON.stringify(mediaSource))
+        Logger.i(TAG, ">> setMediaSource: " + JSON.stringify(mediaSource))
     }
 
     startTo(position: number) {
@@ -160,6 +161,7 @@ export class BasePlayer implements IPlayer, IRender {
 
     reset() {
         // do action in sub class
+        this.stopProgressTimer()
     }
 
     seekTo(position: number) {
@@ -185,6 +187,7 @@ export class BasePlayer implements IPlayer, IRender {
             this.progressChangedListeners.forEach((callback) => {
                 callback(this.getCurrentPosition())
             })
+            Logger.i(TAG, ">> start progress timer")
             this.progressTimer = setInterval(() => {
                 this.progressChangedListeners.forEach((callback) => {
                     callback(this.getCurrentPosition())
@@ -194,8 +197,10 @@ export class BasePlayer implements IPlayer, IRender {
     }
 
     protected stopProgressTimer() {
-        if (this.progressTimer != null) {
+        if (this.progressTimer != -1) {
+            Logger.i(TAG, ">> stop progress timer")
             clearInterval(this.progressTimer)
+            this.progressTimer = -1
         }
     }
 
@@ -211,7 +216,7 @@ export class BasePlayer implements IPlayer, IRender {
         this.stateChangedListeners = []
     }
 
-    getSystemPlayer(): any {
+    getSystemPlayer(): media.AVPlayer | media.VideoPlayer | media.AudioPlayer {
         return null
     }
 }
