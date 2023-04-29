@@ -4,21 +4,28 @@ A media player for OpenHarmony 一个为 OpenHarmony 设计，支持音视频媒
 
 ### 框架设计
 
-1. 框架代码结构
+1. 工程结构
 
 ```typescript
 player
-  |----config // 框架属性定义，包括播放状态，媒体类型，视频模式
-  |----core //  框架核心，包括音频，视频播放具体实现
-  |----common // 日志，扩展函数等公共业务
-  |----data // 媒体资源定义，提供与本地文件和url的转换接口
-  |----inteface // 音频，视频业务能力定义
+  |----config // 状态机，媒体属性定义及配置
+  |----core //  媒体播放的具体实现
+  |----common // 公共业务
+  |----data // 媒体资源定义，提供MediaSource与文件和Url的转换接口
+  |----interface // 音频，视频业务能力定义
   |----widget // 视频播放组件
   |----CcPlayer.ts // 媒体播放器，对外提供播放能力的统一入口
 ```
 
 2. 架构设计图  
-   TODO
+   
+
+3. TODO
+   * 音频焦点事件分发&默认处理机制
+   * 倍速播放能力
+   * 全屏播放能力
+   * 提供自定义解码能力的顶层接口
+   * 悬浮窗播放能力？
 
 ### 使用方式
 
@@ -50,13 +57,13 @@ player
 - 编译工具链依赖版本： **hypium ^1.0.0**
 - 编译工具链依赖版本： **@ohos/hvigor 1.0.6**
 
-新增：从 734b9b74230f015aafa63a125812cdc6dc5f2798 开始，已经适配 OpenHarmony3.2 环境：
+新增：从 tag v3.1之后开始，已经适配 OpenHarmony3.2 环境，需要更新sdk和ide：
 
 - IDE 版本： **DevEco Studio 3.1.0.200**
 - SDK 版本： **SDK API9 3.2.11.9**
-- 编译工具链依赖版本： **@ohos/hvigor-ohos-plugin": "1.4.0**
-- 编译工具链依赖版本： **@ohos/hypium": "1.0.5**
-- 编译工具链依赖版本： **@ohos/hvigor": "1.4.0**
+- 编译工具链依赖版本： **@ohos/hvigor-ohos-plugin: 1.4.0**
+- 编译工具链依赖版本： **@ohos/hypium: 1.0.5**
+- 编译工具链依赖版本： **@ohos/hvigor: 1.4.0**
 
 ### 接口能力
 
@@ -79,6 +86,7 @@ player
   |getDuration| void| number| 获取媒体资源的总时长|
   |getCurrentPosition| void| number| 获取当前播放时长|
   |getPlayerState| void| PlayerState| 获取当前播放状态|
+  |getSystemPlayer| void| AVPlayer,VideoPlayer,AudioPlayer| 获取当前系统播放器实例|
   |setSurface| surfaceId 渲染表层 id| void| 绑定 surafce(仅媒体类型为视频时有效)|
   |addOnPreparedListener| listener: () => void| IPlayer| 添加媒体资源 prepare 状态监听|
   |removeOnPreparedListener| listener: () => void| IPlayer| 移除媒体资源 preapare 状态监听|
