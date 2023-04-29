@@ -1,6 +1,15 @@
 import { timeToString } from '../Extentions';
 import { CcPlayer, Logger, MediaSourceFactory, PlayerState, PlayerType } from '@seagazer/ccplayer';
 
+
+@Extend(Button) function btnStyle() {
+    .fontSize(30)
+    .width(200)
+    .height(60)
+    .fontColor(Color.White)
+    .margin({ left: 30 })
+}
+
 const TAG = "VideoPage"
 
 @Entry
@@ -20,21 +29,23 @@ struct VideoPage {
     private completedListener = () => {
         Logger.d(TAG, "play completed")
     }
-    private errorListener = (code, message) => {
+    private errorListener = (code: number, message: string) => {
         Logger.d(TAG, "err =  " + code + ", " + message)
     }
-    private progressChangedListener = (duration) => {
-        Logger.d(TAG, "position = " + duration)
+    private progressChangedListener = (duration: number) => {
+        Logger.d(TAG, "progress = " + duration + ", isSeeking = " + this.isSeeking)
         if (!this.isSeeking) {
             this.pos = duration
         }
     }
-    private seekChangedListener = (duration) => {
+    private seekChangedListener = (duration: number) => {
         this.isSeeking = false
         Logger.d(TAG, "seek completed: " + duration)
     }
-    private stateChangedListener = (newState) => {
+    @State currentState: string = ""
+    private stateChangedListener = (newState: PlayerState) => {
         Logger.d(TAG, "new state: " + newState)
+        this.currentState = newState + ""
     }
 
     aboutToAppear() {
@@ -92,11 +103,8 @@ struct VideoPage {
                 .margin({ top: 50 })
 
             Row() {
-                Button("setMediaSource")
-                    .fontSize(30)
-                    .width(300)
-                    .height(60)
-                    .fontColor(Color.White)
+                Button("setSrc")
+                    .btnStyle()
                     .onClick(() => {
                         // if bind surface, set data source to play
                         if (this.surfaceId != null) {
@@ -124,30 +132,14 @@ struct VideoPage {
                         }
                     })
                 Button("start")
-                    .fontSize(30)
-                    .width(200)
-                    .height(60)
-                    .margin({ left: 30 })
-                    .fontColor(Color.White)
+                    .btnStyle()
                     .onClick(() => {
                         this.player.start()
                     })
                 Button("pause")
-                    .fontSize(30)
-                    .width(200)
-                    .height(60)
-                    .margin({ left: 30 })
-                    .fontColor(Color.White)
+                    .btnStyle()
                     .onClick(() => {
-//                        this.player.pause()
-                        // mock play next
-                        MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/rotor_rotation.mp4", "rotor_rotation.mp4")
-                            .then((data) => {
-                                this.player.stop()
-                                this.player.setMediaSource(data, () => {
-                                    this.player.start()
-                                })
-                            })
+                        this.player.pause()
                     })
             }
             .justifyContent(FlexAlign.Center)
@@ -174,6 +166,7 @@ struct VideoPage {
                     .constraintSize({ maxWidth: 500 })
                     .margin({ left: 10, right: 10 })
                     .onChange((value: number, mode: SliderChangeMode) => {
+                        Logger.w(TAG, "slide mode = " + mode)
                         if (mode == SliderChangeMode.End || mode == 3) {
                             this.isSeeking = true
                             this.player.seekTo(Math.floor(value))
@@ -188,6 +181,8 @@ struct VideoPage {
             }.justifyContent(FlexAlign.Center)
             .width("100%")
             .margin({ top: 20 })
+
+            Text(this.currentState).fontSize(30).margin({ top: 16 })
         }
         .justifyContent(FlexAlign.Center)
         .width("100%")

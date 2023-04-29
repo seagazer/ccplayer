@@ -5,16 +5,25 @@ import { CcPlayer } from '@seagazer/ccplayer';
 import { PlayerType } from '@seagazer/ccplayer';
 import { PlayerState } from '@seagazer/ccplayer';
 
+
+@Extend(Button) function btnStyle() {
+    .fontSize(30)
+    .width(200)
+    .height(60)
+    .fontColor(Color.White)
+    .margin({ left: 30 })
+}
+
 const TAG = "AudioPage"
 
 @Entry
 @Component
 struct AudioPage {
-    @State pos: number= 0
-    @State duration: number= 0
+    @State pos: number = 0
+    @State duration: number = 0
     private player: CcPlayer = null
     private isSeeking = false
-    private filePath: string  = ""
+    private filePath: string = ""
     private prepareListener = () => {
         Logger.d(TAG, "prepared")
         this.duration = this.player.getDuration()
@@ -22,20 +31,22 @@ struct AudioPage {
     private completedListener = () => {
         Logger.d(TAG, "play completed")
     }
-    private errorListener = (code, message) => {
+    private errorListener = (code: number, message: string) => {
         Logger.d(TAG, "err =  " + code + ", " + message)
     }
-    private progressChangedListener = (duration) => {
+    private progressChangedListener = (duration: number) => {
         if (!this.isSeeking) {
             this.pos = duration
         }
     }
-    private seekChangedListener = (duration) => {
+    private seekChangedListener = (duration: number) => {
         this.isSeeking = false
         Logger.d(TAG, "seek completed: " + duration)
     }
-    private stateChangedListener = (newState) => {
+    @State currentState: string = ""
+    private stateChangedListener = (newState: PlayerState) => {
         Logger.d(TAG, "new state: " + newState)
+        this.currentState = newState + ""
     }
 
     aboutToAppear() {
@@ -75,11 +86,8 @@ struct AudioPage {
                 })
 
             Row() {
-                Button("setMediaSource")
-                    .fontSize(30)
-                    .width(300)
-                    .height(60)
-                    .fontColor(Color.White)
+                Button("setSrc")
+                    .btnStyle()
                     .onClick(() => {
                         Logger.d(TAG, "filePath = " + this.filePath)
                         if (this.filePath.length > 0) {
@@ -92,25 +100,19 @@ struct AudioPage {
                         } else {
                             MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp3", "test.mp3")
                                 .then((data) => {
-                                    this.player.setMediaSource(data)
+                                    this.player.setMediaSource(data, () => {
+                                        this.player.start()
+                                    })
                                 })
                         }
                     })
                 Button("start")
-                    .fontSize(30)
-                    .width(200)
-                    .height(60)
-                    .margin({ left: 30 })
-                    .fontColor(Color.White)
+                    .btnStyle()
                     .onClick(() => {
                         this.player.start()
                     })
                 Button("pause")
-                    .fontSize(30)
-                    .width(200)
-                    .height(60)
-                    .margin({ left: 30 })
-                    .fontColor(Color.White)
+                    .btnStyle()
                     .onClick(() => {
                         this.player.pause()
                     })
@@ -155,6 +157,8 @@ struct AudioPage {
             .justifyContent(FlexAlign.Center)
             .width("100%")
             .margin({ top: 20 })
+
+            Text(this.currentState).fontSize(30).margin({ top: 16 })
         }
         .justifyContent(FlexAlign.Center)
         .width("100%")

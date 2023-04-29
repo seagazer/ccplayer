@@ -6,6 +6,15 @@ import { PlayerType } from '@seagazer/ccplayer';
 import { PlayerState } from '@seagazer/ccplayer';
 import { AspectRatio } from '@seagazer/ccplayer';
 
+
+@Extend(Button) function btnStyle() {
+    .fontSize(30)
+    .width(200)
+    .height(60)
+    .fontColor(Color.White)
+    .margin({ left: 30 })
+}
+
 const TAG = "CustomPlayerViewPage"
 
 @Entry
@@ -20,33 +29,17 @@ struct CustomPlayerViewPage {
         Logger.d(TAG, "prepared")
         this.videoTitle = this.player.getMediaSource().title
     }
-    private completedListener = () => {
-        Logger.d(TAG, "play completed")
-    }
-    private errorListener = (code, message) => {
-        Logger.d(TAG, "err =  " + code + ", " + message)
-    }
-    private stateChangedListener = (newState) => {
-        Logger.d(TAG, "new state: " + newState)
-    }
 
     aboutToAppear() {
         if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
             this.player = CcPlayer.create(PlayerType.VIDEO)
         }
-        this.player
-            .addOnPreparedListener(this.prepareListener)
-            .addOnCompletionListener(this.completedListener)
-            .addOnErrorListener(this.errorListener)
-            .addOnStateChangedListener(this.stateChangedListener)
+        this.player.addOnPreparedListener(this.prepareListener)
     }
 
     aboutToDisappear() {
         this.player
             .removeOnPreparedListener(this.prepareListener)
-            .removeOnCompletionListener(this.completedListener)
-            .removeOnErrorListener(this.errorListener)
-            .removeOnStateChangedListener(this.stateChangedListener)
             .release()
     }
 
@@ -71,6 +64,40 @@ struct CustomPlayerViewPage {
         this.gestureActionType = 2
         this.gestureValue = brightness
         this.gestureMaxValue = max
+    }
+
+    @Builder CustomTitleUI() {
+        Text(this.videoTitle)
+            .fontColor("#d9ffffff")
+            .textAlign(TextAlign.Center)
+            .width("100%")
+            .height(50)
+            .height(50)
+            .backgroundColor("#cc1a1a1a")
+            .position({ x: 0, y: 0 })
+            .opacity(this.showTitleBar ? 1 : 0)
+            .translate({ y: this.showTitleBar ? 0 : -50 })
+            .animation({
+                duration: 600
+            })
+    }
+
+    @Builder CustomGestureUI() {
+        if (this.showController) {
+            if (this.gestureActionType == 0) { //seek
+                Text("Seek:" + this.gestureValue + "/" + this.gestureMaxValue)
+                    .padding(16)
+                    .backgroundColor(Color.Green)
+            } else if (this.gestureActionType == 1) { //volume
+                Text("Volume:" + this.gestureValue + "/" + this.gestureMaxValue)
+                    .padding(16)
+                    .backgroundColor(Color.Red)
+            } else if (this.gestureActionType == 2) { //brightness
+                Text("Brightness:" + this.gestureValue + "/" + this.gestureMaxValue)
+                    .padding(16)
+                    .backgroundColor(Color.Blue)
+            }
+        }
     }
 
     build() {
@@ -107,85 +134,19 @@ struct CustomPlayerViewPage {
                     }
                 })
                 // custom title bar
-                Text(this.videoTitle)
-                    .fontColor("#d9ffffff")
-                    .textAlign(TextAlign.Center)
-                    .width("100%")
-                    .height(50)
-                    .height(50)
-                    .backgroundColor("#cc1a1a1a")
-                    .position({ x: 0, y: 0 })
-                    .opacity(this.showTitleBar ? 1 : 0)
-                    .translate({ y: this.showTitleBar ? 0 : -50 })
-                    .animation({
-                        duration: 600
-                    })
+                this.CustomTitleUI()
                 // custom controller ui
-                if (this.showController) {
-                    if (this.gestureActionType == 0) { //seek
-                        Text("Seek:" + this.gestureValue + "/" + this.gestureMaxValue)
-                            .padding(16)
-                            .backgroundColor(Color.Green)
-                    } else if (this.gestureActionType == 1) { //volume
-                        Text("Volume:" + this.gestureValue + "/" + this.gestureMaxValue)
-                            .padding(16)
-                            .backgroundColor(Color.Red)
-                    } else if (this.gestureActionType == 2) { //brightness
-                        Text("Brightness:" + this.gestureValue + "/" + this.gestureMaxValue)
-                            .padding(16)
-                            .backgroundColor(Color.Blue)
-                    }
-                }
+                this.CustomGestureUI()
             }
             .width(800)
             .height(480)
             .alignContent(Alignment.Center)
             .clip(true)
 
-            // video ratio settings
-            Row() {
-                Row() {
-                    Radio({ value: "auto", group: "ratio" }).width(45).height(45).onChange(() => {
-                        this.videoRatio = AspectRatio.AUTO
-                    }).checked(true)
-                    Text("auto").fontSize(30)
-                }
-
-                Row() {
-                    Radio({ value: "21:9", group: "ratio" }).width(45).height(45).onChange(() => {
-                        this.videoRatio = AspectRatio.W_21_9
-                    }).checked(false)
-                    Text("21:9").fontSize(30)
-                }.margin({ left: 10 })
-
-                Row() {
-                    Radio({ value: "4:3", group: "ratio" }).width(45).height(45).onChange(() => {
-                        this.videoRatio = AspectRatio.W_4_3
-                    }).checked(false)
-                    Text("4:3").fontSize(30)
-                }.margin({ left: 10 })
-
-                Row() {
-                    Radio({ value: "16:9", group: "ratio" }).width(45).height(45).onChange(() => {
-                        this.videoRatio = AspectRatio.W_16_9
-                    }).checked(false)
-                    Text("16:9").fontSize(30)
-                }.margin({ left: 10 })
-
-                Row() {
-                    Radio({ value: "fill", group: "ratio" }).width(45).height(45).onChange(() => {
-                        this.videoRatio = AspectRatio.FILL
-                    }).checked(false)
-                    Text("fill").fontSize(30)
-                }.margin({ left: 10 })
-            }.margin({ top: 50 })
             // play actions
             Row() {
-                Button("setMediaSource")
-                    .fontSize(30)
-                    .width(300)
-                    .height(60)
-                    .fontColor(Color.White)
+                Button("setSrc")
+                    .btnStyle()
                     .onClick(() => {
                         // if bind surface, set data source to play
                         MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4").then((data) => {
@@ -195,20 +156,12 @@ struct CustomPlayerViewPage {
                         })
                     })
                 Button("start")
-                    .fontSize(30)
-                    .width(200)
-                    .height(60)
-                    .margin({ left: 30 })
-                    .fontColor(Color.White)
+                    .btnStyle()
                     .onClick(() => {
                         this.player.start()
                     })
                 Button("pause")
-                    .fontSize(30)
-                    .width(200)
-                    .height(60)
-                    .margin({ left: 30 })
-                    .fontColor(Color.White)
+                    .btnStyle()
                     .onClick(() => {
                         this.player.pause()
                     })

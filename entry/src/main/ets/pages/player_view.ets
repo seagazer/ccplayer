@@ -1,51 +1,36 @@
-import { CcPlayerView } from '@seagazer/ccplayer';
-import { MediaSourceFactory } from '@seagazer/ccplayer';
-import { Logger } from '@seagazer/ccplayer';
-import { CcPlayer } from '@seagazer/ccplayer';
-import { PlayerType } from '@seagazer/ccplayer';
-import { PlayerState } from '@seagazer/ccplayer';
-import { AspectRatio } from '@seagazer/ccplayer';
+import {
+    AspectRatio,
+    CcPlayer,
+    CcPlayerView,
+    Logger,
+    MediaSourceFactory,
+    PlayerState,
+    PlayerType
+} from '@seagazer/ccplayer';
 
-const TAG = "PlayerViewPage"
+@Extend(Button) function btnStyle() {
+    .fontSize(30)
+    .width(200)
+    .height(60)
+    .fontColor(Color.White)
+    .margin({ left: 30 })
+}
 
 @Entry
 @Component
 struct PlayerViewPage {
     @State videoRatio: number = AspectRatio.AUTO
     @State showTitleBar: boolean = false
-    private autoHildeTaskId = -1
     private player: CcPlayer = null
-    private prepareListener = () => {
-        Logger.d(TAG, "prepared")
-    }
-    private completedListener = () => {
-        Logger.d(TAG, "play completed")
-    }
-    private errorListener = (code, message) => {
-        Logger.d(TAG, "err =  " + code + ", " + message)
-    }
-    private stateChangedListener = (newState) => {
-        Logger.d(TAG, "new state: " + newState)
-    }
 
     aboutToAppear() {
         if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
             this.player = CcPlayer.create(PlayerType.VIDEO)
         }
-        this.player
-            .addOnPreparedListener(this.prepareListener)
-            .addOnCompletionListener(this.completedListener)
-            .addOnErrorListener(this.errorListener)
-            .addOnStateChangedListener(this.stateChangedListener)
     }
 
     aboutToDisappear() {
-        this.player
-            .removeOnPreparedListener(this.prepareListener)
-            .removeOnCompletionListener(this.completedListener)
-            .removeOnErrorListener(this.errorListener)
-            .removeOnStateChangedListener(this.stateChangedListener)
-            .release()
+        this.player.release()
     }
 
     build() {
@@ -103,11 +88,8 @@ struct PlayerViewPage {
             }.margin({ top: 50 })
             // play actions
             Row() {
-                Button("setMediaSource")
-                    .fontSize(30)
-                    .width(300)
-                    .height(60)
-                    .fontColor(Color.White)
+                Button("setSrc")
+                    .btnStyle()
                     .onClick(() => {
                         // if bind surface, set data source to play
                         MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4").then((data) => {
@@ -117,20 +99,12 @@ struct PlayerViewPage {
                         })
                     })
                 Button("start")
-                    .fontSize(30)
-                    .width(200)
-                    .height(60)
-                    .margin({ left: 30 })
-                    .fontColor(Color.White)
+                    .btnStyle()
                     .onClick(() => {
                         this.player.start()
                     })
                 Button("pause")
-                    .fontSize(30)
-                    .width(200)
-                    .height(60)
-                    .margin({ left: 30 })
-                    .fontColor(Color.White)
+                    .btnStyle()
                     .onClick(() => {
                         this.player.pause()
                     })
