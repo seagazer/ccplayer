@@ -1,4 +1,5 @@
 import { timeToString } from '../common/Extentions';
+// @ts-ignore
 import brightness from '@ohos.brightness';
 import audio from '@ohos.multimedia.audio';
 import { Logger } from '../common/Logger';

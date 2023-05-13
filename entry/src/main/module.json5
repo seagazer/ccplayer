@@ -5,8 +5,7 @@
     "description": "$string:entry_desc",
     "mainElement": "MainAbility",
     "deviceTypes": [
-      "default",
-      "tablet"
+      "default"
     ],
     "deliveryWithInstall": true,
     "installationFree": false,
