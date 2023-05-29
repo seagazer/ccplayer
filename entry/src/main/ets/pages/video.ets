@@ -3,9 +3,9 @@ import { CcPlayer, Logger, MediaSourceFactory, PlayerState, PlayerType } from '@
 
 
 @Extend(Button) function btnStyle() {
-    .fontSize(30)
-    .width(200)
-    .height(60)
+    .fontSize(18)
+    .width(100)
+    .height(50)
     .fontColor(Color.White)
     .margin({ left: 30 })
 }
@@ -88,8 +88,8 @@ struct VideoPage {
                 Logger.d(TAG, "surface view destroy")
 
             })
-                .width(720)
-                .height(480)
+                .width(480)
+                .height(300)
 
             TextInput({ placeholder: "../../resources/rawfile/test.mp4" })
                 .fontSize(30)
@@ -150,7 +150,6 @@ struct VideoPage {
                 Text(timeToString(this.pos))
                     .fontSize(30)
                     .padding(10)
-                    .margin({ left: 20 })
                     .fontColor(Color.Blue)
                 Slider({
                     max: this.duration,
@@ -163,7 +162,7 @@ struct VideoPage {
                     .trackColor(Color.Orange)
                     .borderColor(Color.Pink)
                     .trackThickness(30)
-                    .constraintSize({ maxWidth: 500 })
+                    .layoutWeight(1)
                     .margin({ left: 10, right: 10 })
                     .onChange((value: number, mode: SliderChangeMode) => {
                         Logger.w(TAG, "slide mode = " + mode)
@@ -176,7 +175,6 @@ struct VideoPage {
                 Text(timeToString(this.duration))
                     .fontSize(30)
                     .padding(10)
-                    .margin({ left: 20 })
                     .fontColor(Color.Blue)
             }.justifyContent(FlexAlign.Center)
             .width("100%")

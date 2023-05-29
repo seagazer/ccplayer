@@ -8,9 +8,9 @@ import { AspectRatio } from '@seagazer/ccplayer';
 
 
 @Extend(Button) function btnStyle() {
-    .fontSize(30)
-    .width(200)
-    .height(60)
+    .fontSize(18)
+    .width(100)
+    .height(50)
     .fontColor(Color.White)
     .margin({ left: 30 })
 }
@@ -106,8 +106,8 @@ struct CustomPlayerViewPage {
             Stack() {
                 CcPlayerView({
                     player: this.player,
-                    w: 800,
-                    h: 480,
+                    w: 480,
+                    h: 300,
                     asRatio: $videoRatio,
                     isSupportGesture: true,
                     isDefaultGestureUI: false, //custom ui
@@ -138,8 +138,8 @@ struct CustomPlayerViewPage {
                 // custom controller ui
                 this.CustomGestureUI()
             }
-            .width(800)
-            .height(480)
+            .width(480)
+            .height(300)
             .alignContent(Alignment.Center)
             .clip(true)
 

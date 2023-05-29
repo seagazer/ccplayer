@@ -9,9 +9,9 @@ import {
 } from '@seagazer/ccplayer';
 
 @Extend(Button) function btnStyle() {
-    .fontSize(30)
-    .width(200)
-    .height(60)
+    .fontSize(18)
+    .width(100)
+    .height(50)
     .fontColor(Color.White)
     .margin({ left: 30 })
 }
@@ -39,64 +39,67 @@ struct PlayerViewPage {
             Stack() {
                 CcPlayerView({
                     player: this.player,
-                    w: 800,
-                    h: 480,
+                    w: 480,
+                    h: 300,
                     asRatio: $videoRatio,
                     isSupportGesture: true,
                 })
             }
-            .width(800)
-            .height(480)
+            .width(480)
+            .height(300)
             .clip(true)
 
             // video ratio settings
-            Row() {
+            Scroll() {
                 Row() {
-                    Radio({ value: "auto", group: "ratio" }).width(45).height(45).onChange(() => {
-                        this.videoRatio = AspectRatio.AUTO
-                    }).checked(true)
-                    Text("auto").fontSize(30)
-                }
+                    Row() {
+                        Radio({ value: "auto", group: "ratio" }).width(45).height(45).onChange(() => {
+                            this.videoRatio = AspectRatio.AUTO
+                        }).checked(true)
+                        Text("auto").fontSize(30)
+                    }
 
-                Row() {
-                    Radio({ value: "21:9", group: "ratio" }).width(45).height(45).onChange(() => {
-                        this.videoRatio = AspectRatio.W_21_9
-                    }).checked(false)
-                    Text("21:9").fontSize(30)
-                }.margin({ left: 10 })
+                    Row() {
+                        Radio({ value: "21:9", group: "ratio" }).width(45).height(45).onChange(() => {
+                            this.videoRatio = AspectRatio.W_21_9
+                        }).checked(false)
+                        Text("21:9").fontSize(30)
+                    }.margin({ left: 10 })
 
-                Row() {
-                    Radio({ value: "4:3", group: "ratio" }).width(45).height(45).onChange(() => {
-                        this.videoRatio = AspectRatio.W_4_3
-                    }).checked(false)
-                    Text("4:3").fontSize(30)
-                }.margin({ left: 10 })
+                    Row() {
+                        Radio({ value: "4:3", group: "ratio" }).width(45).height(45).onChange(() => {
+                            this.videoRatio = AspectRatio.W_4_3
+                        }).checked(false)
+                        Text("4:3").fontSize(30)
+                    }.margin({ left: 10 })
 
-                Row() {
-                    Radio({ value: "16:9", group: "ratio" }).width(45).height(45).onChange(() => {
-                        this.videoRatio = AspectRatio.W_16_9
-                    }).checked(false)
-                    Text("16:9").fontSize(30)
-                }.margin({ left: 10 })
+                    Row() {
+                        Radio({ value: "16:9", group: "ratio" }).width(45).height(45).onChange(() => {
+                            this.videoRatio = AspectRatio.W_16_9
+                        }).checked(false)
+                        Text("16:9").fontSize(30)
+                    }.margin({ left: 10 })
 
-                Row() {
-                    Radio({ value: "fill", group: "ratio" }).width(45).height(45).onChange(() => {
-                        this.videoRatio = AspectRatio.FILL
-                    }).checked(false)
-                    Text("fill").fontSize(30)
-                }.margin({ left: 10 })
-            }.margin({ top: 50 })
+                    Row() {
+                        Radio({ value: "fill", group: "ratio" }).width(45).height(45).onChange(() => {
+                            this.videoRatio = AspectRatio.FILL
+                        }).checked(false)
+                        Text("fill").fontSize(30)
+                    }.margin({ left: 10 })
+                }.margin({ top: 50 })
+            }.scrollable(ScrollDirection.Horizontal)
             // play actions
             Row() {
                 Button("setSrc")
                     .btnStyle()
                     .onClick(() => {
                         // if bind surface, set data source to play
-                        MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4").then((data) => {
-                            this.player.setMediaSource(data, () => {
-                                this.player.start()
+                        MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4")
+                            .then((data) => {
+                                this.player.setMediaSource(data, () => {
+                                    this.player.start()
+                                })
                             })
-                        })
                     })
                 Button("start")
                     .btnStyle()

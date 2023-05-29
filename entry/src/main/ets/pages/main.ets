@@ -9,7 +9,7 @@ import router from '@system.router';
 
 @Entry
 @Component
-struct Index {
+struct Main {
     @State pageScale: number = 0
     @State pageAlpha: number = 0
 

@@ -7,9 +7,9 @@ import { PlayerState } from '@seagazer/ccplayer';
 
 
 @Extend(Button) function btnStyle() {
-    .fontSize(30)
-    .width(200)
-    .height(60)
+    .fontSize(18)
+    .width(100)
+    .height(50)
     .fontColor(Color.White)
     .margin({ left: 30 })
 }
@@ -125,7 +125,6 @@ struct AudioPage {
                 Text(timeToString(this.pos))
                     .fontSize(30)
                     .padding(10)
-                    .margin({ left: 20 })
                     .fontColor(Color.Blue)
                 Slider({
                     max: this.duration,
@@ -134,7 +133,7 @@ struct AudioPage {
                     style: SliderStyle.InSet,
                     value: this.pos
                 })
-                    .width("60%")
+                    .layoutWeight(1)
                     .selectedColor(Color.Blue)
                     .trackColor(Color.Orange)
                     .borderColor(Color.Pink)
@@ -151,7 +150,6 @@ struct AudioPage {
                 Text(timeToString(this.duration))
                     .fontSize(30)
                     .padding(10)
-                    .margin({ left: 20 })
                     .fontColor(Color.Blue)
             }
             .justifyContent(FlexAlign.Center)
