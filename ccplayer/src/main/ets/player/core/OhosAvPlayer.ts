@@ -162,13 +162,12 @@ export class OhosAvPlayer extends BasePlayer {
         })
     }
 
-    setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
+    async setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
         Logger.d(TAG, "setMediaSource = " + JSON.stringify(mediaSource))
         this.onReady = onReady
         if (this.isPlayed) {
-            this.player.reset().then(() => {
-                this.setMediaSourceInner(mediaSource)
-            })
+            await this.player.reset()
+            this.setMediaSourceInner(mediaSource)
         } else {
             this.setMediaSourceInner(mediaSource)
         }
@@ -183,44 +182,44 @@ export class OhosAvPlayer extends BasePlayer {
         this.player.url = mediaSource.source
     }
 
-    start() {
+    async start() {
         Logger.d(TAG, ">> start, isPrepared = " + this.isPrepared)
         if (this.isPrepared == false) {
-            this.player.prepare()
+            await this.player.prepare()
         } else {
-            this.player.play()
+            await this.player.play()
         }
         super.start()
     }
 
-    pause() {
+    async pause() {
         Logger.d(TAG, ">> pause")
-        this.player.pause()
+        await this.player.pause()
         super.pause()
     }
 
-    stop() {
+    async stop() {
         Logger.d(TAG, ">> stop")
-        this.player.stop()
+        await this.player.stop()
         super.stop()
     }
 
-    reset() {
+    async reset() {
         Logger.d(TAG, ">> reset")
-        this.player.reset()
+        await this.player.reset()
         super.reset()
     }
 
-    release() {
+    async release() {
         Logger.d(TAG, ">> release")
         this.player.off("stateChange")
         this.player.off("startRenderFrame")
         this.player.off("videoSizeChange")
         this.player.off("seekDone")
         this.player.off("volumeChange")
-        this.player.stop()
-        this.player.reset()
-        this.player.release()
+        await this.player.stop()
+        await this.player.reset()
+        await this.player.release()
         super.release()
     }
 
@@ -241,11 +240,11 @@ export class OhosAvPlayer extends BasePlayer {
 
     getDuration(): number {
         Logger.d(TAG, "duration = " + this.player.duration)
-        return Math.floor(this.player.duration)
+        return Math.round(this.player.duration)
     }
 
     getCurrentPosition(): number {
-        return Math.floor(this.player.currentTime)
+        return Math.round(this.player.currentTime)
     }
 
     getPlayerState(): PlayerState {

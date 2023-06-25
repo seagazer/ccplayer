@@ -65,20 +65,21 @@ export class OhosVideoPlayer extends BasePlayer {
         return new OhosVideoPlayer()
     }
 
-    setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
+    async setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
         Logger.d(TAG, "setMediaSource = " + JSON.stringify(mediaSource))
         if (this.isPlayed) {
-            this.player.reset((err) => {
-                if (this.unError(err)) {
-                    this.setMediaSourceInner(mediaSource, onReady)
-                }
-            })
+            try {
+                await this.player.reset()
+                this.setMediaSourceInner(mediaSource, onReady)
+            } catch (err) {
+                this.checkError(err)
+            }
         } else {
             this.setMediaSourceInner(mediaSource, onReady)
         }
     }
 
-    private setMediaSourceInner(mediaSource: MediaSource, onReady?: () => void) {
+    private async setMediaSourceInner(mediaSource: MediaSource, onReady?: () => void) {
         if (this.curSurfaceId == null) {
             throw new Error("You must call setSurfaceId(surfaceId) before call this function.")
         }
@@ -88,127 +89,138 @@ export class OhosVideoPlayer extends BasePlayer {
         if (this.curSurfaceId != this.lastSurfaceId) {
             this.lastSurfaceId = this.curSurfaceId
             Logger.d(TAG, ">> set surface: " + this.curSurfaceId)
-            this.player.setDisplaySurface(this.curSurfaceId, (err) => {
-                if (this.unError(err)) {
-                    if (onReady) {
-                        onReady?.()
-                    }
+            try {
+                await this.player.setDisplaySurface(this.curSurfaceId)
+                if (onReady) {
+                    onReady?.()
                 }
-            })
+            } catch (err) {
+                this.checkError(err)
+            }
         } else {
             onReady?.()
         }
     }
 
-    start() {
+    async start() {
         Logger.d(TAG, ">> start")
         if (this.isPrepared == false) {
-            this.player.prepare((err) => {
-                if (this.unError(err)) {
-                    Logger.i(TAG, "System callback: prepared")
-                    this.isPrepared = true
-                    this.changePlayerState(PlayerState.STATE_PREPARED)
-                    if (this.preparedListeners.length > 0) {
-                        this.preparedListeners.forEach((callback) => {
-                            callback()
-                        })
-                    }
-                    this.player.play((err) => {
-                        Logger.i(TAG, "System callback: play")
-                        if (this.unError(err)) {
-                            this.isPlayed = true
-                            this.changePlayerState(PlayerState.STATE_STARTED)
-                            if (this.startPosition != -1) {
-                                this.seekTo(this.startPosition)
-                                this.startPosition = -1
-                            }
-                            this.startProgressTimer()
-                        }
+            try {
+                await this.player.prepare()
+                Logger.i(TAG, "System callback: prepared")
+                this.isPrepared = true
+                this.changePlayerState(PlayerState.STATE_PREPARED)
+                if (this.preparedListeners.length > 0) {
+                    this.preparedListeners.forEach((callback) => {
+                        callback()
                     })
                 }
-            })
-        } else {
-            this.player.play((err) => {
+                await this.player.play()
                 Logger.i(TAG, "System callback: play")
-                if (this.unError(err)) {
-                    this.changePlayerState(PlayerState.STATE_STARTED)
-                    this.startProgressTimer()
+                this.isPlayed = true
+                this.changePlayerState(PlayerState.STATE_STARTED)
+                if (this.startPosition != -1) {
+                    this.seekTo(this.startPosition)
+                    this.startPosition = -1
                 }
-            })
+                this.startProgressTimer()
+                super.start()
+            } catch (err) {
+                this.checkError(err)
+            }
+        } else {
+            try {
+                await this.player.play()
+                Logger.i(TAG, "System callback: play")
+                this.changePlayerState(PlayerState.STATE_STARTED)
+                this.startProgressTimer()
+                super.start()
+            } catch (err) {
+                this.checkError(err)
+                return
+            }
         }
-        super.start()
     }
 
-    pause() {
+    async pause() {
         Logger.d(TAG, ">> pause")
-        this.player.pause((err) => {
+        try {
+            await this.player.pause()
             Logger.i(TAG, "System callback: pause")
-            if (this.unError(err)) {
-                this.changePlayerState(PlayerState.STATE_PAUSED)
-            }
-        })
-        super.pause()
+            this.changePlayerState(PlayerState.STATE_PAUSED)
+            super.pause()
+        } catch (err) {
+            this.checkError(err)
+            return
+        }
     }
 
-    stop() {
+    async stop() {
         Logger.d(TAG, ">> stop")
-        this.player.stop((err) => {
+        try {
+            await this.player.stop()
             Logger.i(TAG, "System callback: stop")
-            if (this.unError(err)) {
-                this.changePlayerState(PlayerState.STATE_STOPPED)
-            }
-        })
-        this.isPrepared = false
-        super.stop()
+            this.changePlayerState(PlayerState.STATE_STOPPED)
+            this.isPrepared = false
+            super.stop()
+        } catch (err) {
+            this.checkError(err)
+        }
     }
 
-    reset() {
+    async reset() {
         Logger.d(TAG, ">> reset")
-        this.player.reset((err) => {
+        try {
+            await this.player.reset()
             Logger.i(TAG, "System callback: reset")
-            if (this.unError(err)) {
-                this.changePlayerState(PlayerState.STATE_IDLE)
-            }
-        })
-        this.isPrepared = false
-        super.reset()
+            this.changePlayerState(PlayerState.STATE_IDLE)
+            this.isPrepared = false
+            super.reset()
+        } catch (err) {
+            this.checkError(err)
+        }
     }
 
-    release() {
+    async release() {
         Logger.d(TAG, ">> release")
-        this.player.stop()
-        this.player.release((err) => {
+        try {
+            await this.player.stop()
+            await this.player.release()
             Logger.i(TAG, "System callback: release")
-            if (this.unError(err)) {
-                this.changePlayerState(PlayerState.STATE_NOT_INIT)
-            }
-        })
-        super.release()
+            this.changePlayerState(PlayerState.STATE_NOT_INIT)
+            super.release()
+        } catch (err) {
+            this.checkError(err)
+        }
     }
 
-    seekTo(position: number) {
+    async seekTo(position: number) {
         Logger.d(TAG, ">> seek to: " + position)
-        this.player.seek(position, (err, duration) => {
+        try {
+            let duration = await this.player.seek(position)
             Logger.i(TAG, "System callback: seek completed")
-            if (this.unError(err)) {
-                if (this.seekChangedListeners.length > 0) {
-                    this.seekChangedListeners.forEach((callback) => {
-                        callback(duration)
-                    })
-                }
+            if (this.seekChangedListeners.length > 0) {
+                this.seekChangedListeners.forEach((callback) => {
+                    callback(duration)
+                })
             }
-        })
+        } catch (err) {
+            this.checkError(err)
+        }
     }
 
-    setVolume(vol: number) {
+    async setVolume(vol: number) {
         Logger.d(TAG, ">> set volume: " + vol)
-        this.player.setVolume(vol, () => {
+        try {
+            await this.player.setVolume(vol)
             if (this.volumeChangedListeners.length > 0) {
                 this.volumeChangedListeners.forEach((callback) => {
                     callback()
                 })
             }
-        })
+        } catch (err) {
+            this.checkError(err)
+        }
     }
 
     setLooper(isLoop: boolean) {
@@ -218,11 +230,11 @@ export class OhosVideoPlayer extends BasePlayer {
 
     getDuration(): number {
         Logger.d(TAG, "duration = " + this.player.duration)
-        return Math.floor(this.player.duration)
+        return Math.round(this.player.duration)
     }
 
     getCurrentPosition(): number {
-        return Math.floor(this.player.currentTime)
+        return Math.round(this.player.currentTime)
     }
 
     getPlayerState(): PlayerState {
@@ -234,8 +246,8 @@ export class OhosVideoPlayer extends BasePlayer {
         this.curSurfaceId = surfaceId
     }
 
-    private unError(err): boolean {
-        if (typeof (err) != "undefined") {
+    private checkError(err): boolean {
+        if (err) {
             Logger.e(TAG, "system error = " + JSON.stringify(err))
             this.changePlayerState(PlayerState.STATE_ERROR)
             this.isPrepared = false

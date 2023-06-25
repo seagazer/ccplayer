@@ -157,11 +157,11 @@ export class OhosAudioPlayer extends BasePlayer {
 
     getDuration(): number {
         Logger.d(TAG, "duration = " + this.player.duration)
-        return Math.floor(this.player.duration)
+        return Math.round(this.player.duration)
     }
 
     getCurrentPosition(): number {
-        return Math.floor(this.player.currentTime)
+        return Math.round(this.player.currentTime)
     }
 
     getPlayerState(): PlayerState {
