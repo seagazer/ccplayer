@@ -20,13 +20,8 @@ export function timeToString(time: number): string {
 // @ts-ignore
 import systemParameter from '@ohos.systemParameter'
 
-export function getOSVersion(): number {
-    // const.product.software.version = OpenHarmony 3.2.11.9
-    let version: string = systemParameter.getSync("const.product.software.version", "3.1")
-    version = version.replace("OpenHarmony", "").trim()
-    if (version.indexOf(".") > 0) {
-        let split = version.split(".")
-        version = split[0] + "." + split[1]
-    }
+export function getApiVersion(): number {
+    // const.ohos.apiversion = 10
+    let version = systemParameter.getSync(" const.ohos.apiversion", "9")
     return Number.parseFloat(version)
 }

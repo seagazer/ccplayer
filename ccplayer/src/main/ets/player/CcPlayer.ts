@@ -6,7 +6,7 @@ import { IRender } from './interface/IRender'
 import { OhosAvPlayer } from './core/OhosAvPlayer';
 import { OhosVideoPlayer } from './core/OhosVideoPlayer';
 import { OhosAudioPlayer } from './core/OhosAudioPlayer';
-import { getOSVersion } from './common/Extentions';
+import { getApiVersion } from './common/Extentions';
 import { MediaSource } from './data/MediaSource';
 import { PlayerState } from './config/PlayerState';
 import { PlayerType } from './config/Playertype'
@@ -21,16 +21,16 @@ export class CcPlayer implements IPlayer, IRender {
     private player: BasePlayer
 
     private constructor(type: PlayerType) {
-        let osVersion = getOSVersion()
-        if (osVersion >= 3.2) {
+        let apiVersion = getApiVersion()
+        if (apiVersion >= 9) {
             this.player = OhosAvPlayer.create(type)
-            Logger.i(TAG, "Os version is 3.2+, create AvPlayer")
-        } else if (osVersion >= 3.0) {
+            Logger.i(TAG, "Api version is 9+, create AvPlayer")
+        } else if (apiVersion >= 8) {
             if (type == PlayerType.AUDIO) {
-                Logger.i(TAG, "Os version is 3.1, create AudioPlayer")
+                Logger.i(TAG, "Api version is 8+, create AudioPlayer")
                 this.player = OhosAudioPlayer.create()
             } else {
-                Logger.i(TAG, "Os version is 3.1, create VideoPlayer")
+                Logger.i(TAG, "Api version is 8+, create VideoPlayer")
                 this.player = OhosVideoPlayer.create()
             }
         } else {
