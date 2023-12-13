@@ -2,7 +2,11 @@
 
 A media player for OpenHarmony 一个为 OpenHarmony 设计，支持音视频媒体的轻量级播放器应用框架
 
-### 接口能力
+## 调用方法/状态机
+
+![](./img/lifecycle.png)
+
+## 接口能力
 
 - CcPlayer 媒体播放器
   |接口|参数|返回值|说明|
