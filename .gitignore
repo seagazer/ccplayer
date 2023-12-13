@@ -1,3 +1,16 @@
 /node_modules
+<<<<<<< HEAD
 /.preview
 /build
+=======
+/oh_modules
+/local.properties
+/.idea
+**/build
+/.hvigor
+.cxx
+/.clangd
+/.clang-format
+/.clang-tidy
+**/.test
+>>>>>>> dev

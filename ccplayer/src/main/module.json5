@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "ccplayer",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ],
+  }
+}

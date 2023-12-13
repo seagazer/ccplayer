@@ -1,0 +1,10 @@
+{
+  "src": [
+    "pages/main",
+    "pages/audio",
+    "pages/video",
+    "pages/player_view",
+    "pages/custom_ui",
+    "pages/logo"
+  ]
+}
