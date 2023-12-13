@@ -101,7 +101,3 @@ A media player for OpenHarmony 一个为 OpenHarmony 设计，支持音视频媒
   | createFile   | filePath 文件绝对路径, title? 媒体标题                          | Promise<MediaSource> | 通过本地文件创建媒体资源  |
   | createAssets | abilityContext 上下文, assetsPath 资源相对路径, title? 媒体标题 | Promise<MediaSource> | 通过 Raw 文件创建媒体资源 |
   | createUrl    | url 媒体链接地址, title? 媒体标题                               | MediaSource          | 通过 url 地址创建媒体资源 |
-
-### 示例工程
-
-可以切换到**dev**分支下载代码，工程中内置了示例模块，包含音频播放，视频播放，CcPlayerView 组件，及自定义播放器 UI 的使用和常见业务场景的处理方式。
