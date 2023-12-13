@@ -1,8 +1,6 @@
 /node_modules
-<<<<<<< HEAD
 /.preview
 /build
-=======
 /oh_modules
 /local.properties
 /.idea
@@ -13,4 +11,3 @@
 /.clang-format
 /.clang-tidy
 **/.test
->>>>>>> dev
