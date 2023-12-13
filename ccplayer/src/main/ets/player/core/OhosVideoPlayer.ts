@@ -4,7 +4,7 @@ import { Logger } from '../common/Logger';
 import { PlayerState } from '../config/PlayerState'
 import { BasePlayer } from './BasePlayer';
 
-const TAG = "OhosVideoPlayer"
+const TAG = "[OhosVideoPlayer]"
 
 /**
  * Video player impl for OpenHarmony 3.0+.
@@ -25,7 +25,7 @@ export class OhosVideoPlayer extends BasePlayer {
             this.changePlayerState(PlayerState.STATE_IDLE)
             this.player = data
             this.player.on("playbackCompleted", () => {
-                Logger.i(TAG, "System callback: completed")
+                Logger.d(TAG, "System callback: completed")
                 this.stopProgressTimer()
                 this.changePlayerState(PlayerState.STATE_COMPLETED)
                 if (this.completedListeners.length > 0) {
@@ -35,7 +35,7 @@ export class OhosVideoPlayer extends BasePlayer {
                 }
             })
             this.player.on("videoSizeChanged", (width: number, height: number) => {
-                Logger.i(TAG, "System callback: videoSizeChanged: " + width + " x " + height)
+                Logger.d(TAG, "System callback: videoSizeChanged: " + width + " x " + height)
                 if (this.videoSizeChangedListeners.length > 0) {
                     this.videoSizeChangedListeners.forEach((callback) => {
                         callback(width, height)
@@ -43,7 +43,7 @@ export class OhosVideoPlayer extends BasePlayer {
                 }
             })
             this.player.on("startRenderFrame", () => {
-                Logger.i(TAG, "System callback: render first frame ")
+                Logger.d(TAG, "System callback: render first frame ")
                 if (this.renderFirstFrameListeners.length > 0) {
                     this.renderFirstFrameListeners.forEach((callback) => {
                         callback()
@@ -51,7 +51,7 @@ export class OhosVideoPlayer extends BasePlayer {
                 }
             })
             this.player.on("error", (error) => {
-                Logger.i(TAG, "System callback: error ")
+                Logger.e(TAG, "System callback: error ")
                 if (this.errorListeners.length > 0) {
                     this.errorListeners.forEach((callback) => {
                         callback(error.code, error.message)
@@ -107,7 +107,7 @@ export class OhosVideoPlayer extends BasePlayer {
         if (this.isPrepared == false) {
             try {
                 await this.player.prepare()
-                Logger.i(TAG, "System callback: prepared")
+                Logger.d(TAG, "System callback: prepared")
                 this.isPrepared = true
                 this.changePlayerState(PlayerState.STATE_PREPARED)
                 if (this.preparedListeners.length > 0) {
@@ -116,7 +116,7 @@ export class OhosVideoPlayer extends BasePlayer {
                     })
                 }
                 await this.player.play()
-                Logger.i(TAG, "System callback: play")
+                Logger.d(TAG, "System callback: play")
                 this.isPlayed = true
                 this.changePlayerState(PlayerState.STATE_STARTED)
                 if (this.startPosition != -1) {
@@ -131,7 +131,7 @@ export class OhosVideoPlayer extends BasePlayer {
         } else {
             try {
                 await this.player.play()
-                Logger.i(TAG, "System callback: play")
+                Logger.d(TAG, "System callback: play")
                 this.changePlayerState(PlayerState.STATE_STARTED)
                 this.startProgressTimer()
                 super.start()
@@ -146,7 +146,7 @@ export class OhosVideoPlayer extends BasePlayer {
         Logger.d(TAG, ">> pause")
         try {
             await this.player.pause()
-            Logger.i(TAG, "System callback: pause")
+            Logger.d(TAG, "System callback: pause")
             this.changePlayerState(PlayerState.STATE_PAUSED)
             super.pause()
         } catch (err) {
@@ -159,7 +159,7 @@ export class OhosVideoPlayer extends BasePlayer {
         Logger.d(TAG, ">> stop")
         try {
             await this.player.stop()
-            Logger.i(TAG, "System callback: stop")
+            Logger.d(TAG, "System callback: stop")
             this.changePlayerState(PlayerState.STATE_STOPPED)
             this.isPrepared = false
             super.stop()
@@ -172,7 +172,7 @@ export class OhosVideoPlayer extends BasePlayer {
         Logger.d(TAG, ">> reset")
         try {
             await this.player.reset()
-            Logger.i(TAG, "System callback: reset")
+            Logger.d(TAG, "System callback: reset")
             this.changePlayerState(PlayerState.STATE_IDLE)
             this.isPrepared = false
             super.reset()
@@ -186,7 +186,7 @@ export class OhosVideoPlayer extends BasePlayer {
         try {
             await this.player.stop()
             await this.player.release()
-            Logger.i(TAG, "System callback: release")
+            Logger.d(TAG, "System callback: release")
             this.changePlayerState(PlayerState.STATE_NOT_INIT)
             super.release()
         } catch (err) {
@@ -198,7 +198,7 @@ export class OhosVideoPlayer extends BasePlayer {
         Logger.d(TAG, ">> seek to: " + position)
         try {
             let duration = await this.player.seek(position)
-            Logger.i(TAG, "System callback: seek completed")
+            Logger.d(TAG, "System callback: seek completed")
             if (this.seekChangedListeners.length > 0) {
                 this.seekChangedListeners.forEach((callback) => {
                     callback(duration)

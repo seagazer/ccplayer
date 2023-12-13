@@ -2,7 +2,7 @@ import { MediaSource } from './MediaSource';
 import { Logger } from '../common/logger';
 import fileIO from '@ohos.fileio'
 
-const TAG = "MediaSourceFactory"
+const TAG = "[MediaSourceFactory]"
 
 /**
  * Helper to create media source from file, assets and url.

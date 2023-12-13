@@ -6,7 +6,7 @@ import media from '@ohos.multimedia.media';
 import { BasePlayer } from './BasePlayer';
 
 
-const TAG = "OhosAvPlayer"
+const TAG = "[OhosAvPlayer]"
 
 /**
  * A player impl include audio and video for OpenHarmony 3.2+.
@@ -40,12 +40,12 @@ export class OhosAvPlayer extends BasePlayer {
         this.player.on('stateChange', (newState, _) => {
             switch (newState) {
                 case "idle":
-                    Logger.i(TAG, "System callback: idle")
+                    Logger.d(TAG, "System callback: idle")
                     this.changePlayerState(PlayerState.STATE_IDLE)
                     this.isPrepared = false
                     break
                 case "initialized": // src ready -> initialized
-                    Logger.i(TAG, "System callback: datasource ready")
+                    Logger.d(TAG, "System callback: datasource ready")
                     if (this.playType == PlayerType.VIDEO && this.curSurfaceId != this.lastSurfaceId) {
                         Logger.d(TAG, ">> set surface: " + this.curSurfaceId)
                         this.player.surfaceId = this.curSurfaceId
@@ -55,7 +55,7 @@ export class OhosAvPlayer extends BasePlayer {
                     this.onReady = null
                     break
                 case "prepared":
-                    Logger.i(TAG, "System callback: prepared")
+                    Logger.d(TAG, "System callback: prepared")
                     this.changePlayerState(PlayerState.STATE_PREPARED)
                     this.isPrepared = true
                     if (this.preparedListeners.length > 0) {
@@ -73,18 +73,18 @@ export class OhosAvPlayer extends BasePlayer {
                     }
                     break
                 case "playing":
-                    Logger.i(TAG, "System callback: playing")
+                    Logger.d(TAG, "System callback: playing")
                     this.isPlayed = true
                     this.changePlayerState(PlayerState.STATE_STARTED)
-                    this.startProgressTimer()
+                // this.startProgressTimer()
                     break
                 case "paused":
-                    Logger.i(TAG, "System callback: pause")
+                    Logger.d(TAG, "System callback: pause")
                     this.changePlayerState(PlayerState.STATE_PAUSED)
                     break
                 case "completed":
-                    Logger.i(TAG, "System callback: completed")
-                    this.stopProgressTimer()
+                    Logger.d(TAG, "System callback: completed")
+                // this.stopProgressTimer()
                     this.changePlayerState(PlayerState.STATE_COMPLETED)
                     if (this.completedListeners.length > 0) {
                         this.completedListeners.forEach((callback) => {
@@ -93,12 +93,12 @@ export class OhosAvPlayer extends BasePlayer {
                     }
                     break
                 case "stopped":
-                    Logger.i(TAG, "System callback: stopped")
+                    Logger.d(TAG, "System callback: stopped")
                     this.changePlayerState(PlayerState.STATE_STOPPED)
                     this.isPrepared = false
                     break
                 case "released":
-                    Logger.i(TAG, "System callback: released")
+                    Logger.d(TAG, "System callback: released")
                     this.changePlayerState(PlayerState.STATE_NOT_INIT)
                     break
                 case "error":
@@ -124,7 +124,7 @@ export class OhosAvPlayer extends BasePlayer {
             }
         })
         this.player.on('startRenderFrame', () => {
-            Logger.i(TAG, "System callback: render first frame ")
+            Logger.d(TAG, "System callback: render first frame ")
             if (this.renderFirstFrameListeners.length > 0) {
                 this.renderFirstFrameListeners.forEach((callback) => {
                     callback()
@@ -132,7 +132,7 @@ export class OhosAvPlayer extends BasePlayer {
             }
         })
         this.player.on('videoSizeChange', (width: number, height: number) => {
-            Logger.i(TAG, "System callback: videoSizeChanged: " + width + " x " + height)
+            Logger.d(TAG, "System callback: videoSizeChanged: " + width + " x " + height)
             if (this.videoSizeChangedListeners.length > 0) {
                 this.videoSizeChangedListeners.forEach((callback) => {
                     callback(width, height)
@@ -140,7 +140,7 @@ export class OhosAvPlayer extends BasePlayer {
             }
         })
         this.player.on("seekDone", (position) => {
-            Logger.i(TAG, "System callback: seekDone: " + position)
+            Logger.d(TAG, "System callback: seekDone: " + position)
             if (this.seekChangedListeners.length > 0) {
                 this.seekChangedListeners.forEach((callback) => {
                     callback(position)
@@ -153,12 +153,17 @@ export class OhosAvPlayer extends BasePlayer {
             }
         })
         this.player.on("volumeChange", (volume) => {
-            Logger.i(TAG, "System callback: volumeChange: " + volume)
+            Logger.d(TAG, "System callback: volumeChange: " + volume)
             if (this.volumeChangedListeners.length > 0) {
                 this.volumeChangedListeners.forEach((callback) => {
                     callback()
                 })
             }
+        })
+        this.player.on("timeUpdate", (time) => {
+            this.progressChangedListeners.forEach((callback) => {
+                callback(time)
+            })
         })
     }
 
@@ -189,25 +194,25 @@ export class OhosAvPlayer extends BasePlayer {
         } else {
             await this.player.play()
         }
-        super.start()
+        // super.start()
     }
 
     async pause() {
         Logger.d(TAG, ">> pause")
         await this.player.pause()
-        super.pause()
+        // super.pause()
     }
 
     async stop() {
         Logger.d(TAG, ">> stop")
         await this.player.stop()
-        super.stop()
+        // super.stop()
     }
 
     async reset() {
         Logger.d(TAG, ">> reset")
         await this.player.reset()
-        super.reset()
+        // super.reset()
     }
 
     async release() {

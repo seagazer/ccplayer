@@ -4,7 +4,7 @@ import { BasePlayer } from './baseplayer';
 import { Logger } from '../common/Logger'
 import { PlayerState } from '../config/PlayerState'
 
-const TAG = "OhosAudioPlayer"
+const TAG = "[OhosAudioPlayer]"
 
 /**
  * Audio player impl for OpenHarmony 3.0+.
@@ -27,12 +27,12 @@ export class OhosAudioPlayer extends BasePlayer {
     init() {
         this.changePlayerState(PlayerState.STATE_IDLE)
         this.player.on('reset', () => {
-            Logger.i(TAG, "System callback: reset")
+            Logger.d(TAG, "System callback: reset")
             this.isPrepared = false
             this.changePlayerState(PlayerState.STATE_IDLE)
         })
         this.player.on('dataLoad', () => {
-            Logger.i(TAG, "System callback: dataLoad")
+            Logger.d(TAG, "System callback: dataLoad")
             this.isPrepared = true
             this.changePlayerState(PlayerState.STATE_PREPARED)
             if (this.preparedListeners.length > 0) {
@@ -44,7 +44,7 @@ export class OhosAudioPlayer extends BasePlayer {
             this.onReady = null
         })
         this.player.on('play', () => {
-            Logger.i(TAG, "System callback: play")
+            Logger.d(TAG, "System callback: play")
             this.changePlayerState(PlayerState.STATE_STARTED)
             this.startProgressTimer()
             if (this.startPosition != -1) {
@@ -53,16 +53,16 @@ export class OhosAudioPlayer extends BasePlayer {
             }
         })
         this.player.on('pause', () => {
-            Logger.i(TAG, "System callback: pause")
+            Logger.d(TAG, "System callback: pause")
             this.changePlayerState(PlayerState.STATE_PAUSED)
         })
         this.player.on('stop', () => {
-            Logger.i(TAG, "System callback: stop")
+            Logger.d(TAG, "System callback: stop")
             this.isPrepared = false
             this.changePlayerState(PlayerState.STATE_STOPPED)
         })
         this.player.on('finish', () => {
-            Logger.i(TAG, "System callback: finish")
+            Logger.d(TAG, "System callback: finish")
             this.changePlayerState(PlayerState.STATE_COMPLETED)
             this.stopProgressTimer()
             if (this.completedListeners.length > 0) {
@@ -100,7 +100,7 @@ export class OhosAudioPlayer extends BasePlayer {
         this.player.src = mediaSource.source
     }
 
-    start() {
+    async start() {
         if (this.isPrepared) {
             Logger.d(TAG, ">> start")
             this.player.play()
@@ -109,26 +109,26 @@ export class OhosAudioPlayer extends BasePlayer {
         }
     }
 
-    pause() {
+    async pause() {
         Logger.d(TAG, ">> pause")
         this.player.pause()
         super.pause()
     }
 
-    stop() {
+    async stop() {
         Logger.d(TAG, ">> stop")
         this.player.stop()
         super.stop()
     }
 
-    reset() {
+    async reset() {
         Logger.d(TAG, ">> reset")
         this.player.reset()
         this.changePlayerState(PlayerState.STATE_IDLE)
         super.reset()
     }
 
-    release() {
+    async release() {
         Logger.d(TAG, ">> release")
         this.player.release()
         this.changePlayerState(PlayerState.STATE_NOT_INIT)

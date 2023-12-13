@@ -11,7 +11,7 @@ import { MediaSource } from './data/MediaSource';
 import { PlayerState } from './config/PlayerState';
 import { PlayerType } from './config/Playertype'
 
-const TAG = "CcPlayer"
+const TAG = "[CcPlayer]"
 
 /**
  * The player for audio or video.
@@ -28,6 +28,7 @@ export class CcPlayer implements IPlayer, IRender {
         } else if (apiVersion >= 8) {
             if (type == PlayerType.AUDIO) {
                 Logger.i(TAG, "Api version is 8+, create AudioPlayer")
+                // @ts-ignore
                 this.player = OhosAudioPlayer.create()
             } else {
                 Logger.i(TAG, "Api version is 8+, create VideoPlayer")
@@ -47,59 +48,59 @@ export class CcPlayer implements IPlayer, IRender {
         return new CcPlayer(type)
     }
 
-    start() {
+    async start() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_STARTED) {
             return
         }
-        this.player.start()
+        await this.player.start()
     }
 
-    startTo(position: number) {
+    async startTo(position: number) {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_STARTED) {
             return
         }
-        this.player.startTo(position)
+        await this.player.startTo(position)
     }
 
-    pause() {
+    async pause() {
         let state = this.getPlayerState()
         if (state != PlayerState.STATE_STARTED) {
             return
         }
-        this.player.pause()
+        await this.player.pause()
     }
 
-    stop() {
+    async stop() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_STOPPED) {
             return
         }
-        this.player.stop()
+        await this.player.stop()
     }
 
-    reset() {
+    async reset() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_IDLE) {
             return
         }
-        this.player.reset()
+        await this.player.reset()
     }
 
-    release() {
+    async release() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_NOT_INIT) {
             return
         }
-        this.player.release()
+        await this.player.release()
     }
 
-    seekTo(position: number) {
+    async seekTo(position: number) {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_PREPARED || state == PlayerState.STATE_STARTED ||
-        state == PlayerState.STATE_PAUSED || state == PlayerState.STATE_COMPLETED) {
-            this.player.seekTo(position)
+            state == PlayerState.STATE_PAUSED || state == PlayerState.STATE_COMPLETED) {
+            await this.player.seekTo(position)
         }
     }
 

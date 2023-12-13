@@ -5,7 +5,7 @@ import { IPlayer } from '../interface/Iplayer'
 import { IRender } from '../interface/IRender'
 import { PlayerState } from '../config/Playerstate'
 
-const TAG = "BasePlayer"
+const TAG = "[BasePlayer]"
 
 /**
  * Base player
@@ -139,27 +139,27 @@ export class BasePlayer implements IPlayer, IRender {
         Logger.i(TAG, ">> setMediaSource: " + JSON.stringify(mediaSource))
     }
 
-    startTo(position: number) {
+    async startTo(position: number) {
         Logger.d(TAG, ">> start to: " + position)
         this.startPosition = position
-        this.start()
+        await this.start()
     }
 
-    start() {
+    async start() {
         // do action in sub class
     }
 
-    pause() {
-        // do action in sub class
-        this.stopProgressTimer()
-    }
-
-    stop() {
+    async pause() {
         // do action in sub class
         this.stopProgressTimer()
     }
 
-    reset() {
+    async stop() {
+        // do action in sub class
+        this.stopProgressTimer()
+    }
+
+    async reset() {
         // do action in sub class
         this.stopProgressTimer()
     }

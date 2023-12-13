@@ -6,7 +6,7 @@ import { Logger } from '../common/Logger';
 import { CcPlayer } from '../CcPlayer';
 import { AspectRatio } from '../config/AspectRatio'
 
-const TAG = "CcPlayerView"
+const TAG = "[CcPlayerView]"
 
 enum ControlType {
     BRIGHTNESS, PROGRESS, VOLUME
@@ -90,7 +90,7 @@ export struct CcPlayerView {
     private videoHeight: number = 0
     private controllerWidth = 250
     private controllerHeight = 80
-    @State @Watch("onControllerVisibleChanged") isShowController: boolean = false
+    @Watch("onControllerVisibleChanged") @State isShowController: boolean = false
     private controlType: ControlType = ControlType.PROGRESS
     private controlEdge = 0 // default is 1/5 of the width
     private downX: number = -1
@@ -104,7 +104,6 @@ export struct CcPlayerView {
     private startVolume: number = 0 // the drag start volume for display
     @State targetVolume: number = 0
     private maxVolume: number = 0
-
     // seek duration
     private startDuration = 0 // the drag start position for display
     @State targetDuration: number = 0
@@ -131,7 +130,7 @@ export struct CcPlayerView {
         Logger.i(TAG, "aspectRatioChanged = " + this.videoRatio)
     }
 
-    private onControllerVisibleChanged() {
+    onControllerVisibleChanged() {
         if (this.gestureUIListener != null) {
             this.gestureUIListener(this.isShowController)
         }
@@ -281,7 +280,6 @@ export struct CcPlayerView {
             default:
                 return this.videoWidth / this.videoHeight
         }
-        return -1
     }
 
     private onTouchEvent(event: TouchEvent) {

@@ -2,7 +2,7 @@
   "license": "Apache License 2.0",
   "types": "",
   "devDependencies": {},
-  "name": "@seagazer/ccplayer",
+  "name": "ccplayer",
   "description": "A media player for OpenHarmony.",
   "main": "index.ts",
   "repository": {},
