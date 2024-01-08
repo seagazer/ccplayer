@@ -1,12 +1,13 @@
 import { timeToString } from '../Extentions';
 import { MediaSourceFactory } from '@seagazer/ccplayer';
-import { Logger } from '@seagazer/ccplayer';
 import { CcPlayer } from '@seagazer/ccplayer';
 import { PlayerType } from '@seagazer/ccplayer';
 import { PlayerState } from '@seagazer/ccplayer';
+import { Logger } from '../Logger';
 
 
-@Extend(Button) function btnStyle() {
+@Extend(Button)
+function btnStyle() {
     .fontSize(18)
     .width(100)
     .height(50)
@@ -21,12 +22,12 @@ const TAG = "AudioPage"
 struct AudioPage {
     @State pos: number = 0
     @State duration: number = 0
-    private player: CcPlayer = null
+    private player: CcPlayer | null = null
     private isSeeking = false
     private filePath: string = ""
     private prepareListener = () => {
         Logger.d(TAG, "prepared")
-        this.duration = this.player.getDuration()
+        this.duration = this.player!.getDuration()
     }
     private completedListener = () => {
         Logger.d(TAG, "play completed")
@@ -50,11 +51,10 @@ struct AudioPage {
     }
 
     aboutToAppear() {
-        if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
+        if (this.player == null || this.player!.getPlayerState() == PlayerState.STATE_NOT_INIT) {
             this.player = CcPlayer.create(PlayerType.AUDIO)
         }
-        this.player
-            .addOnPreparedListener(this.prepareListener)
+        this.player!.addOnPreparedListener(this.prepareListener)
             .addOnProgressChangedListener(this.progressChangedListener)
             .addOnCompletionListener(this.completedListener)
             .addOnErrorListener(this.errorListener)
@@ -63,8 +63,7 @@ struct AudioPage {
     }
 
     aboutToDisappear() {
-        this.player
-            .removeOnPreparedListener(this.prepareListener)
+        this.player!.removeOnPreparedListener(this.prepareListener)
             .removeOnProgressChangedListener(this.progressChangedListener)
             .removeOnCompletionListener(this.completedListener)
             .removeOnErrorListener(this.errorListener)
@@ -75,7 +74,7 @@ struct AudioPage {
 
     build() {
         Column() {
-            TextInput({ placeholder: "../../resources/rawfile/test.mp3" })
+            TextInput({ placeholder: "test.mp3" })
                 .fontSize(30)
                 .width("70%")
                 .height(60)
@@ -94,14 +93,14 @@ struct AudioPage {
                             if (this.filePath.startsWith("http")) {
                             } else {
                                 MediaSourceFactory.createFile(this.filePath).then((data) => {
-                                    this.player.setMediaSource(data)
+                                    this.player!.setMediaSource(data)
                                 })
                             }
                         } else {
-                            MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp3", "test.mp3")
+                            MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp3", "test.mp3")
                                 .then((data) => {
-                                    this.player.setMediaSource(data, () => {
-                                        this.player.start()
+                                    this.player!.setMediaSource(data, () => {
+                                        this.player!.start()
                                     })
                                 })
                         }
@@ -109,12 +108,12 @@ struct AudioPage {
                 Button("start")
                     .btnStyle()
                     .onClick(() => {
-                        this.player.start()
+                        this.player!.start()
                     })
                 Button("pause")
                     .btnStyle()
                     .onClick(() => {
-                        this.player.pause()
+                        this.player!.pause()
                     })
             }
             .justifyContent(FlexAlign.Center)
@@ -143,7 +142,7 @@ struct AudioPage {
                     .onChange((value: number, mode: SliderChangeMode) => {
                         if (mode == SliderChangeMode.End || mode == 3) {
                             this.isSeeking = true
-                            this.player.seekTo(Math.floor(value))
+                            this.player!.seekTo(Math.floor(value))
                             this.pos = Math.floor(value)
                         }
                     })

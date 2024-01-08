@@ -1,5 +1,3 @@
-export { Logger } from './src/main/ets/player/common/Logger'
-
 export { CcPlayer } from './src/main/ets/player/CcPlayer'
 
 export { CcPlayerView } from './src/main/ets/player/widget/CcPlayerView'

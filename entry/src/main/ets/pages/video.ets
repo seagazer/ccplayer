@@ -1,8 +1,9 @@
 import { timeToString } from '../Extentions';
-import { CcPlayer, Logger, MediaSourceFactory, PlayerState, PlayerType } from '@seagazer/ccplayer';
+import { CcPlayer, MediaSourceFactory, PlayerState, PlayerType } from '@seagazer/ccplayer';
+import { Logger } from '../Logger';
 
-
-@Extend(Button) function btnStyle() {
+@Extend(Button)
+function btnStyle() {
     .fontSize(18)
     .width(100)
     .height(50)
@@ -19,12 +20,12 @@ struct VideoPage {
     @State duration: number = 0
     private isSeeking = false
     private controller = new XComponentController()
-    private surfaceId: string = null
-    private player: CcPlayer = null
+    private surfaceId: string | null = null
+    private player: CcPlayer | null = null
     private filePath: string = ""
     private prepareListener = () => {
         Logger.d(TAG, "prepared")
-        this.duration = this.player.getDuration()
+        this.duration = this.player!.getDuration()
     }
     private completedListener = () => {
         Logger.d(TAG, "play completed")
@@ -49,11 +50,10 @@ struct VideoPage {
     }
 
     aboutToAppear() {
-        if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
+        if (this.player == null || this.player!.getPlayerState() == PlayerState.STATE_NOT_INIT) {
             this.player = CcPlayer.create(PlayerType.VIDEO)
         }
-        this.player
-            .addOnPreparedListener(this.prepareListener)
+        this.player!.addOnPreparedListener(this.prepareListener)
             .addOnProgressChangedListener(this.progressChangedListener)
             .addOnCompletionListener(this.completedListener)
             .addOnErrorListener(this.errorListener)
@@ -62,8 +62,7 @@ struct VideoPage {
     }
 
     aboutToDisappear() {
-        this.player
-            .removeOnPreparedListener(this.prepareListener)
+        this.player!.removeOnPreparedListener(this.prepareListener)
             .removeOnProgressChangedListener(this.progressChangedListener)
             .removeOnCompletionListener(this.completedListener)
             .removeOnErrorListener(this.errorListener)
@@ -83,7 +82,7 @@ struct VideoPage {
                 this.surfaceId = this.controller.getXComponentSurfaceId()
                 Logger.d(TAG, "surface view created: " + this.surfaceId)
                 // bind a surface to render picture
-                this.player.setSurface(this.surfaceId)
+                this.player!.setSurface(this.surfaceId)
             }).onDestroy(() => {
                 Logger.d(TAG, "surface view destroy")
 
@@ -91,7 +90,7 @@ struct VideoPage {
                 .width(480)
                 .height(300)
 
-            TextInput({ placeholder: "../../resources/rawfile/test.mp4" })
+            TextInput({ placeholder: "test.mp4" })
                 .fontSize(30)
                 .width("70%")
                 .height(60)
@@ -111,21 +110,21 @@ struct VideoPage {
                             Logger.d(TAG, "filePath = " + this.filePath)
                             if (this.filePath.length > 0) {
                                 if (this.filePath.startsWith("http")) {
-                                    this.player.setMediaSource(MediaSourceFactory.createUrl(this.filePath), () => {
-                                        this.player.start()
+                                    this.player!.setMediaSource(MediaSourceFactory.createUrl(this.filePath), () => {
+                                        this.player!.start()
                                     })
                                 } else {
                                     MediaSourceFactory.createFile(this.filePath).then((data) => {
-                                        this.player.setMediaSource(data, () => {
-                                            this.player.start()
+                                        this.player!.setMediaSource(data, () => {
+                                            this.player!.start()
                                         })
                                     })
                                 }
                             } else {
-                                MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4")
+                                MediaSourceFactory.createAssets(getContext(this), "test.mp4", "test.mp4")
                                     .then((data) => {
-                                        this.player.setMediaSource(data, () => {
-                                            this.player.start()
+                                        this.player!.setMediaSource(data, () => {
+                                            this.player!.start()
                                         })
                                     })
                             }
@@ -134,12 +133,12 @@ struct VideoPage {
                 Button("start")
                     .btnStyle()
                     .onClick(() => {
-                        this.player.start()
+                        this.player!.start()
                     })
                 Button("pause")
                     .btnStyle()
                     .onClick(() => {
-                        this.player.pause()
+                        this.player!.pause()
                     })
             }
             .justifyContent(FlexAlign.Center)
@@ -168,7 +167,7 @@ struct VideoPage {
                         Logger.w(TAG, "slide mode = " + mode)
                         if (mode == SliderChangeMode.End || mode == 3) {
                             this.isSeeking = true
-                            this.player.seekTo(Math.floor(value))
+                            this.player!.seekTo(Math.floor(value))
                             this.pos = Math.floor(value)
                         }
                     })

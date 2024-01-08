@@ -1,6 +1,7 @@
 import { MediaSource } from './MediaSource';
 import { Logger } from '../common/logger';
 import fileIO from '@ohos.fileio'
+import common from '@ohos.app.ability.common';
 
 const TAG = "[MediaSourceFactory]"
 
@@ -24,18 +25,18 @@ export class MediaSourceFactory {
 
     /**
      * Create a media source for assets file.
-     * @param abilityContext The context of ability.
+     * @param context The context of ability.
      * @param assetsPath The path of raw assets file.
      * @param title The title of media file, maybe null.
      */
-    public static async createAssets(abilityContext, assetsPath: string, title?: string): Promise<MediaSource> {
-        if (abilityContext == undefined) {
+    public static async createAssets(context: common.Context, assetsPath: string, title?: string): Promise<MediaSource> {
+        if (context == undefined) {
             Logger.e(TAG, "The context is null!!!")
             return null
         }
         let fdPath = 'fd://'
         Logger.i(TAG, "assetsPath = " + assetsPath)
-        let rfd = await abilityContext.resourceManager.getRawFileDescriptor(assetsPath)
+        let rfd = await context.resourceManager.getRawFd(assetsPath)
         let result = fdPath + rfd.fd
         Logger.d(TAG, "createAssets = " + result)
         return new MediaSource(result, title)
@@ -46,7 +47,7 @@ export class MediaSourceFactory {
      * @param url The url of media file.
      * @param title The title of media file, maybe null.
      */
-    public static createUrl(url: string, title?: string): MediaSource{
+    public static createUrl(url: string, title?: string): MediaSource {
         return new MediaSource(url, title)
     }
 }

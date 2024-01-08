@@ -1,13 +1,13 @@
 import { CcPlayerView } from '@seagazer/ccplayer';
 import { MediaSourceFactory } from '@seagazer/ccplayer';
-import { Logger } from '@seagazer/ccplayer';
 import { CcPlayer } from '@seagazer/ccplayer';
 import { PlayerType } from '@seagazer/ccplayer';
 import { PlayerState } from '@seagazer/ccplayer';
 import { AspectRatio } from '@seagazer/ccplayer';
+import { Logger } from '../Logger';
 
-
-@Extend(Button) function btnStyle() {
+@Extend(Button)
+function btnStyle() {
     .fontSize(18)
     .width(100)
     .height(50)
@@ -24,10 +24,10 @@ struct CustomPlayerViewPage {
     @State videoTitle: string = ""
     @State showTitleBar: boolean = false
     private autoHildeTaskId = -1
-    private player: CcPlayer = null
+    private player: CcPlayer | null = null
     private prepareListener = () => {
         Logger.d(TAG, "prepared")
-        this.videoTitle = this.player.getMediaSource().title
+        this.videoTitle = this.player!.getMediaSource().title
     }
 
     aboutToAppear() {
@@ -38,8 +38,7 @@ struct CustomPlayerViewPage {
     }
 
     aboutToDisappear() {
-        this.player
-            .removeOnPreparedListener(this.prepareListener)
+        this.player!.removeOnPreparedListener(this.prepareListener)
             .release()
     }
 
@@ -66,7 +65,8 @@ struct CustomPlayerViewPage {
         this.gestureMaxValue = max
     }
 
-    @Builder CustomTitleUI() {
+    @Builder
+    CustomTitleUI() {
         Text(this.videoTitle)
             .fontColor("#d9ffffff")
             .textAlign(TextAlign.Center)
@@ -82,7 +82,8 @@ struct CustomPlayerViewPage {
             })
     }
 
-    @Builder CustomGestureUI() {
+    @Builder
+    CustomGestureUI() {
         if (this.showController) {
             if (this.gestureActionType == 0) { //seek
                 Text("Seek:" + this.gestureValue + "/" + this.gestureMaxValue)
@@ -149,21 +150,22 @@ struct CustomPlayerViewPage {
                     .btnStyle()
                     .onClick(() => {
                         // if bind surface, set data source to play
-                        MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4").then((data) => {
-                            this.player.setMediaSource(data, () => {
-                                this.player.start()
+                        MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4")
+                            .then((data) => {
+                                this.player!.setMediaSource(data, () => {
+                                    this.player!.start()
+                                })
                             })
-                        })
                     })
                 Button("start")
                     .btnStyle()
                     .onClick(() => {
-                        this.player.start()
+                        this.player!.start()
                     })
                 Button("pause")
                     .btnStyle()
                     .onClick(() => {
-                        this.player.pause()
+                        this.player!.pause()
                     })
             }
             .width("100%")

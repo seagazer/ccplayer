@@ -25,6 +25,8 @@ export class OhosAvPlayer extends BasePlayer {
         media.createAVPlayer((err, player) => {
             if (err) {
                 Logger.e(TAG, "init video player error = " + JSON.stringify(err))
+                this.changePlayerState(PlayerState.STATE_NOT_INIT)
+                return
             }
             this.player = player
             this.changePlayerState(PlayerState.STATE_IDLE)
@@ -76,7 +78,6 @@ export class OhosAvPlayer extends BasePlayer {
                     Logger.d(TAG, "System callback: playing")
                     this.isPlayed = true
                     this.changePlayerState(PlayerState.STATE_STARTED)
-                // this.startProgressTimer()
                     break
                 case "paused":
                     Logger.d(TAG, "System callback: pause")
@@ -84,7 +85,6 @@ export class OhosAvPlayer extends BasePlayer {
                     break
                 case "completed":
                     Logger.d(TAG, "System callback: completed")
-                // this.stopProgressTimer()
                     this.changePlayerState(PlayerState.STATE_COMPLETED)
                     if (this.completedListeners.length > 0) {
                         this.completedListeners.forEach((callback) => {
@@ -194,25 +194,21 @@ export class OhosAvPlayer extends BasePlayer {
         } else {
             await this.player.play()
         }
-        // super.start()
     }
 
     async pause() {
         Logger.d(TAG, ">> pause")
         await this.player.pause()
-        // super.pause()
     }
 
     async stop() {
         Logger.d(TAG, ">> stop")
         await this.player.stop()
-        // super.stop()
     }
 
     async reset() {
         Logger.d(TAG, ">> reset")
         await this.player.reset()
-        // super.reset()
     }
 
     async release() {

@@ -1,4 +1,3 @@
-import { BasePlayer } from './core/BasePlayer';
 import media from '@ohos.multimedia.media';
 import { Logger } from './common/Logger';
 import { IPlayer } from './interface/IPlayer'
@@ -18,21 +17,20 @@ const TAG = "[CcPlayer]"
  */
 export class CcPlayer implements IPlayer, IRender {
     private mediaSource: MediaSource = null
-    private player: BasePlayer
+    private player: OhosAvPlayer | OhosAudioPlayer | OhosVideoPlayer
 
     private constructor(type: PlayerType) {
         let apiVersion = getApiVersion()
         if (apiVersion >= 9) {
-            this.player = OhosAvPlayer.create(type)
+            this.player = OhosAvPlayer.create(type) as OhosAvPlayer
             Logger.i(TAG, "Api version is 9+, create AvPlayer")
         } else if (apiVersion >= 8) {
             if (type == PlayerType.AUDIO) {
                 Logger.i(TAG, "Api version is 8+, create AudioPlayer")
-                // @ts-ignore
-                this.player = OhosAudioPlayer.create()
+                this.player = OhosAudioPlayer.create() as OhosAudioPlayer
             } else {
                 Logger.i(TAG, "Api version is 8+, create VideoPlayer")
-                this.player = OhosVideoPlayer.create()
+                this.player = OhosVideoPlayer.create() as OhosVideoPlayer
             }
         } else {
             Logger.e(TAG, "Os version is 2.x, not support!")

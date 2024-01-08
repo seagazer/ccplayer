@@ -1,6 +1,7 @@
 import router from '@system.router';
 
-@Extend(Text) function logoStyle() {
+@Extend(Text)
+function logoStyle() {
     .fontSize(56)
     .fontWeight(FontWeight.Bold)
 }
@@ -11,14 +12,14 @@ struct Logo {
     private logoName = ["c", "c", "p", "l", "a", "y", "e", "r",]
     @State translations: Array<number> = [0, 0, 0, 0, 0, 0, 0, 0,]
     @State alphas: Array<number> = [0, 0, 0, 0, 0, 0, 0, 0,]
-    private duration = 800
+    private duration = 400
     private delay = 200
     @State pageScale: number = 1
     @State pageAlpha: number = 1
 
     build() {
         Row() {
-            ForEach(this.logoName, (name, index) => {
+            ForEach(this.logoName, (name: string, index: number) => {
                 Text(name).logoStyle().translate({ y: this.translations[index] }).opacity(this.alphas[index])
             })
         }
@@ -32,11 +33,11 @@ struct Logo {
             let h = newSize.height as number
             let translateValue = 0
             if (w > h) {
-                translateValue = -newSize.height as number / 3
+                translateValue = -(newSize.height as number) / 3
             } else {
-                translateValue = -newSize.height as number / 6
+                translateValue = -(newSize.height as number) / 6
             }
-            for (let i = 0;i < this.translations.length; i++) {
+            for (let i = 0; i < this.translations.length; i++) {
                 this.translations[i] = translateValue
                 animateTo(
                     {

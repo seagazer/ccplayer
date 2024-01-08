@@ -2,13 +2,14 @@ import {
     AspectRatio,
     CcPlayer,
     CcPlayerView,
-    Logger,
     MediaSourceFactory,
     PlayerState,
     PlayerType
 } from '@seagazer/ccplayer';
+import { Logger } from '../Logger';
 
-@Extend(Button) function btnStyle() {
+@Extend(Button)
+function btnStyle() {
     .fontSize(18)
     .width(100)
     .height(50)
@@ -21,7 +22,7 @@ import {
 struct PlayerViewPage {
     @State videoRatio: number = AspectRatio.AUTO
     @State showTitleBar: boolean = false
-    private player: CcPlayer = null
+    private player: CcPlayer | null = null
 
     aboutToAppear() {
         if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
@@ -30,7 +31,7 @@ struct PlayerViewPage {
     }
 
     aboutToDisappear() {
-        this.player.release()
+        this.player!.release()
     }
 
     build() {
@@ -88,6 +89,7 @@ struct PlayerViewPage {
                     }.margin({ left: 10 })
                 }.margin({ top: 50 })
             }.scrollable(ScrollDirection.Horizontal)
+
             // play actions
             Row() {
                 Button("setSrc")
@@ -96,20 +98,20 @@ struct PlayerViewPage {
                         // if bind surface, set data source to play
                         MediaSourceFactory.createAssets(getContext(this), "../../resources/rawfile/test.mp4", "test.mp4")
                             .then((data) => {
-                                this.player.setMediaSource(data, () => {
-                                    this.player.start()
+                                this.player!.setMediaSource(data, () => {
+                                    this.player!.start()
                                 })
                             })
                     })
                 Button("start")
                     .btnStyle()
                     .onClick(() => {
-                        this.player.start()
+                        this.player!.start()
                     })
                 Button("pause")
                     .btnStyle()
                     .onClick(() => {
-                        this.player.pause()
+                        this.player!.pause()
                     })
             }
             .width("100%")
