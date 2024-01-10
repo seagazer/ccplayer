@@ -1,7 +1,22 @@
 # ccplayer
 
-A media player for OpenHarmony  
-一个为 OpenHarmony 设计，支持音视频媒体的轻量级播放器应用框架
+## 简介
+
+CcPlayer 是一个为 OpenHarmony 设计，支持音视频媒体的轻量级播放器应用框架，最低兼容至 OpenHarmony3.1。
+
+- 支持音频/视频播放
+- 视频播放组件，支持视频宽高比设置，手势控制音量、亮度、播放进度
+- OpenHarmony 3.1 和 3.2 自适应使用 AvPlayer 或 AudioPlayer 或 VideoPlayer
+
+## 依赖方式
+
+```ts
+ohpm install @seagazer/ccplayer
+```
+
+## 注意事项
+
+本库使用到系统接口，为了保证功能完整性，应用请使用系统签名。
 
 ## 接口能力
 
@@ -76,7 +91,7 @@ A media player for OpenHarmony
 - PlayerState 播放器状态
   | 属性 | 说明 |
   | --------------- | ---------------------- |
-  | STATE_NOT_INIT | 初始状态(未实例化)     |
+  | STATE_NOT_INIT | 初始状态(未实例化) |
   | STATE_IDLE | 播放器实例化且闲置状态 |
   | STATE_PREPARED | 播放器加载资源完成状态 |
   | STATE_STARTED | 播放器正在播放状态 |
@@ -98,3 +113,8 @@ A media player for OpenHarmony
   | createAssets | abilityContext 上下文, assetsPath 资源相对路径, title? 媒体标题 | Promise<MediaSource> | 通过 Raw
   文件创建媒体资源 |
   | createUrl | url 媒体链接地址, title? 媒体标题 | MediaSource | 通过 url 地址创建媒体资源 |
+
+## 场景示例
+
+更多使用场景和示例，可以参考本库代码仓的 entry 工程：
+https://github.com/seagazer/ccplayer

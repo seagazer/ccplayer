@@ -1,7 +1,6 @@
 {
   "license": "Apache License 2.0",
   "devDependencies": {},
-  "name": "@seagazer/ccplayer",
   "keywords": [
     "MediaPlayer",
     "Player",
@@ -13,10 +12,11 @@
     "name": "seagazer",
     "email": "seagazer@qq.com"
   },
+  "name": "@seagazer/ccplayer",
   "description": "A media player for OpenHarmony.",
   "main": "index.ets",
-  "homepage": "https://github.com/seagazer",
   "repository": "https://github.com/seagazer/ccplayer",
   "version": "1.0.0",
+  "homepage": "https://github.com/seagazer",
   "dependencies": {}
 }
