@@ -6,7 +6,5 @@
   "description": "Please describe the basic information.",
   "main": "",
   "version": "1.0.0",
-  "dependencies": {
-    "@seagazer/ccplayer": "file:../lib"
-  }
+  "dependencies": {}
 }

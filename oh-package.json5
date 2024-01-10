@@ -8,5 +8,7 @@
   "description": "A media player library for OpenHarmony.",
   "main": "",
   "version": "1.0.0",
-  "dependencies": {}
+  "dependencies": {
+    "@seagazer/ccplayer": "file:./libs/ccplayer.har"
+  }
 }

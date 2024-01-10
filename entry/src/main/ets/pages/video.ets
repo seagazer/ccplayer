@@ -121,7 +121,7 @@ struct VideoPage {
                                     })
                                 }
                             } else {
-                                MediaSourceFactory.createAssets(getContext(this), "test.mp4", "test.mp4")
+                                MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
                                     .then((data) => {
                                         this.player!.setMediaSource(data, () => {
                                             this.player!.start()
