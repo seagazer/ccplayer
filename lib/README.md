@@ -6,6 +6,7 @@ CcPlayer 是一个为 OpenHarmony 设计，支持音视频媒体的轻量级播�
 
 - 支持音频/视频播放
 - 视频播放组件，支持视频宽高比设置，手势控制音量、亮度、播放进度
+- 支持自定义手势控制 UI
 - OpenHarmony 3.1 和 3.2 自适应使用 AvPlayer 或 AudioPlayer 或 VideoPlayer
 
 ## 依赖方式
@@ -16,7 +17,9 @@ ohpm install @seagazer/ccplayer
 
 ## 注意事项
 
-本库使用到系统接口，为了保证功能完整性，应用请使用系统签名。
+- 本库使用到系统接口（例如亮度控制），为了保证功能完整性，应用请使用系统签名（system_core 级别）。
+- 如何修改签名等级可参考官方的应用 APL 等级说明：
+  https://docs.openharmony.cn/pages/v4.0/zh-cn/application-dev/security/accesstoken-overview.md/
 
 ## 接口能力
 
@@ -109,12 +112,170 @@ ohpm install @seagazer/ccplayer
 - MediaSourceFactory 媒体资源构建器
   | 接口 | 参数 | 返回值 | 说明 |
   | ------------ | --------------------------------------------------------------- | -------------------- | ------------------------- |
-  | createFile | filePath 文件绝对路径, title? 媒体标题 | Promise<MediaSource> | 通过本地文件创建媒体资源 |
-  | createAssets | abilityContext 上下文, assetsPath 资源相对路径, title? 媒体标题 | Promise<MediaSource> | 通过 Raw
-  文件创建媒体资源 |
+  | createFile | filePath 文件绝对路径, title? 媒体标题 | Promise\<MediaSource> | 通过本地文件创建媒体资源 |
+  | createAssets | abilityContext 上下文, assetsPath 资源相对路径, title? 媒体标题 | Promise\<MediaSource> | 通过 Raw 文件创建媒体资源 |
   | createUrl | url 媒体链接地址, title? 媒体标题 | MediaSource | 通过 url 地址创建媒体资源 |
 
 ## 场景示例
 
-更多使用场景和示例，可以参考本库代码仓的 entry 工程：
+- 使用 CcPlayerView 播放视频的方式：
+
+```ts
+@Entry
+@Component
+struct PlayerViewPage {
+    // 视频画面比例模式
+    @State videoRatio: number = AspectRatio.AUTO
+    private player: CcPlayer | null = null
+
+    aboutToAppear() {
+        // 1.实例化CcPlayer
+        this.player = CcPlayer.create(PlayerType.VIDEO)
+    }
+
+    build() {
+        Column() {
+            Stack() {
+                // 2.引用CcPlayerView视频播放组件，设置参数，绑定CcPlayer
+                CcPlayerView({
+                    player: this.player,
+                    w: 400,
+                    h: 300,
+                    asRatio: $videoRatio,
+                    isSupportGesture: true,
+                })
+            }
+            .width(400)
+            .height(300)
+            .clip(true)
+
+            // play actions
+            Button("play")
+                .onClick(() => {
+                    this.play()
+                })
+        }
+        .width("100%")
+        .height("100%")
+        .justifyContent(FlexAlign.Center)
+    }
+
+    private async play() {
+        // 3.创建mediaSource
+        let src = MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
+        // 4.设置mediaSource
+        this.player!.setMediaSource(src, () => {
+            // 5.设置成功回调，开始播放
+            this.player!.start()
+        })
+    }
+
+    aboutToDisappear() {
+        // 6.释放资源
+        this.player!.release()
+    }
+}
+```
+
+- 使用 CcPlayer 播放视频的方式：
+
+```ts
+@Entry
+@Component
+struct PlayerViewPage {
+    private controller = new XComponentController()
+    private player: CcPlayer | null = null
+
+    aboutToAppear() {
+        // 1.实例化CcPlayer
+        this.player = CcPlayer.create(PlayerType.VIDEO)
+    }
+
+    build() {
+        Column() {
+            // render surface
+            XComponent({
+                type: "surface",
+                id: "video",
+                controller: this.controller
+            }).onLoad(() => {
+                let surfaceId = this.controller.getXComponentSurfaceId()
+                // 2.设置surface，播放前必须设置
+                this.player!.setSurface(surfaceId)
+            })
+            .width(400)
+            .height(300)
+
+            // play actions
+            Button("play")
+                .onClick(() => {
+                    this.play()
+                })
+        }
+        .width("100%")
+        .height("100%")
+        .justifyContent(FlexAlign.Center)
+    }
+
+    private async play() {
+        // 3.创建mediaSource
+        let src = MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
+        // 4.设置mediaSource
+        this.player!.setMediaSource(src, () => {
+            // 5.设置成功回调，开始播放
+            this.player!.start()
+        })
+    }
+
+    aboutToDisappear() {
+        // 6.释放资源
+        this.player!.release()
+    }
+}
+```
+
+- 使用 CcPlayer 播放音乐的方式：
+
+```ts
+@Entry
+@Component
+struct PlayerViewPage {
+    private player: CcPlayer | null = null
+
+    aboutToAppear() {
+        // 1.实例化CcPlayer
+        this.player = CcPlayer.create(PlayerType.VIDEO)
+    }
+
+    build() {
+        Column() {
+            // play actions
+            Button("play")
+                .onClick(() => {
+                    this.play()
+                })
+        }
+        .width("100%")
+        .height("100%")
+        .justifyContent(FlexAlign.Center)
+    }
+
+    private async play() {
+        // 2.创建mediaSource
+        let src = MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp3", "test.mp3")
+        // 3.设置mediaSource
+        this.player!.setMediaSource(src, () => {
+            // 4.设置成功回调，开始播放
+            this.player!.start()
+        })
+    }
+
+    aboutToDisappear() {
+        // 5.释放资源
+        this.player!.release()
+    }
+}
+```
+
+更多使用场景和示例，例如自定义手势操作 UI，播放器状态事件监听等，可以参考本库代码仓的 entry 工程：
 https://github.com/seagazer/ccplayer

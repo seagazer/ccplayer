@@ -100,8 +100,8 @@ A media player for OpenHarmony 一个为 OpenHarmony 设计，支持音视频媒
 
 - MediaSourceFactory 媒体资源构建器
 
-  | 接口         | 参数                                                            | 返回值               | 说明                      |
-  | ------------ | --------------------------------------------------------------- | -------------------- | ------------------------- |
-  | createFile   | filePath 文件绝对路径, title? 媒体标题                          | Promise<MediaSource> | 通过本地文件创建媒体资源  |
-  | createAssets | abilityContext 上下文, assetsPath 资源相对路径, title? 媒体标题 | Promise<MediaSource> | 通过 Raw 文件创建媒体资源 |
-  | createUrl    | url 媒体链接地址, title? 媒体标题                               | MediaSource          | 通过 url 地址创建媒体资源 |
+  | 接口         | 参数                                                            | 返回值                | 说明                      |
+  | ------------ | --------------------------------------------------------------- | --------------------- | ------------------------- |
+  | createFile   | filePath 文件绝对路径, title? 媒体标题                          | Promise\<MediaSource> | 通过本地文件创建媒体资源  |
+  | createAssets | abilityContext 上下文, assetsPath 资源相对路径, title? 媒体标题 | Promise\<MediaSource> | 通过 Raw 文件创建媒体资源 |
+  | createUrl    | url 媒体链接地址, title? 媒体标题                               | MediaSource           | 通过 url 地址创建媒体资源 |
