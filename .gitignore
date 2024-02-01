@@ -10,4 +10,5 @@
 /.clangd
 /.clang-format
 /.clang-tidy
+/oh-package-lock.json5
 **/.test

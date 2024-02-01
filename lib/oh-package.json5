@@ -2,11 +2,11 @@
   "license": "Apache License 2.0",
   "devDependencies": {},
   "keywords": [
-    "MediaPlayer",
-    "Player",
+    "播放器",
+    "音视频",
     "Video",
     "Music",
-    "Audio"
+    "Player"
   ],
   "author": {
     "name": "seagazer",
@@ -16,7 +16,7 @@
   "description": "A media player for OpenHarmony.",
   "main": "index.ets",
   "repository": "https://github.com/seagazer/ccplayer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/seagazer",
   "dependencies": {}
 }
