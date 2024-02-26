@@ -6,5 +6,10 @@
       "default",
       "tablet"
     ],
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.ACCESS_NOTIFICATION_POLICY"
+      }
+    ]
   }
 }

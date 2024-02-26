@@ -18,6 +18,7 @@ export class OhosAvPlayer extends BasePlayer {
     private isPlayed = false
     private onReady: () => void = null
     private playType: PlayerType
+    private isLoop = false
 
     private constructor(type: PlayerType) {
         super()
@@ -58,8 +59,9 @@ export class OhosAvPlayer extends BasePlayer {
                     break
                 case "prepared":
                     Logger.d(TAG, "System callback: prepared")
-                    this.changePlayerState(PlayerState.STATE_PREPARED)
                     this.isPrepared = true
+                    this.player.loop = this.isLoop
+                    this.changePlayerState(PlayerState.STATE_PREPARED)
                     if (this.preparedListeners.length > 0) {
                         this.preparedListeners.forEach((callback) => {
                             callback()
@@ -77,14 +79,17 @@ export class OhosAvPlayer extends BasePlayer {
                 case "playing":
                     Logger.d(TAG, "System callback: playing")
                     this.isPlayed = true
+                    this.player.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_STARTED)
                     break
                 case "paused":
                     Logger.d(TAG, "System callback: pause")
+                    this.player.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_PAUSED)
                     break
                 case "completed":
                     Logger.d(TAG, "System callback: completed")
+                    this.player.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_COMPLETED)
                     if (this.completedListeners.length > 0) {
                         this.completedListeners.forEach((callback) => {
@@ -180,7 +185,8 @@ export class OhosAvPlayer extends BasePlayer {
 
     private setMediaSourceInner(mediaSource: MediaSource) {
         if (this.playType == PlayerType.VIDEO && this.curSurfaceId == null) {
-            throw new Error("You must call setSurfaceId(surfaceId) before call this function.")
+            Logger.e(TAG, "You must call setSurfaceId(surfaceId) before call this function.")
+            return
         }
         Logger.d(TAG, "set url = " + mediaSource.source)
         // the action set surface must between set url and prepare.
@@ -236,7 +242,7 @@ export class OhosAvPlayer extends BasePlayer {
 
     setLooper(isLoop: boolean) {
         Logger.d(TAG, ">> set loop: " + isLoop)
-        this.player.loop = isLoop
+        this.isLoop = isLoop
     }
 
     getDuration(): number {

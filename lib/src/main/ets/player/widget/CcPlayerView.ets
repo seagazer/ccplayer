@@ -13,7 +13,7 @@ enum ControlType {
 
 const TOUCH_SHOT = 10
 const GESTURE_BACKGROUND = "#cc1a1a1a"
-const CONTENT_COLOR = "#d9ffffff"
+const CONTENT_COLOR = "#ffffff"
 
 /**
  * A component to play video, you can control media player with gesture.
@@ -34,13 +34,9 @@ export struct CcPlayerView {
      */
     player: CcPlayer | null = null
     /**
-     * The width of player view.
+     * The size of player view.
      */
-    w: number = 0
-    /**
-     * The height of player view.
-     */
-    h: number = 0
+    @Prop viewSize: SizeOptions
     /**
      * Set the video ratio, the value is from # AspectRatio.
      */
@@ -89,6 +85,8 @@ export struct CcPlayerView {
     gestureVolumeAction?: (volume: number, max: number) => void = () => {
     }
     /*-----------------------------------------------------------------------------------------------*/
+    private w: number = 0
+    private h: number = 0
     private controller = new XComponentController()
     private surfaceId: string = ""
     private videoWidth: number = 0
@@ -126,7 +124,7 @@ export struct CcPlayerView {
             this.onAspectRatioChanged()
         }
     }
-    private audioManager: audio.AudioManager | null = null
+    private volumeManager: audio.AudioVolumeGroupManager | null = null
     @State videoRatio: number = -1
     private isUserMoved = false
 
@@ -144,26 +142,22 @@ export struct CcPlayerView {
     async aboutToAppear() {
         this.player!.addOnPreparedListener(this.preparedListener)
         this.player!.addOnVideoSizeChangedListener(this.videoSizeChangedListener)
-        this.audioManager = audio.getAudioManager()
-        this.audioManager.getVolume(audio.AudioVolumeType.MEDIA, (err, cur) => {
+        let audioManager = audio.getAudioManager().getVolumeManager()
+        this.volumeManager = await audioManager.getVolumeGroupManager(audio.DEFAULT_VOLUME_GROUP_ID)
+        this.volumeManager.getVolume(audio.AudioVolumeType.MEDIA, (err, cur) => {
             if (err) {
                 Logger.e(TAG, "getVolume error = " + JSON.stringify(err))
             }
             this.targetVolume = cur
             Logger.d(TAG, "current volume = " + this.targetVolume)
         })
-        this.audioManager.getMaxVolume(audio.AudioVolumeType.MEDIA, (err, max) => {
+        this.volumeManager.getMaxVolume(audio.AudioVolumeType.MEDIA, (err, max) => {
             if (err) {
                 Logger.e(TAG, "getMaxVolume error = " + JSON.stringify(err))
             }
             this.maxVolume = max
             Logger.d(TAG, "max volume = " + this.maxVolume)
         })
-        if (this.w == 0 || this.h == 0) {
-            throw new Error("You must set the width and height when create a instance of CcPlayerView!")
-        }
-        Logger.d(TAG, "The player view size is: " + this.w + " x " + this.h)
-        this.controlEdge = this.w / 5
     }
 
     aboutToDisappear() {
@@ -204,33 +198,39 @@ export struct CcPlayerView {
                     .padding(16)
                     .textAlign(TextAlign.Center)
                     .backgroundColor(GESTURE_BACKGROUND)
-                    .border({ radius: 12 })
+                    .border({ radius: 8 })
             } else if (this.controlType == ControlType.BRIGHTNESS) { // action: brightness
                 Row() {
-                    Text("Lum").fontColor(CONTENT_COLOR).margin({ right: 10 })
+                    Image($r('app.media.ic_public_brightness'))
+                        .height("20%").aspectRatio(1)
+                        .margin({ right: 10 })
                     Progress({ style: ProgressStyle.Capsule, value: this.targetBrightness, total: 255 })
                         .height("10%")
                         .layoutWeight(1)
+                        .color($r('sys.color.ohos_id_color_emphasize'))
                         .backgroundColor(CONTENT_COLOR)
                 }
                 .padding(16)
                 .width(this.controllerWidth)
                 .height(this.controllerHeight)
                 .backgroundColor(GESTURE_BACKGROUND)
-                .border({ radius: 12 })
+                .border({ radius: 8 })
             } else if (this.controlType == ControlType.VOLUME) { // action: volume
                 Row() {
-                    Text("Vol").fontColor(CONTENT_COLOR).margin({ right: 10 })
+                    Image($r('app.media.ic_public_sound'))
+                        .height("20%").aspectRatio(1)
+                        .margin({ right: 10 })
                     Progress({ style: ProgressStyle.Capsule, value: this.targetVolume, total: this.maxVolume })
                         .height("10%")
                         .layoutWeight(1)
+                        .color($r('sys.color.ohos_id_color_emphasize'))
                         .backgroundColor(CONTENT_COLOR)
                 }
                 .padding(16)
                 .width(this.controllerWidth)
                 .height(this.controllerHeight)
                 .backgroundColor(GESTURE_BACKGROUND)
-                .border({ radius: 12 })
+                .border({ radius: 8 })
             }
         }
     }
@@ -260,11 +260,19 @@ export struct CcPlayerView {
                 this.onTouchEvent(event)
             }
         })
-        .width(this.w)
-        .height(this.h)
+        .size(this.viewSize)
         .alignContent(Alignment.Center)
         .backgroundColor("#000000")
         .clip(true)
+        .onAreaChange((_, newSize) => {
+            this.w = newSize.width as number
+            this.h = newSize.height as number
+            if (this.w == 0 || this.h == 0) {
+                throw new Error("You must set the width and height when create a instance of CcPlayerView!")
+            }
+            Logger.d(TAG, "The player view size is: " + this.w + " x " + this.h)
+            this.controlEdge = this.w / 5
+        })
     }
 
     private getVideoRatio(): number {
@@ -316,7 +324,7 @@ export struct CcPlayerView {
         this.downY = touchEvent.y
         if (this.downX < this.controlEdge) {
             this.controlType = ControlType.BRIGHTNESS
-            // todo get current brightness
+            // todo get current brightness, no api for current version
             this.startBrightness = this.targetBrightness
         }
         else if (this.downX > this.controlEdge && this.downX < (this.w - this.controlEdge)) {
@@ -326,7 +334,7 @@ export struct CcPlayerView {
             Logger.d(TAG, "down: start duration = " + this.startDuration)
         } else if (this.downX > (this.w - this.controlEdge)) {
             this.controlType = ControlType.VOLUME
-            this.audioManager!.getVolume(audio.AudioVolumeType.MEDIA, (err, cur) => {
+            this.volumeManager!.getVolume(audio.AudioVolumeType.MEDIA, (err, cur) => {
                 if (err) {
                     Logger.e(TAG, "getVolume error = " + JSON.stringify(err))
                 }
@@ -375,7 +383,7 @@ export struct CcPlayerView {
                     } else {
                         this.targetVolume = volumeTemp
                     }
-                    this.audioManager!.setVolume(audio.AudioVolumeType.MEDIA, this.targetVolume)
+                    this.volumeManager!.setVolume(audio.AudioVolumeType.MEDIA, this.targetVolume)
                     Logger.d(TAG, `targetVolume = ${this.targetVolume}`)
                 // callback volume action for custom ui
                     if (this.gestureVolumeAction != null) {

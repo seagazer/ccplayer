@@ -1,6 +1,6 @@
 import { MediaSource } from './MediaSource';
 import { Logger } from '../common/logger';
-import fileIO from '@ohos.fileio'
+import fs from '@ohos.file.fs'
 import common from '@ohos.app.ability.common';
 
 const TAG = "[MediaSourceFactory]"
@@ -17,7 +17,7 @@ export class MediaSourceFactory {
     public static async createFile(filePath: string, title?: string): Promise<MediaSource> {
         let fdPath = 'fd://'
         Logger.i(TAG, "filePath = " + filePath)
-        let fd = await fileIO.open(filePath)
+        let fd = await fs.open(filePath,fs.OpenMode.READ_ONLY)
         let result = fdPath + fd
         Logger.d(TAG, "createFile = " + result)
         return new MediaSource(result, title)
