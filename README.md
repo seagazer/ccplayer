@@ -71,8 +71,7 @@ ohpm install @seagazer/ccplayer
   | 属性 | 类型 | 说明 | 是否必填 |
   | ----------------------- | ------------------------------------------- | ------------------------ | -------- |
   | player | CcPlayer | 媒体播放器 | 是 |
-  | w | number | 组件宽度 | 是 |
-  | h | number | 组件高度 | 是 |
+  | viewSize | SizeOptions | 组件尺寸 | 是 |
   | asRatio | AspectRatio | 视频画面比例 | 是 |
   | autoHideControllerDelay | number | 自动隐藏手势 UI 的延时 | 否 |
   | isSupportGesture | boolean | 是否支持手势操作 | 否 |
@@ -91,9 +90,8 @@ ohpm install @seagazer/ccplayer
   | W_16_9 | 16:9 宽屏 |
   | W_4_3 | 4:3 |
   | W_21_9 | 21:9 宽屏 |
-  | STRETCH | 保持比例填充 |
+  | STRETCH | 保持比例裁切填充 |
   | FILL | 拉伸填充 |
-  | ORIGIN | 原始像素(渲染区域内显示) |
 
 - PlayerState 播放器状态
   | 属性 | 说明 |
@@ -143,10 +141,8 @@ struct PlayerViewPage {
                 // 2.引用CcPlayerView视频播放组件，设置参数，绑定CcPlayer
                 CcPlayerView({
                     player: this.player,
-                    w: 400,
-                    h: 300,
-                    asRatio: $videoRatio,
-                    isSupportGesture: true,
+                    viewSize: {width: "100%", height: "100%"},
+                    asRatio: $videoRatio
                 })
             }
             .width(400)
@@ -166,7 +162,7 @@ struct PlayerViewPage {
 
     private async play() {
         // 3.创建mediaSource
-        let src = MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
+        let src = await MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
         // 4.设置mediaSource
         this.player!.setMediaSource(src, () => {
             // 5.设置成功回调，开始播放
@@ -223,7 +219,7 @@ struct PlayerViewPage {
 
     private async play() {
         // 3.创建mediaSource
-        let src = MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
+        let src = await MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
         // 4.设置mediaSource
         this.player!.setMediaSource(src, () => {
             // 5.设置成功回调，开始播放
@@ -248,7 +244,7 @@ struct PlayerViewPage {
 
     aboutToAppear() {
         // 1.实例化CcPlayer
-        this.player = CcPlayer.create(PlayerType.VIDEO)
+        this.player = CcPlayer.create(PlayerType.AUDIO)
     }
 
     build() {
@@ -266,7 +262,7 @@ struct PlayerViewPage {
 
     private async play() {
         // 2.创建mediaSource
-        let src = MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp3", "test.mp3")
+        let src = await MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp3", "test.mp3")
         // 3.设置mediaSource
         this.player!.setMediaSource(src, () => {
             // 4.设置成功回调，开始播放
