@@ -17,8 +17,8 @@ export class MediaSourceFactory {
     public static async createFile(filePath: string, title?: string): Promise<MediaSource> {
         let fdPath = 'fd://'
         Logger.i(TAG, "filePath = " + filePath)
-        let fd = await fs.open(filePath,fs.OpenMode.READ_ONLY)
-        let result = fdPath + fd
+        let file = await fs.open(filePath, fs.OpenMode.READ_ONLY)
+        let result = fdPath + file.fd
         Logger.d(TAG, "createFile = " + result)
         return new MediaSource(result, title)
     }

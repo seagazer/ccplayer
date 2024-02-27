@@ -31,9 +31,4 @@ export enum AspectRatio {
      * Keep video aspectRatio and fill view size
      */
     FILL,
-
-    /**
-     * Video origin size
-     */
-    ORIGIN
 }

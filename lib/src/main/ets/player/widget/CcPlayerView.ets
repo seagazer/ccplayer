@@ -3,7 +3,7 @@ import brightness from '@ohos.brightness';
 import audio from '@ohos.multimedia.audio';
 import { Logger } from '../common/Logger';
 import { CcPlayer } from '../CcPlayer';
-import { AspectRatio } from '../config/AspectRatio'
+import { AspectRatio } from '../config/AspectRatio';
 
 const TAG = "[CcPlayerView]"
 
@@ -46,22 +46,23 @@ export struct CcPlayerView {
      */
     autoHideControllerDelay = 1500
     /**
-     * Set support gesture action to control or not.
+     * Set support gesture action to control or not, default is true.
      * Attention: the intercept order is: isSupportGesture > isDefaultGestureUI
      */
-    isSupportGesture: boolean = false
+    isSupportGesture: boolean = true
     /**
-     * Set a callback to observe the touch event of this player view.
+     * Set a callback to observe the touch event of this view.
      */
     onTouchCallback?: (event: TouchEvent) => void = () => {
     }
     /**
-     * Set a callback to observe the surface when destroy.
+     * Set a callback to observe the surface state when destroy.
      */
     onSurfaceDestroy?: () => void = () => {
     }
     /**
-     * Set use the default gesture ui or not. If set false, you should define your custom ui by # gestureSeekAction, # gestureBrightnessAction and # gestureVolumeAction.
+     * Set use the default gesture ui or not. If set false, you should define your custom ui by
+     * # gestureSeekAction, # gestureBrightnessAction and # gestureVolumeAction.
      */
     isDefaultGestureUI: boolean = true
     /**
@@ -85,8 +86,8 @@ export struct CcPlayerView {
     gestureVolumeAction?: (volume: number, max: number) => void = () => {
     }
     /*-----------------------------------------------------------------------------------------------*/
-    private w: number = 0
-    private h: number = 0
+    private wSize: number = 0
+    private hSize: number = 0
     private controller = new XComponentController()
     private surfaceId: string = ""
     private videoWidth: number = 0
@@ -120,17 +121,42 @@ export struct CcPlayerView {
         this.videoWidth = width
         this.videoHeight = height
         // if the ratio mode is AUTO, refresh videoRatio when get the video size info.
-        if (this.asRatio == AspectRatio.AUTO) {
+        if (this.asRatio == AspectRatio.AUTO || this.asRatio == AspectRatio.STRETCH) {
             this.onAspectRatioChanged()
         }
     }
     private volumeManager: audio.AudioVolumeGroupManager | null = null
     @State videoRatio: number = -1
     private isUserMoved = false
+    @State surfaceWidth: number = 0
+    @State surfaceHeight: number = 0
 
     private onAspectRatioChanged() {
         this.videoRatio = this.getVideoRatio()
         Logger.i(TAG, "aspectRatioChanged = " + this.videoRatio)
+        this.onMeasureSurface()
+    }
+
+    private onMeasureSurface() {
+        let parentViewRatio = this.wSize / this.hSize
+        if (this.videoRatio < parentViewRatio) {
+            if (this.asRatio == AspectRatio.STRETCH) {
+                this.surfaceWidth = this.wSize
+                this.surfaceHeight = Math.floor(this.hSize / this.videoRatio * parentViewRatio)
+            } else {
+                this.surfaceHeight = this.hSize
+                this.surfaceWidth = Math.floor(this.wSize * this.videoRatio / parentViewRatio)
+            }
+        } else {
+            if (this.asRatio == AspectRatio.STRETCH) {
+                this.surfaceHeight = this.hSize
+                this.surfaceWidth = Math.floor(this.wSize * this.videoRatio / parentViewRatio)
+            } else {
+                this.surfaceWidth = this.wSize
+                this.surfaceHeight = Math.floor(this.hSize / this.videoRatio * parentViewRatio)
+            }
+        }
+        Logger.d(TAG, "measure surface result = " + this.surfaceWidth + " x " + this.surfaceHeight)
     }
 
     onControllerVisibleChanged() {
@@ -139,14 +165,20 @@ export struct CcPlayerView {
         }
     }
 
-    async aboutToAppear() {
+    aboutToAppear() {
         this.player!.addOnPreparedListener(this.preparedListener)
         this.player!.addOnVideoSizeChangedListener(this.videoSizeChangedListener)
+        this.initAudio()
+    }
+
+    private async initAudio() {
         let audioManager = audio.getAudioManager().getVolumeManager()
         this.volumeManager = await audioManager.getVolumeGroupManager(audio.DEFAULT_VOLUME_GROUP_ID)
         this.volumeManager.getVolume(audio.AudioVolumeType.MEDIA, (err, cur) => {
             if (err) {
                 Logger.e(TAG, "getVolume error = " + JSON.stringify(err))
+                this.targetVolume = 0
+                return
             }
             this.targetVolume = cur
             Logger.d(TAG, "current volume = " + this.targetVolume)
@@ -154,6 +186,8 @@ export struct CcPlayerView {
         this.volumeManager.getMaxVolume(audio.AudioVolumeType.MEDIA, (err, max) => {
             if (err) {
                 Logger.e(TAG, "getMaxVolume error = " + JSON.stringify(err))
+                this.maxVolume = 100
+                return
             }
             this.maxVolume = max
             Logger.d(TAG, "max volume = " + this.maxVolume)
@@ -174,6 +208,8 @@ export struct CcPlayerView {
             controller: this.controller,
             type: "surface"
         })
+            .width(this.surfaceWidth)
+            .height(this.surfaceHeight)
             .onLoad(() => {
                 this.surfaceId = this.controller.getXComponentSurfaceId()
                 this.player!.setSurface(this.surfaceId)
@@ -183,7 +219,6 @@ export struct CcPlayerView {
                     this.onSurfaceDestroy()
                 }
             })
-            .aspectRatio(this.videoRatio)
     }
 
     @Builder
@@ -202,10 +237,10 @@ export struct CcPlayerView {
             } else if (this.controlType == ControlType.BRIGHTNESS) { // action: brightness
                 Row() {
                     Image($r('app.media.ic_public_brightness'))
-                        .height("20%").aspectRatio(1)
+                        .height(this.controllerHeight / 2).aspectRatio(1)
                         .margin({ right: 10 })
                     Progress({ style: ProgressStyle.Capsule, value: this.targetBrightness, total: 255 })
-                        .height("10%")
+                        .height(this.controllerHeight / 6)
                         .layoutWeight(1)
                         .color($r('sys.color.ohos_id_color_emphasize'))
                         .backgroundColor(CONTENT_COLOR)
@@ -218,10 +253,10 @@ export struct CcPlayerView {
             } else if (this.controlType == ControlType.VOLUME) { // action: volume
                 Row() {
                     Image($r('app.media.ic_public_sound'))
-                        .height("20%").aspectRatio(1)
+                        .height(this.controllerHeight / 2).aspectRatio(1)
                         .margin({ right: 10 })
                     Progress({ style: ProgressStyle.Capsule, value: this.targetVolume, total: this.maxVolume })
-                        .height("10%")
+                        .height(this.controllerHeight / 6)
                         .layoutWeight(1)
                         .color($r('sys.color.ohos_id_color_emphasize'))
                         .backgroundColor(CONTENT_COLOR)
@@ -239,7 +274,7 @@ export struct CcPlayerView {
         Stack() {
             // surface view
             this.RenderSurface()
-            if (this.isDefaultGestureUI) {
+            if (this.isDefaultGestureUI && this.isSupportGesture) {
                 // gesture control
                 this.GestureController()
             }
@@ -261,18 +296,21 @@ export struct CcPlayerView {
             }
         })
         .size(this.viewSize)
+        .onAreaChange((_, newSize) => {
+            this.wSize = newSize.width as number
+            this.hSize = newSize.height as number
+            this.surfaceWidth = this.wSize
+            this.surfaceHeight = this.hSize
+            if (this.wSize == 0 || this.hSize == 0) {
+                Logger.e(TAG, "The viewSize of this view is not set available!")
+                throw new Error("You must set the width and height when create a instance of CcPlayerView!")
+            }
+            Logger.d(TAG, "The player view size is: " + this.wSize + " x " + this.hSize)
+            this.controlEdge = this.wSize / 5
+        })
         .alignContent(Alignment.Center)
         .backgroundColor("#000000")
         .clip(true)
-        .onAreaChange((_, newSize) => {
-            this.w = newSize.width as number
-            this.h = newSize.height as number
-            if (this.w == 0 || this.h == 0) {
-                throw new Error("You must set the width and height when create a instance of CcPlayerView!")
-            }
-            Logger.d(TAG, "The player view size is: " + this.w + " x " + this.h)
-            this.controlEdge = this.w / 5
-        })
     }
 
     private getVideoRatio(): number {
@@ -284,11 +322,8 @@ export struct CcPlayerView {
             case AspectRatio.W_21_9:
                 return 2.33 // 21:9
             case AspectRatio.FILL:
-                return this.w / this.h
+                return this.wSize / this.hSize
             case AspectRatio.STRETCH:
-        // TODO 保持比例填充
-            case AspectRatio.ORIGIN:
-        // TODO 原始像素
             case AspectRatio.AUTO:
             default:
                 return this.videoWidth / this.videoHeight
@@ -323,16 +358,19 @@ export struct CcPlayerView {
         this.downX = touchEvent.x
         this.downY = touchEvent.y
         if (this.downX < this.controlEdge) {
+            // brightness
             this.controlType = ControlType.BRIGHTNESS
             // todo get current brightness, no api for current version
             this.startBrightness = this.targetBrightness
         }
-        else if (this.downX > this.controlEdge && this.downX < (this.w - this.controlEdge)) {
+        else if (this.downX > this.controlEdge && this.downX < (this.wSize - this.controlEdge)) {
+            // progress
             this.controlType = ControlType.PROGRESS
             this.targetDuration = this.player!.getCurrentPosition()
             this.startDuration = this.targetDuration
             Logger.d(TAG, "down: start duration = " + this.startDuration)
-        } else if (this.downX > (this.w - this.controlEdge)) {
+        } else if (this.downX > (this.wSize - this.controlEdge)) {
+            // volume
             this.controlType = ControlType.VOLUME
             this.volumeManager!.getVolume(audio.AudioVolumeType.MEDIA, (err, cur) => {
                 if (err) {
@@ -340,7 +378,7 @@ export struct CcPlayerView {
                 }
                 Logger.d(TAG, "down: start volume = " + this.targetVolume)
                 this.targetVolume = cur
-                this.startBrightness = this.targetBrightness
+                this.startVolume = this.targetVolume
             })
         }
     }
@@ -355,7 +393,7 @@ export struct CcPlayerView {
             // handle seek progress
                 case ControlType.PROGRESS:
                     let moveDistance = Math.floor(dx)
-                    let seekPercent = moveDistance / (this.w - 2 * this.controlEdge)
+                    let seekPercent = moveDistance / (this.wSize - 2 * this.controlEdge)
                     let seekValue = Math.floor(this.totalDuration / this.seekMoveSpeed * seekPercent)
                     let seekTemp = this.startDuration + seekValue
                     if (seekTemp >= this.totalDuration) {
@@ -373,7 +411,7 @@ export struct CcPlayerView {
             // handle set volume
                 case ControlType.VOLUME:
                     let moveDistance3 = -Math.floor(dy)
-                    let volumePercent = moveDistance3 / (this.h - 2 * this.controlEdge)
+                    let volumePercent = moveDistance3 / (this.hSize - 2 * this.controlEdge)
                     let volumeValue = Math.floor(this.maxVolume * volumePercent)
                     let volumeTemp = this.startVolume + volumeValue
                     if (volumeTemp >= this.maxVolume) {
@@ -393,7 +431,7 @@ export struct CcPlayerView {
             // handle set brightness
                 case ControlType.BRIGHTNESS:
                     let moveDistance2 = -Math.floor(dy)
-                    let brightnessPercent = moveDistance2 / (this.h - 2 * this.controlEdge)
+                    let brightnessPercent = moveDistance2 / (this.hSize - 2 * this.controlEdge)
                     let brightnessValue = Math.floor(255 * brightnessPercent)
                     let brightnessTemp = this.startBrightness + brightnessValue
                     if (brightnessTemp >= 255) {
