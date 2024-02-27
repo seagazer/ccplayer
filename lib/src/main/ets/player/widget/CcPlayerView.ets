@@ -312,6 +312,7 @@ export struct CcPlayerView {
         })
         .alignContent(Alignment.Center)
         .backgroundColor("#000000")
+        .clip(true)
     }
 
     private getVideoRatio(): number {
@@ -422,7 +423,11 @@ export struct CcPlayerView {
                     } else {
                         this.targetVolume = volumeTemp
                     }
-                    this.volumeManager!.setVolume(audio.AudioVolumeType.MEDIA, this.targetVolume)
+                    try {
+                        this.volumeManager!.setVolume(audio.AudioVolumeType.MEDIA, this.targetVolume)
+                    } catch (err) {
+                        Logger.e(TAG, "set volume error = " + JSON.stringify(err))
+                    }
                     Logger.d(TAG, `targetVolume = ${this.targetVolume}`)
                 // callback volume action for custom ui
                     if (this.gestureVolumeAction != null) {
@@ -443,7 +448,11 @@ export struct CcPlayerView {
                         this.targetBrightness = brightnessTemp
                     }
                     Logger.d(TAG, `targetBrightness = ${this.targetBrightness}`)
-                    brightness.setValue(this.targetBrightness)
+                    try {
+                        brightness.setValue(this.targetBrightness)
+                    } catch (err) {
+                        Logger.e(TAG, "set brightness error = " + JSON.stringify(err))
+                    }
                 // callback brightness action for custom ui
                     if (this.gestureBrightnessAction != null) {
                         this.gestureBrightnessAction(this.targetBrightness, 255)
