@@ -107,10 +107,8 @@ struct CustomPlayerViewPage {
             Stack() {
                 CcPlayerView({
                     player: this.player,
-                    w: 480,
-                    h: 300,
+                    viewSize: { width: "100%", height: "100%" },
                     asRatio: $videoRatio,
-                    isSupportGesture: true,
                     isDefaultGestureUI: false, //custom ui
                     gestureUIListener: this.onGestureUIVisible, //custom ui
                     gestureSeekAction: this.seekUIAction, //custom ui

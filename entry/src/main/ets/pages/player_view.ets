@@ -6,8 +6,6 @@ import {
     PlayerState,
     PlayerType
 } from '@seagazer/ccplayer';
-import display from '@ohos.display';
-import { Logger } from '../Logger';
 
 @Extend(Button)
 function btnStyle() {
@@ -26,13 +24,8 @@ struct PlayerViewPage {
     @State videoRatio: number = AspectRatio.AUTO
     @State showTitleBar: boolean = false
     private player: CcPlayer | null = null
-    private w = 0
-    private h = 0
 
     aboutToAppear() {
-        this.w = display.getDefaultDisplaySync().width
-        this.h = this.w / 16 * 9
-        Logger.d(TAG, "size = " + this.w + "x" + this.h)
         if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
             this.player = CcPlayer.create(PlayerType.VIDEO)
         }
@@ -44,22 +37,15 @@ struct PlayerViewPage {
 
     build() {
         Column() {
-            // render surface view
-            Stack().width(this.w)
-                .height(this.h).backgroundColor(Color.Red)
-
             Stack() {
                 CcPlayerView({
                     player: this.player,
-                    w: this.w,
-                    h: this.h,
-                    asRatio: $videoRatio,
-                    isSupportGesture: true,
+                    viewSize: { width: "100%", height: "100%" },
+                    asRatio: $videoRatio
                 })
             }
-            .width(this.w)
-            .height(this.h)
-            .clip(true)
+            .width(360)
+            .height(240)
 
             // video ratio settings
             Scroll() {
@@ -98,6 +84,13 @@ struct PlayerViewPage {
                         }).checked(false)
                         Text("fill").fontSize(18)
                     }.margin({ left: 10 })
+
+                    Row() {
+                        Radio({ value: "stretch", group: "ratio" }).width(32).height(32).onChange(() => {
+                            this.videoRatio = AspectRatio.STRETCH
+                        }).checked(false)
+                        Text("stretch").fontSize(18)
+                    }.margin({ left: 10, right: 10 })
                 }.margin({ top: 50 })
             }.scrollable(ScrollDirection.Horizontal)
 

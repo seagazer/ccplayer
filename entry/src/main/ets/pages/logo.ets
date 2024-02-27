@@ -12,8 +12,8 @@ struct Logo {
     private logoName = ["c", "c", "p", "l", "a", "y", "e", "r",]
     @State translations: Array<number> = [0, 0, 0, 0, 0, 0, 0, 0,]
     @State alphas: Array<number> = [0, 0, 0, 0, 0, 0, 0, 0,]
-    private duration = 400
-    private delay = 200
+    private duration = 300
+    private delay = 150
     @State pageScale: number = 1
     @State pageAlpha: number = 1
 
@@ -33,9 +33,9 @@ struct Logo {
             let h = newSize.height as number
             let translateValue = 0
             if (w > h) {
-                translateValue = -(newSize.height as number) / 3
+                translateValue = -(newSize.height as number) / 4
             } else {
-                translateValue = -(newSize.height as number) / 6
+                translateValue = -(newSize.height as number) / 8
             }
             for (let i = 0; i < this.translations.length; i++) {
                 this.translations[i] = translateValue
