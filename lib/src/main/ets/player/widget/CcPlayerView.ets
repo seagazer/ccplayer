@@ -120,6 +120,7 @@ export struct CcPlayerView {
     private videoSizeChangedListener = (width: number, height: number) => {
         this.videoWidth = width
         this.videoHeight = height
+        Logger.d(TAG, "video size is " + width + " * " + height)
         // if the ratio mode is AUTO, refresh videoRatio when get the video size info.
         if (this.asRatio == AspectRatio.AUTO || this.asRatio == AspectRatio.STRETCH) {
             this.onAspectRatioChanged()
@@ -133,7 +134,7 @@ export struct CcPlayerView {
 
     private onAspectRatioChanged() {
         this.videoRatio = this.getVideoRatio()
-        Logger.i(TAG, "aspectRatioChanged = " + this.videoRatio)
+        Logger.i(TAG, "aspectRatioChanged = " + this.videoRatio + ", type = " + this.asRatio)
         this.onMeasureSurface()
     }
 
@@ -142,7 +143,7 @@ export struct CcPlayerView {
         if (this.videoRatio < parentViewRatio) {
             if (this.asRatio == AspectRatio.STRETCH) {
                 this.surfaceWidth = this.wSize
-                this.surfaceHeight = Math.floor(this.hSize / this.videoRatio * parentViewRatio)
+                this.surfaceHeight = Math.floor(this.wSize * this.videoRatio)
             } else {
                 this.surfaceHeight = this.hSize
                 this.surfaceWidth = Math.floor(this.wSize * this.videoRatio / parentViewRatio)
@@ -150,7 +151,7 @@ export struct CcPlayerView {
         } else {
             if (this.asRatio == AspectRatio.STRETCH) {
                 this.surfaceHeight = this.hSize
-                this.surfaceWidth = Math.floor(this.wSize * this.videoRatio / parentViewRatio)
+                this.surfaceWidth = Math.floor(this.hSize * this.videoRatio)
             } else {
                 this.surfaceWidth = this.wSize
                 this.surfaceHeight = Math.floor(this.hSize / this.videoRatio * parentViewRatio)
@@ -307,10 +308,10 @@ export struct CcPlayerView {
             }
             Logger.d(TAG, "The player view size is: " + this.wSize + " x " + this.hSize)
             this.controlEdge = this.wSize / 5
+            this.onAspectRatioChanged()
         })
         .alignContent(Alignment.Center)
         .backgroundColor("#000000")
-        .clip(true)
     }
 
     private getVideoRatio(): number {
