@@ -16,7 +16,7 @@
   "description": "A media player for OpenHarmony.",
   "main": "index.ets",
   "repository": "https://github.com/seagazer/ccplayer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "homepage": "https://github.com/seagazer",
   "dependencies": {}
 }
