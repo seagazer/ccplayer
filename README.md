@@ -21,9 +21,10 @@ ohpm install @seagazer/ccplayer
 
 ## 注意事项
 
-- 本库使用到系统接口（例如亮度控制），为了保证功能完整性，应用请使用系统签名（system_core 级别）。
+- 本库使用到系统接口（例如亮度控制），为了保证功能完整性，应用请使用系统签名（system_core 级别）和 全量 Sdk。
 - 如何修改签名等级可参考官方的应用 APL 等级说明：
   https://docs.openharmony.cn/pages/v4.0/zh-cn/application-dev/security/accesstoken-overview.md/
+- 从 1.0.3 版本开始，后续迭代均基于 4.0+进行优化和能力扩展，如果需要兼容请使用 1.0.2 及以下的低版本。
 
 ## 接口能力
 
