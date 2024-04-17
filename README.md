@@ -2,16 +2,13 @@
 
 ## 简介
 
-CcPlayer 是一个为 OpenHarmony 设计，支持音视频媒体的轻量级播放器应用框架，最低兼容至 OpenHarmony3.1。
+CcPlayer 是一个为 OpenHarmony 设计，支持音视频媒体的轻量级播放器应用框架，最低兼容至 OpenHarmony3.1(3.1 请使用 v1.0.2 以下版本)。
 
 - 支持音频/视频播放
-- 视频播放组件，支持视频宽高比设置，手势控制音量、亮度、播放进度
+- 视频播放组件，支持视频宽高比设置
+- 支持手势控制音量、亮度、播放进度
 - 支持自定义手势控制 UI
-- OpenHarmony 3.1 和 3.2 自适应使用 AvPlayer 或 AudioPlayer 或 VideoPlayer
-
-## 状态机
-
-![](./img/lifecycle.png)
+- OpenHarmony 3.1 和 3.2+ 自适应使用 AvPlayer 或 AudioPlayer 或 VideoPlayer
 
 ## 依赖方式
 
@@ -69,6 +66,7 @@ ohpm install @seagazer/ccplayer
   |removeOnRenderFirstFrameListener| listener: () => void| void| 移除首帧画面渲染监听|
 
 - CcPlayerView 视频播放组件
+  注意：组件使用了系统接口，需要系统签名和 fullSdk 支持。如果不具备条件，可以使用 CcPlayer 结合 XComponent 进行视频播放，参考下面场景示例。
   | 属性 | 类型 | 说明 | 是否必填 |
   | ----------------------- | ------------------------------------------- | ------------------------ | -------- |
   | player | CcPlayer | 媒体播放器 | 是 |
