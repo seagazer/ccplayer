@@ -3,9 +3,9 @@ import { Logger } from './common/Logger';
 import { IPlayer } from './interface/IPlayer'
 import { IRender } from './interface/IRender'
 import { OhosAvPlayer } from './core/OhosAvPlayer';
-import { OhosVideoPlayer } from './core/OhosVideoPlayer';
-import { OhosAudioPlayer } from './core/OhosAudioPlayer';
-import { getApiVersion } from './common/Extentions';
+// import { OhosVideoPlayer } from './core/OhosVideoPlayer';
+// import { OhosAudioPlayer } from './core/OhosAudioPlayer';
+// import { getApiVersion } from './common/Extentions';
 import { MediaSource } from './data/MediaSource';
 import { PlayerState } from './config/PlayerState';
 import { PlayerType } from './config/Playertype'
@@ -100,7 +100,7 @@ export class CcPlayer implements IPlayer, IRender {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_PREPARED || state == PlayerState.STATE_STARTED ||
             state == PlayerState.STATE_PAUSED || state == PlayerState.STATE_COMPLETED) {
-            await this.player.seekTo(position)
+            this.player.seekTo(position)
         }
     }
 
