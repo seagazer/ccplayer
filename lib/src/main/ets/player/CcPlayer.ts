@@ -17,32 +17,34 @@ const TAG = "[CcPlayer]"
  */
 export class CcPlayer implements IPlayer, IRender {
     private mediaSource: MediaSource = null
-    private player: OhosAvPlayer | OhosAudioPlayer | OhosVideoPlayer
+    // private player: OhosAvPlayer | OhosAudioPlayer | OhosVideoPlayer
+    private player: OhosAvPlayer
 
     private constructor(type: PlayerType) {
-        let apiVersion = getApiVersion()
-        if (apiVersion >= 9) {
-            this.player = OhosAvPlayer.create(type) as OhosAvPlayer
-            Logger.i(TAG, "Api version is 9+, create AvPlayer")
-        } else if (apiVersion >= 8) {
-            if (type == PlayerType.AUDIO) {
-                Logger.i(TAG, "Api version is 8+, create AudioPlayer")
-                this.player = OhosAudioPlayer.create() as OhosAudioPlayer
-            } else {
-                Logger.i(TAG, "Api version is 8+, create VideoPlayer")
-                this.player = OhosVideoPlayer.create() as OhosVideoPlayer
-            }
-        } else {
-            Logger.e(TAG, "Os version is 2.x, not support!")
-            throw new Error("This library only support for OpenHarmony 3.1+")
-        }
+        // let apiVersion = getApiVersion()
+        // if (apiVersion >= 9) {
+        // only support AvPlayer after v1.0.3
+        this.player = OhosAvPlayer.create(type) as OhosAvPlayer
+        Logger.i(TAG, "Api version is 9+, create AvPlayer")
+        // } else if (apiVersion >= 8) {
+        //     if (type == PlayerType.AUDIO) {
+        //         Logger.i(TAG, "Api version is 8+, create AudioPlayer")
+        //         this.player = OhosAudioPlayer.create() as OhosAudioPlayer
+        //     } else {
+        //         Logger.i(TAG, "Api version is 8+, create VideoPlayer")
+        //         this.player = OhosVideoPlayer.create() as OhosVideoPlayer
+        //     }
+        // } else {
+        //     Logger.e(TAG, "Os version is 2.x, not support!")
+        //     throw new Error("This library only support for OpenHarmony 3.1+")
+        // }
     }
 
     /**
      * Create a instance of CcPlayer.
      * @param type The type of player. [PlayerType.AUDIO, PlayerType.VIDEO]
      */
-    public static create(type: PlayerType) {
+    public static create(type: PlayerType = PlayerType.VIDEO) {
         return new CcPlayer(type)
     }
 

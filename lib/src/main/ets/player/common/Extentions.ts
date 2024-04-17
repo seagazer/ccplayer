@@ -17,11 +17,11 @@ export function timeToString(time: number): string {
     return result
 }
 
-// @ts-ignore
-import systemParameter from '@ohos.systemParameter'
+// import systemParameter from '@ohos.systemParameter'
 
-export function getApiVersion(): number {
-    // const.ohos.apiversion = 10
-    let version = systemParameter.getSync(" const.ohos.apiversion", "9")
-    return Number.parseFloat(version)
-}
+// @deprecated since v1.0.4
+// export function getApiVersion(): number {
+//     // const.ohos.apiversion = 10
+//     let version = systemParameter.getSync(" const.ohos.apiversion", "9")
+//     return Number.parseFloat(version)
+// }

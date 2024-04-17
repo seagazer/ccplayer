@@ -9,6 +9,8 @@ const TAG = "[OhosVideoPlayer]"
 /**
  * Video player impl for OpenHarmony 3.0+.
  * The process is: reset -> setMediaSource -> setSurface -> prepare -> play
+ *
+ * @deprecated since v1.0.4
  */
 export class OhosVideoPlayer extends BasePlayer {
     private player: media.VideoPlayer = null

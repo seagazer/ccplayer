@@ -151,17 +151,17 @@ export class BasePlayer implements IPlayer, IRender {
 
     async pause() {
         // do action in sub class
-        this.stopProgressTimer()
+        //this.stopProgressTimer()
     }
 
     async stop() {
         // do action in sub class
-        this.stopProgressTimer()
+        //this.stopProgressTimer()
     }
 
     async reset() {
         // do action in sub class
-        this.stopProgressTimer()
+        //this.stopProgressTimer()
     }
 
     seekTo(position: number) {
@@ -180,6 +180,9 @@ export class BasePlayer implements IPlayer, IRender {
         // do action in sub class
     }
 
+    /**
+     * @deprecated since v1.0.4
+     */
     protected startProgressTimer() {
         if (this.progressChangedListeners.length > 0) {
             this.stopProgressTimer()
@@ -196,6 +199,9 @@ export class BasePlayer implements IPlayer, IRender {
         }
     }
 
+    /**
+     * @deprecated since v1.0.4
+     */
     protected stopProgressTimer() {
         if (this.progressTimer != -1) {
             Logger.i(TAG, ">> stop progress timer")
@@ -206,7 +212,7 @@ export class BasePlayer implements IPlayer, IRender {
 
     release() {
         Logger.d(TAG, "release")
-        this.stopProgressTimer()
+        //this.stopProgressTimer()
         this.preparedListeners = []
         this.completedListeners = []
         this.progressChangedListeners = []

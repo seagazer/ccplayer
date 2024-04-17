@@ -2,6 +2,8 @@ export { CcPlayer } from './src/main/ets/player/CcPlayer'
 
 export { CcPlayerView } from './src/main/ets/player/widget/CcPlayerView'
 
+export { PlayerView } from './src/main/ets/player/widget/PlayerView'
+
 export { PlayerType } from './src/main/ets/player/config/PlayerType'
 
 export { PlayerState } from './src/main/ets/player/config/PlayerState'

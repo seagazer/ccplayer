@@ -8,6 +8,8 @@ const TAG = "[OhosAudioPlayer]"
 
 /**
  * Audio player impl for OpenHarmony 3.0+.
+ *
+ * @deprecated since v1.0.4
  */
 export class OhosAudioPlayer extends BasePlayer {
     private player: media.AudioPlayer = null
