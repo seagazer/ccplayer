@@ -10,6 +10,10 @@ CcPlayer 是一个为 OpenHarmony 设计，支持音视频媒体的轻量级播�
 - 支持自定义手势控制 UI
 - OpenHarmony 3.1 和 3.2+ 自适应使用 AvPlayer 或 AudioPlayer 或 VideoPlayer
 
+## 状态机
+
+![](./img/lifecycle.png)
+
 ## 依赖方式
 
 ```ts
