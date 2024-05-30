@@ -3,9 +3,6 @@ import { Logger } from './common/Logger';
 import { IPlayer } from './interface/IPlayer'
 import { IRender } from './interface/IRender'
 import { OhosAvPlayer } from './core/OhosAvPlayer';
-// import { OhosVideoPlayer } from './core/OhosVideoPlayer';
-// import { OhosAudioPlayer } from './core/OhosAudioPlayer';
-// import { getApiVersion } from './common/Extentions';
 import { MediaSource } from './data/MediaSource';
 import { PlayerState } from './config/PlayerState';
 import { PlayerType } from './config/Playertype'
@@ -16,28 +13,12 @@ const TAG = "[CcPlayer]"
  * The player for audio or video.
  */
 export class CcPlayer implements IPlayer, IRender {
-    private mediaSource: MediaSource = null
-    // private player: OhosAvPlayer | OhosAudioPlayer | OhosVideoPlayer
+    private mediaSource: MediaSource | null = null
     private player: OhosAvPlayer
 
     private constructor(type: PlayerType) {
-        // let apiVersion = getApiVersion()
-        // if (apiVersion >= 9) {
-        // only support AvPlayer after v1.0.3
         this.player = OhosAvPlayer.create(type) as OhosAvPlayer
         Logger.i(TAG, "Api version is 9+, create AvPlayer")
-        // } else if (apiVersion >= 8) {
-        //     if (type == PlayerType.AUDIO) {
-        //         Logger.i(TAG, "Api version is 8+, create AudioPlayer")
-        //         this.player = OhosAudioPlayer.create() as OhosAudioPlayer
-        //     } else {
-        //         Logger.i(TAG, "Api version is 8+, create VideoPlayer")
-        //         this.player = OhosVideoPlayer.create() as OhosVideoPlayer
-        //     }
-        // } else {
-        //     Logger.e(TAG, "Os version is 2.x, not support!")
-        //     throw new Error("This library only support for OpenHarmony 3.1+")
-        // }
     }
 
     /**
@@ -227,7 +208,7 @@ export class CcPlayer implements IPlayer, IRender {
      * Get the playing media source.
      * @return MediaSource The media source which is playing.
      */
-    public getMediaSource(): MediaSource {
+    public getMediaSource(): MediaSource | null {
         return this.mediaSource
     }
 

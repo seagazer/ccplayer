@@ -1,3 +1,10 @@
+# 1.0.5
+
+- 适配4.1
+- CcPlayerView组件增加onSurfaceCreated接口
+- 修复部分场景因为创建播放器实例接口执行太慢导致播放时序错乱问题
+- 开放PlayerView供next版本使用
+
 # 1.0.4
 
 - 废弃3.2及以下接口

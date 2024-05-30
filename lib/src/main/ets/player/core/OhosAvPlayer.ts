@@ -1,9 +1,9 @@
-import { PlayerType } from '../config/PlayerType';
-import { MediaSource } from '../data/MediaSource';
-import { Logger } from '../common/Logger';
-import { PlayerState } from '../config/PlayerState';
-import media from '@ohos.multimedia.media';
-import { BasePlayer } from './BasePlayer';
+import { PlayerType } from "../config/PlayerType";
+import { MediaSource } from "../data/MediaSource";
+import { Logger } from "../common/Logger";
+import { PlayerState } from "../config/PlayerState";
+import media from "@ohos.multimedia.media";
+import { BasePlayer } from "./BasePlayer";
 
 
 const TAG = "[OhosAvPlayer]"
@@ -19,6 +19,8 @@ export class OhosAvPlayer extends BasePlayer {
     private onReady: () => void = null
     private playType: PlayerType
     private isLoop = false
+    private isLazyInitForPlay = false
+    private currentMediaSource: MediaSource | null = null
 
     private constructor(type: PlayerType) {
         super()
@@ -29,9 +31,16 @@ export class OhosAvPlayer extends BasePlayer {
                 this.changePlayerState(PlayerState.STATE_NOT_INIT)
                 return
             }
+            Logger.d(TAG, "create player success")
             this.player = player
             this.changePlayerState(PlayerState.STATE_IDLE)
             this.init()
+            if (this.isLazyInitForPlay && this.currentMediaSource) {
+                Logger.w(TAG, "the player is call start before instance is created, need to play now, url = "
+                    + JSON.stringify(this.currentMediaSource))
+                this.player.url = this.currentMediaSource.source
+                this.isLazyInitForPlay = false
+            }
         })
     }
 
@@ -40,7 +49,7 @@ export class OhosAvPlayer extends BasePlayer {
     }
 
     init() {
-        this.player.on('stateChange', (newState, _) => {
+        this.player.on("stateChange", (newState, _) => {
             switch (newState) {
                 case "idle":
                     Logger.d(TAG, "System callback: idle")
@@ -128,7 +137,7 @@ export class OhosAvPlayer extends BasePlayer {
                 })
             }
         })
-        this.player.on('startRenderFrame', () => {
+        this.player.on("startRenderFrame", () => {
             Logger.d(TAG, "System callback: render first frame ")
             if (this.renderFirstFrameListeners.length > 0) {
                 this.renderFirstFrameListeners.forEach((callback) => {
@@ -136,7 +145,7 @@ export class OhosAvPlayer extends BasePlayer {
                 })
             }
         })
-        this.player.on('videoSizeChange', (width: number, height: number) => {
+        this.player.on("videoSizeChange", (width: number, height: number) => {
             Logger.d(TAG, "System callback: videoSizeChanged: " + width + " x " + height)
             if (this.videoSizeChangedListeners.length > 0) {
                 this.videoSizeChangedListeners.forEach((callback) => {
@@ -176,7 +185,9 @@ export class OhosAvPlayer extends BasePlayer {
         Logger.d(TAG, "setMediaSource = " + JSON.stringify(mediaSource))
         this.onReady = onReady
         if (this.isPlayed) {
-            await this.player.reset()
+            if (this.player != null) {
+                await this.player.reset()
+            }
             this.setMediaSourceInner(mediaSource)
         } else {
             this.setMediaSourceInner(mediaSource)
@@ -190,7 +201,13 @@ export class OhosAvPlayer extends BasePlayer {
         }
         Logger.d(TAG, "set url = " + mediaSource.source)
         // the action set surface must between set url and prepare.
-        this.player.url = mediaSource.source
+        if (this.player != null) {
+            this.player.url = mediaSource.source
+        } else {
+            Logger.w(TAG, "the player is not created finish, mark lazy to play when the player instance is created!")
+            this.currentMediaSource = mediaSource
+            this.isLazyInitForPlay = true
+        }
     }
 
     async start() {

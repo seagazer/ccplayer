@@ -53,13 +53,15 @@ export struct CcPlayerView {
     /**
      * Set a callback to observe the touch event of this view.
      */
-    onTouchCallback?: (event: TouchEvent) => void = () => {
-    }
+    onTouchCallback: ((event: TouchEvent) => void) | null = null
     /**
-     * Set a callback to observe the surface state when destroy.
+     * Set a callback to observe the surface state when onLoad.
      */
-    onSurfaceDestroy?: () => void = () => {
-    }
+    onSurfaceCreated: (() => void) | null = null
+    /**
+     * Set a callback to observe the surface state when onDestroy.
+     */
+    onSurfaceDestroy: (() => void) | null = null
     /**
      * Set use the default gesture ui or not. If set false, you should define your custom ui by
      * # gestureSeekAction, # gestureBrightnessAction and # gestureVolumeAction.
@@ -68,23 +70,19 @@ export struct CcPlayerView {
     /**
      * Set a listener to handle the gesture ui visible.
      */
-    gestureUIListener?: (isVisible: boolean) => void = () => {
-    }
+    gestureUIListener: ((isVisible: boolean) => void) | null = null
     /**
      * If the isDefaultGestureUI is false, you should set this callback to handle custom gesture ui for seek action.
      */
-    gestureSeekAction?: (seekPosition: number, max: number) => void = () => {
-    }
+    gestureSeekAction: ((seekPosition: number, max: number) => void) | null = null
     /**
      * If the isDefaultGestureUI is false, you should set this callback to handle custom gesture ui for brightness action.
      */
-    gestureBrightnessAction?: (brightness: number, max: number) => void = () => {
-    }
+    gestureBrightnessAction: ((brightness: number, max: number) => void) | null = null
     /**
      * If the isDefaultGestureUI is false, you should set this callback to handle custom gesture ui for volume action.
      */
-    gestureVolumeAction?: (volume: number, max: number) => void = () => {
-    }
+    gestureVolumeAction: ((volume: number, max: number) => void) | null = null
     /*-----------------------------------------------------------------------------------------------*/
     private wSize: number = 0
     private hSize: number = 0
@@ -214,6 +212,9 @@ export struct CcPlayerView {
             .onLoad(() => {
                 this.surfaceId = this.controller.getXComponentSurfaceId()
                 this.player!.setSurface(this.surfaceId)
+                if (this.onSurfaceCreated != null) {
+                    this.onSurfaceCreated()
+                }
             })
             .onDestroy(() => {
                 if (this.onSurfaceDestroy != null) {

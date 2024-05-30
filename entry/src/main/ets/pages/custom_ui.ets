@@ -27,7 +27,10 @@ struct CustomPlayerViewPage {
     private player: CcPlayer | null = null
     private prepareListener = () => {
         Logger.d(TAG, "prepared")
-        this.videoTitle = this.player!.getMediaSource().title
+        let mediaSource = this.player!.getMediaSource()
+        if (mediaSource != null) {
+            this.videoTitle = mediaSource.title
+        }
     }
 
     aboutToAppear() {
