@@ -1,4 +1,4 @@
-import router from '@system.router';
+import router from '@ohos.router';
 
 @Extend(Text)
 function logoStyle() {
@@ -51,8 +51,8 @@ struct Logo {
                     })
             }
             setTimeout(() => {
-                router.push({
-                    uri: "pages/main"
+                router.pushUrl({
+                    url: "pages/main"
                 })
             }, 500 + this.duration + this.delay * this.translations.length)
         })

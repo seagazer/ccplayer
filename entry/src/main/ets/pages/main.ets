@@ -1,4 +1,4 @@
-import router from '@system.router';
+import router from '@ohos.router';
 
 
 @Extend(Button) function btnStyle() {
