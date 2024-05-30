@@ -75,12 +75,28 @@ ohpm install @seagazer/ccplayer
   | autoHideControllerDelay | number | 自动隐藏手势 UI 的延时 | 否 |
   | isSupportGesture | boolean | 是否支持手势操作 | 否 |
   | onTouchCallback | (event: TouchEvent) => void | 触摸事件回调 | 否 |
+  | onSurfaceCreated | () => void | Surface 创建事件回调 | 否 |
   | onSurfaceDestroy | () => void | Surface 销毁事件回调 | 否 |
   | isDefaultGestureUI | boolean | 是否使用内置默认手势 UI | 否 |
   | gestureUIListener | (isVisible: boolean) => void | 手势 UI 显示/隐藏回调 | 否 |
   | gestureSeekAction | (seekPosition: number, max: number) => void | 手势 seek 进度回调 | 否 |
   | gestureBrightnessAction | (brightness: number, max: number) => void | 手势 Brightness 进度回调 | 否 |
   | gestureVolumeAction | (volume: number, max: number) => void | 手势 Volume 进度回调 | 否 |
+
+- PlayerView 视频播放组件，可用于HarmonyOS Next，在CcPlayerView基础上裁剪了手势控制音量和亮度(系统API，Next未开放该接口)
+  | 属性 | 类型 | 说明 | 是否必填 |
+  | ----------------------- | ------------------------------------------- | ------------------------ | -------- |
+  | player | CcPlayer | 媒体播放器 | 是 |
+  | viewSize | SizeOptions | 组件尺寸 | 是 |
+  | asRatio | AspectRatio | 视频画面比例 | 是 |
+  | autoHideControllerDelay | number | 自动隐藏手势 UI 的延时 | 否 |
+  | isSupportGesture | boolean | 是否支持手势操作 | 否 |
+  | onTouchCallback | (event: TouchEvent) => void | 触摸事件回调 | 否 |
+  | onSurfaceCreated | () => void | Surface 创建事件回调 | 否 |
+  | onSurfaceDestroy | () => void | Surface 销毁事件回调 | 否 |
+  | isDefaultGestureUI | boolean | 是否使用内置默认手势 UI | 否 |
+  | gestureUIListener | (isVisible: boolean) => void | 手势 UI 显示/隐藏回调 | 否 |
+  | gestureSeekAction | (seekPosition: number, max: number) => void | 手势 seek 进度回调 | 否 |
 
 - AspectRatio 视频画面比例
   | 属性 | 说明 |
