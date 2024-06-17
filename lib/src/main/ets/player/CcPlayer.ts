@@ -17,7 +17,6 @@ export class CcPlayer implements IPlayer, IRender {
 
     private constructor() {
         this.player = OhosAvPlayer.create() as OhosAvPlayer
-        Logger.i(TAG, "Api version is 9+, create AvPlayer")
     }
 
     /**

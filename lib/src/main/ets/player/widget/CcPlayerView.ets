@@ -205,7 +205,7 @@ export struct CcPlayerView {
         XComponent({
             id: "ccplayer",
             controller: this.controller,
-            type: "surface"
+            type: XComponentType.SURFACE
         })
             .width(this.surfaceWidth)
             .height(this.surfaceHeight)
