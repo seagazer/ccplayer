@@ -5,7 +5,6 @@ import { IRender } from './interface/IRender'
 import { OhosAvPlayer } from './core/OhosAvPlayer';
 import { MediaSource } from './data/MediaSource';
 import { PlayerState } from './config/PlayerState';
-import { PlayerType } from './config/Playertype'
 
 const TAG = "[CcPlayer]"
 
@@ -16,17 +15,16 @@ export class CcPlayer implements IPlayer, IRender {
     private mediaSource: MediaSource | null = null
     private player: OhosAvPlayer
 
-    private constructor(type: PlayerType) {
-        this.player = OhosAvPlayer.create(type) as OhosAvPlayer
+    private constructor() {
+        this.player = OhosAvPlayer.create() as OhosAvPlayer
         Logger.i(TAG, "Api version is 9+, create AvPlayer")
     }
 
     /**
      * Create a instance of CcPlayer.
-     * @param type The type of player. [PlayerType.AUDIO, PlayerType.VIDEO]
      */
-    public static create(type: PlayerType = PlayerType.VIDEO) {
-        return new CcPlayer(type)
+    public static create() {
+        return new CcPlayer()
     }
 
     async start() {

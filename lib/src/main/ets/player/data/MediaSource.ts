@@ -1,17 +1,20 @@
 import fs from '@ohos.file.fs'
+import media from '@ohos.multimedia.media'
 
 /**
  * The data source for media.
- * @param title The display name of media.
- * @param source The filePath, assetsPath or url for media.
  */
 export class MediaSource {
     source: string
-    title: string
+    httpHeaders: Record<string, string> | null = null
+    isHttp: boolean = false
+    strategy: media.PlaybackStrategy | null = null
 
-    constructor(source: string, title?: string) {
+    constructor(source: string, httpHeaders: Record<string, string> = null, strategy: media.PlaybackStrategy = null) {
         this.source = source
-        this.title = title
+        this.httpHeaders = httpHeaders
+        this.strategy = strategy
+        this.isHttp = source.startsWith("http")
     }
 
     release() {

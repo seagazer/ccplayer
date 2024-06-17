@@ -3,8 +3,6 @@ import {
     CcPlayer,
     CcPlayerView,
     MediaSourceFactory,
-    PlayerState,
-    PlayerType
 } from '@seagazer/ccplayer';
 
 @Extend(Button)
@@ -26,9 +24,7 @@ struct PlayerViewPage {
     private player: CcPlayer | null = null
 
     aboutToAppear() {
-        if (this.player == null || this.player.getPlayerState() == PlayerState.STATE_NOT_INIT) {
-            this.player = CcPlayer.create(PlayerType.VIDEO)
-        }
+        this.player = CcPlayer.create()
     }
 
     aboutToDisappear() {
@@ -100,7 +96,7 @@ struct PlayerViewPage {
                     .btnStyle()
                     .onClick(() => {
                         // if bind surface, set data source to play
-                        MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
+                        MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4")
                             .then((data) => {
                                 this.player!.setMediaSource(data, () => {
                                     this.player!.start()

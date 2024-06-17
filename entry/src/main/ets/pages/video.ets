@@ -1,5 +1,5 @@
 import { timeToString } from '../Extentions';
-import { CcPlayer, MediaSourceFactory, PlayerState, PlayerType } from '@seagazer/ccplayer';
+import { CcPlayer, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer';
 import { Logger } from '../Logger';
 
 @Extend(Button)
@@ -11,7 +11,7 @@ function btnStyle() {
     .margin({ left: 30 })
 }
 
-const TAG = "VideoPage"
+const TAG = "[VideoPage]"
 
 @Entry
 @Component
@@ -32,9 +32,9 @@ struct VideoPage {
     }
     private errorListener = (code: number, message: string) => {
         Logger.d(TAG, "err =  " + code + ", " + message)
+        this.currentState = 'error'
     }
     private progressChangedListener = (duration: number) => {
-        Logger.d(TAG, "progress = " + duration + ", isSeeking = " + this.isSeeking)
         if (!this.isSeeking) {
             this.pos = duration
         }
@@ -50,9 +50,7 @@ struct VideoPage {
     }
 
     aboutToAppear() {
-        if (this.player == null || this.player!.getPlayerState() == PlayerState.STATE_NOT_INIT) {
-            this.player = CcPlayer.create(PlayerType.VIDEO)
-        }
+        this.player = CcPlayer.create()
         this.player!.addOnPreparedListener(this.prepareListener)
             .addOnProgressChangedListener(this.progressChangedListener)
             .addOnCompletionListener(this.completedListener)
@@ -75,7 +73,7 @@ struct VideoPage {
         Column() {
             // render surface
             XComponent({
-                type: "surface",
+                type: XComponentType.SURFACE,
                 id: "video",
                 controller: this.controller
             }).onLoad(() => {
@@ -97,6 +95,7 @@ struct VideoPage {
                 .fontColor(Color.Black)
                 .onChange((value) => {
                     this.filePath = value
+                    this.filePath = 'http://tv-vod.nbs.cn/vod_storage/vol1/2024/06/06/66615d8489137/66615d848913767849.mp4'
                     Logger.d(TAG, "input = " + this.filePath)
                 })
                 .margin({ top: 50 })
@@ -110,7 +109,9 @@ struct VideoPage {
                             Logger.d(TAG, "filePath = " + this.filePath)
                             if (this.filePath.length > 0) {
                                 if (this.filePath.startsWith("http")) {
-                                    this.player!.setMediaSource(MediaSourceFactory.createUrl(this.filePath), () => {
+                                    this.player!.setMediaSource(MediaSourceFactory.createUrl(this.filePath, {
+                                        "Referer": ""
+                                    }), () => {
                                         this.player!.start()
                                     })
                                 } else {
@@ -121,7 +122,7 @@ struct VideoPage {
                                     })
                                 }
                             } else {
-                                MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
+                                MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4")
                                     .then((data) => {
                                         this.player!.setMediaSource(data, () => {
                                             this.player!.start()

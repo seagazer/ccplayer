@@ -1,7 +1,6 @@
 import { timeToString } from '../Extentions';
 import { MediaSourceFactory } from '@seagazer/ccplayer';
 import { CcPlayer } from '@seagazer/ccplayer';
-import { PlayerType } from '@seagazer/ccplayer';
 import { PlayerState } from '@seagazer/ccplayer';
 import { Logger } from '../Logger';
 
@@ -15,7 +14,7 @@ function btnStyle() {
     .margin({ left: 30 })
 }
 
-const TAG = "AudioPage"
+const TAG = "[AudioPage]"
 
 @Entry
 @Component
@@ -51,9 +50,7 @@ struct AudioPage {
     }
 
     aboutToAppear() {
-        if (this.player == null || this.player!.getPlayerState() == PlayerState.STATE_NOT_INIT) {
-            this.player = CcPlayer.create(PlayerType.AUDIO)
-        }
+        this.player = CcPlayer.create()
         this.player!.addOnPreparedListener(this.prepareListener)
             .addOnProgressChangedListener(this.progressChangedListener)
             .addOnCompletionListener(this.completedListener)
@@ -97,7 +94,7 @@ struct AudioPage {
                                 })
                             }
                         } else {
-                            MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp3", "test.mp3")
+                            MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp3")
                                 .then((data) => {
                                     this.player!.setMediaSource(data, () => {
                                         this.player!.start()

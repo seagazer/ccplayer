@@ -1,9 +1,9 @@
-import { PlayerType } from "../config/PlayerType";
 import { MediaSource } from "../data/MediaSource";
 import { Logger } from "../common/Logger";
 import { PlayerState } from "../config/PlayerState";
 import media from "@ohos.multimedia.media";
 import { BasePlayer } from "./BasePlayer";
+import json from '@ohos.util.json';
 
 
 const TAG = "[OhosAvPlayer]"
@@ -17,14 +17,12 @@ export class OhosAvPlayer extends BasePlayer {
     private lastSurfaceId: string = null
     private isPlayed = false
     private onReady: () => void = null
-    private playType: PlayerType
     private isLoop = false
     private isLazyInitForPlay = false
     private currentMediaSource: MediaSource | null = null
 
-    private constructor(type: PlayerType) {
+    private constructor() {
         super()
-        this.playType = type
         media.createAVPlayer((err, player) => {
             if (err) {
                 Logger.e(TAG, "init video player error = " + JSON.stringify(err))
@@ -38,14 +36,14 @@ export class OhosAvPlayer extends BasePlayer {
             if (this.isLazyInitForPlay && this.currentMediaSource) {
                 Logger.w(TAG, "the player is call start before instance is created, need to play now, url = "
                     + JSON.stringify(this.currentMediaSource))
-                this.player.url = this.currentMediaSource.source
+                this.setMediaSourceInner(this.currentMediaSource)
                 this.isLazyInitForPlay = false
             }
         })
     }
 
-    static create(type: PlayerType): OhosAvPlayer {
-        return new OhosAvPlayer(type)
+    static create(): OhosAvPlayer {
+        return new OhosAvPlayer()
     }
 
     init() {
@@ -57,8 +55,8 @@ export class OhosAvPlayer extends BasePlayer {
                     this.isPrepared = false
                     break
                 case "initialized": // src ready -> initialized
-                    Logger.d(TAG, "System callback: datasource ready")
-                    if (this.playType == PlayerType.VIDEO && this.curSurfaceId != this.lastSurfaceId) {
+                    Logger.d(TAG, "System callback: initialized")
+                    if (this.curSurfaceId != null && this.curSurfaceId != this.lastSurfaceId) {
                         Logger.d(TAG, ">> set surface: " + this.curSurfaceId)
                         this.player.surfaceId = this.curSurfaceId
                         this.lastSurfaceId = this.curSurfaceId
@@ -92,7 +90,7 @@ export class OhosAvPlayer extends BasePlayer {
                     this.changePlayerState(PlayerState.STATE_STARTED)
                     break
                 case "paused":
-                    Logger.d(TAG, "System callback: pause")
+                    Logger.d(TAG, "System callback: paused")
                     this.player.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_PAUSED)
                     break
@@ -195,19 +193,37 @@ export class OhosAvPlayer extends BasePlayer {
     }
 
     private setMediaSourceInner(mediaSource: MediaSource) {
-        if (this.playType == PlayerType.VIDEO && this.curSurfaceId == null) {
-            Logger.e(TAG, "You must call setSurfaceId(surfaceId) before call this function.")
-            return
-        }
         Logger.d(TAG, "set url = " + mediaSource.source)
-        // the action set surface must between set url and prepare.
-        if (this.player != null) {
-            this.player.url = mediaSource.source
+        if (mediaSource.isHttp && mediaSource.httpHeaders != null) {
+            // impl set media source for api12+
+            this.setMediaSourceInner12Impl(mediaSource)
         } else {
-            Logger.w(TAG, "the player is not created finish, mark lazy to play when the player instance is created!")
-            this.currentMediaSource = mediaSource
-            this.isLazyInitForPlay = true
+            // the action set surface must between set url and prepare.
+            if (this.player != null) {
+                this.player.url = mediaSource.source
+            } else {
+                Logger.w(TAG, "the player is not created finish, mark lazy to play when the player instance is created!")
+                this.currentMediaSource = mediaSource
+                this.isLazyInitForPlay = true
+            }
         }
+    }
+
+    private setMediaSourceInner12Impl(mediaSource: MediaSource) {
+        Logger.d(TAG, "set http source = " + mediaSource.source + ", header = " + JSON.stringify(mediaSource.httpHeaders))
+        const source = media.createMediaSourceWithUrl(mediaSource.source, mediaSource.httpHeaders)
+        let playStrategy: media.PlaybackStrategy
+        if (mediaSource.strategy != null) {
+            playStrategy = mediaSource.strategy
+        } else {
+            playStrategy = {
+                preferredWidth: 1920,
+                preferredHeight: 1080,
+                preferredBufferDuration: 3,
+                preferredHdr: false
+            }
+        }
+        this.player.setMediaSource(source, playStrategy)
     }
 
     async start() {
@@ -277,10 +293,6 @@ export class OhosAvPlayer extends BasePlayer {
     }
 
     setSurface(surfaceId: string) {
-        if (this.playType != PlayerType.VIDEO) {
-            Logger.w(TAG, "Current player type is AUDIO, not support to bind a surface")
-            return
-        }
         this.curSurfaceId = surfaceId
     }
 
