@@ -4,13 +4,13 @@
       {
         "name": "default",
         "material": {
-          "certpath": "C:\\Users\\seagazer\\.ohos\\config\\openharmony\\auto_ohos_default_ccplayer_com.seagazer.player.cer",
-          "storePassword": "0000001BE4259CEAB1F5A0AE4FABD91F9A6BA854D3CE25B2A76477610D1FE5A43E55498662B6C6FA3C3968",
+          "certpath": "C:/Users/seagazer/.ohos/config/openharmony/default_ccplayer_rFlZOhYb8ppMl9V5450JeqDL6bb_a_UUXztXv7Sc_M4=.cer",
+          "storePassword": "0000001BA4897AD2099893B223A8F26292A04F461F2649D77FE91A3CEA512629105027B492AE46FEDB6C44",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B698061D809D83A8E3A02683899191C4868907D5F2F3331AC3F6A5AFFB7A03EAA13A6D3A1EAAD57",
-          "profile": "C:\\Users\\seagazer\\.ohos\\config\\openharmony\\auto_ohos_default_ccplayer_com.seagazer.player.p7b",
+          "keyPassword": "0000001BDE7BA1D7F5818E24B34F8428CCEDE84EE0C77AA5FF0979F4410262AFCA5765208C1BF7EEA8C76C",
+          "profile": "C:/Users/seagazer/.ohos/config/openharmony/default_ccplayer_rFlZOhYb8ppMl9V5450JeqDL6bb_a_UUXztXv7Sc_M4=.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "C:\\Users\\seagazer\\.ohos\\config\\openharmony\\auto_ohos_default_ccplayer_com.seagazer.player.p12"
+          "storeFile": "C:/Users/seagazer/.ohos/config/openharmony/default_ccplayer_rFlZOhYb8ppMl9V5450JeqDL6bb_a_UUXztXv7Sc_M4=.p12"
         }
       }
     ],

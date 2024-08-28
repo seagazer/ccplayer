@@ -61,8 +61,7 @@ export class OhosAvPlayer extends BasePlayer {
                         this.player.surfaceId = this.curSurfaceId
                         this.lastSurfaceId = this.curSurfaceId
                     }
-                    this.onReady?.()
-                    this.onReady = null
+                    this.player.prepare()
                     break
                 case "prepared":
                     Logger.d(TAG, "System callback: prepared")
@@ -74,14 +73,8 @@ export class OhosAvPlayer extends BasePlayer {
                             callback()
                         })
                     }
-                // Must seek in [prepared] state before call play! This is different with old api like AudioPlayer and VideoPlayer.
-                // The old api must seek in [started] state after call play!
-                    if (this.startPosition != -1) { // start with seek action
-                        Logger.d(TAG, "start to " + this.startPosition)
-                        this.seekTo(this.startPosition)
-                    } else {
-                        this.player.play()
-                    }
+                    this.onReady?.()
+                    this.onReady = null
                     break
                 case "playing":
                     Logger.d(TAG, "System callback: playing")
@@ -182,17 +175,13 @@ export class OhosAvPlayer extends BasePlayer {
     async setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
         Logger.d(TAG, "setMediaSource = " + JSON.stringify(mediaSource))
         this.onReady = onReady
-        if (this.isPlayed) {
-            if (this.player != null) {
-                await this.player.reset()
-            }
-            this.setMediaSourceInner(mediaSource)
-        } else {
-            this.setMediaSourceInner(mediaSource)
+        if (this.isPlayed && this.player) {
+            await this.player.reset()
         }
+        await this.setMediaSourceInner(mediaSource)
     }
 
-    private setMediaSourceInner(mediaSource: MediaSource) {
+    private async setMediaSourceInner(mediaSource: MediaSource) {
         Logger.d(TAG, "set url = " + mediaSource.source)
         if (mediaSource.isHttp && mediaSource.httpHeaders != null) {
             // impl set media source for api12+
@@ -209,7 +198,7 @@ export class OhosAvPlayer extends BasePlayer {
         }
     }
 
-    private setMediaSourceInner12Impl(mediaSource: MediaSource) {
+    private async setMediaSourceInner12Impl(mediaSource: MediaSource) {
         Logger.d(TAG, "set http source = " + mediaSource.source + ", header = " + JSON.stringify(mediaSource.httpHeaders))
         const source = media.createMediaSourceWithUrl(mediaSource.source, mediaSource.httpHeaders)
         let playStrategy: media.PlaybackStrategy
@@ -223,16 +212,18 @@ export class OhosAvPlayer extends BasePlayer {
                 preferredHdr: false
             }
         }
-        this.player.setMediaSource(source, playStrategy)
+        await this.player.setMediaSource(source, playStrategy)
     }
 
     async start() {
         Logger.d(TAG, ">> start, isPrepared = " + this.isPrepared)
-        if (this.isPrepared == false) {
-            await this.player.prepare()
+        if (this.startPosition != -1) { // start with seek action
+            Logger.d(TAG, "start to " + this.startPosition)
+            this.seekTo(this.startPosition)
         } else {
-            await this.player.play()
+            this.player.play()
         }
+
     }
 
     async pause() {

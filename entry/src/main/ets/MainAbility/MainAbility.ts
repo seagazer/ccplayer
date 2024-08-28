@@ -1,11 +1,8 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
+import window from '@ohos.window';
 
 export default class MainAbility extends UIAbility {
-    onCreate(want, launchParam) {
+    onWindowStageCreate(windowStage: window.WindowStage): void {
+        windowStage.loadContent("pages/logo")
     }
-
-    onWindowStageCreate(windowStage) {
-        windowStage.setUIContent(this.context, "pages/logo", null)
-    }
-
 }

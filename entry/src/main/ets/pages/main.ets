@@ -1,7 +1,8 @@
 import router from '@ohos.router';
 
 
-@Extend(Button) function btnStyle() {
+@Extend(Button)
+function btnStyle() {
     .fontSize(30)
     .width(300)
     .height(60)
@@ -13,14 +14,8 @@ struct Main {
     @State pageScale: number = 0
     @State pageAlpha: number = 0
 
-    pageTransition() {
-        PageTransitionEnter({ duration: 500 }).onEnter((type: RouteType, progress: number) => {
-            this.pageScale = progress
-            this.pageAlpha = progress
-            if (progress == 1) {
-                router.clear()
-            }
-        })
+    aboutToAppear(): void {
+        router.clear()
     }
 
     build() {
@@ -44,7 +39,5 @@ struct Main {
         .width("100%")
         .height("100%")
         .justifyContent(FlexAlign.Center)
-        .scale({ x: this.pageScale, y: this.pageScale })
-        .opacity(this.pageAlpha)
     }
 }

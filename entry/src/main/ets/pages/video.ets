@@ -95,7 +95,7 @@ struct VideoPage {
                 .fontColor(Color.Black)
                 .onChange((value) => {
                     this.filePath = value
-                    this.filePath = 'http://tv-vod.nbs.cn/vod_storage/vol1/2024/06/06/66615d8489137/66615d848913767849.mp4'
+                    // this.filePath = 'http://tv-vod.nbs.cn/vod_storage/vol1/2024/06/06/66615d8489137/66615d848913767849.mp4'
                     Logger.d(TAG, "input = " + this.filePath)
                 })
                 .margin({ top: 50 })
@@ -109,9 +109,7 @@ struct VideoPage {
                             Logger.d(TAG, "filePath = " + this.filePath)
                             if (this.filePath.length > 0) {
                                 if (this.filePath.startsWith("http")) {
-                                    this.player!.setMediaSource(MediaSourceFactory.createUrl(this.filePath, {
-                                        "Referer": ""
-                                    }), () => {
+                                    this.player!.setMediaSource(MediaSourceFactory.createUrl(this.filePath), () => {
                                         this.player!.start()
                                     })
                                 } else {

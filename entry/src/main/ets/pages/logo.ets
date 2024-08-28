@@ -57,11 +57,4 @@ struct Logo {
             }, 500 + this.duration + this.delay * this.translations.length)
         })
     }
-
-    pageTransition() {
-        PageTransitionExit({ duration: 500 }).onExit((type: RouteType, progress: number) => {
-            this.pageScale = 1 - progress
-            this.pageAlpha = 1 - progress
-        })
-    }
 }
