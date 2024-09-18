@@ -1,6 +1,6 @@
 import media from '@ohos.multimedia.media';
 import { MediaSource } from '../data/MediaSource';
-import { PlayerState } from '../config/PlayerState'
+import { PlayerState } from '../config/PlayerState';
 
 
 /**
@@ -10,58 +10,64 @@ export interface IPlayer {
     /**
      * Start play or resume play.
      */
-    start()
+    start(): void
 
     /**
      * Start to play with the begin position.
      * @param position The begin position.
      */
-    startTo(position: number)
+    startTo(position: number): void
 
     /**
      * Pause play.
      */
-    pause()
+    pause(): void
 
     /**
      * Stop play.
      */
-    stop()
+    stop(): void
 
     /**
      * Reset the player, the state reset to IDLE.
      */
-    reset()
+    reset(): void
 
     /**
      * Destroy the player and release the resource.
      */
-    release()
+    release(): void
 
     /**
      * Seek to the position.
      * @param position Duration to be seek.
      */
-    seekTo(position: number)
+    seekTo(position: number): void
 
     /**
      * Set the mediaSource.
-     * @param mediaSource The mediaSource, use MediaSourceFactory to create a mediaSource.
+     * @param mediaSource The mediaSource {@link MediaSource}, use MediaSourceFactory to create a mediaSource.
      * @param onReady The callback when video is bind surface and set src success, null for audio player.
      */
-    setMediaSource(mediaSource: MediaSource, onReady?: () => void)
+    setMediaSource(mediaSource: MediaSource, onReady?: () => void): void
+
+    /**
+     * Get current mediaSource.
+     * @returns The mediaSource of current playing, null if not play.{@link MediaSource}
+     */
+    getMediaSource(): MediaSource | undefined
 
     /**
      * Set loop mode.
      * @param isLoop Loop or not.
      */
-    setLooper(isLoop: boolean)
+    setLooper(isLoop: boolean): void
 
     /**
      * Set the volume.
      * @param vol The volume of media player.
      */
-    setVolume(vol: number)
+    setVolume(vol: number): void
 
     /**
      * Add a listener to observe the prepared state.
@@ -186,8 +192,38 @@ export interface IPlayer {
     getPlayerState(): PlayerState
 
     /**
-     * Get the instance of system player, the instance is media.AudioPlayer or media.VideoPlayer.
+     * Get the instance of system player.
      * @return The instance of system player.
      */
-    getSystemPlayer(): media.AVPlayer | media.VideoPlayer | media.AudioPlayer
+    getSystemPlayer(): media.AVPlayer
+
+    /**
+     * Set a surface to render picture for video player.
+     * @param surfaceId The surface of XComponent to be bind the media player.
+     */
+    setSurface(surfaceId: string): void
+
+    /**
+     * Add a listener to observe the video size changed of player.
+     * @param listener The listener to observe the video size changed of player.
+     */
+    addOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer
+
+    /**
+     * Remove a listener to observe the video size changed of player.
+     * @param listener The listener to observe the video size changed of player.
+     */
+    removeOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer
+
+    /**
+     * Add a listener to observe the timer for first frame of video.
+     * @param listener The listener to observe the timer for first frame of video.
+     */
+    addOnRenderFirstFrameListener(listener: () => void): IPlayer
+
+    /**
+     * Remove a listener to observe the timer for first frame of video.
+     * @param listener The listener to observe the timer for first frame of video.
+     */
+    removeOnRenderFirstFrameListener(listener: () => void): IPlayer
 }

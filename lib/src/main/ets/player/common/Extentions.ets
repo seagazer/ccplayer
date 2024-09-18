@@ -16,12 +16,3 @@ export function timeToString(time: number): string {
     let result = hour != 0 ? `${hour}:${resultMinute}:${resultSecond}` : `${resultMinute}:${resultSecond}`
     return result
 }
-
-// import systemParameter from '@ohos.systemParameter'
-
-// @deprecated since v1.0.4
-// export function getApiVersion(): number {
-//     // const.ohos.apiversion = 10
-//     let version = systemParameter.getSync(" const.ohos.apiversion", "9")
-//     return Number.parseFloat(version)
-// }

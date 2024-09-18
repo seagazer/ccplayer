@@ -1,80 +1,68 @@
 import media from '@ohos.multimedia.media';
-import { Logger } from './common/Logger';
-import { IPlayer } from './interface/IPlayer'
-import { IRender } from './interface/IRender'
+import { IPlayer } from './interface/IPlayer';
 import { OhosAvPlayer } from './core/OhosAvPlayer';
 import { MediaSource } from './data/MediaSource';
 import { PlayerState } from './config/PlayerState';
 
-const TAG = "[CcPlayer]"
-
 /**
  * The player for audio or video.
  */
-export class CcPlayer implements IPlayer, IRender {
-    private mediaSource: MediaSource | null = null
-    private player: OhosAvPlayer
+export class CcPlayer implements IPlayer {
+    private player: IPlayer = OhosAvPlayer.create()
 
-    private constructor() {
-        this.player = OhosAvPlayer.create() as OhosAvPlayer
+    public setPlayer(player: IPlayer) {
+        this.player = this.player
     }
 
-    /**
-     * Create a instance of CcPlayer.
-     */
-    public static create() {
-        return new CcPlayer()
-    }
-
-    async start() {
+    start() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_STARTED) {
             return
         }
-        await this.player.start()
+        this.player.start()
     }
 
-    async startTo(position: number) {
+    startTo(position: number) {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_STARTED) {
             return
         }
-        await this.player.startTo(position)
+        this.player.startTo(position)
     }
 
-    async pause() {
+    pause() {
         let state = this.getPlayerState()
         if (state != PlayerState.STATE_STARTED) {
             return
         }
-        await this.player.pause()
+        this.player.pause()
     }
 
-    async stop() {
+    stop() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_STOPPED) {
             return
         }
-        await this.player.stop()
+        this.player.stop()
     }
 
-    async reset() {
+    reset() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_IDLE) {
             return
         }
-        await this.player.reset()
+        this.player.reset()
     }
 
-    async release() {
+    release() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_NOT_INIT) {
             return
         }
-        await this.player.release()
+        this.player.release()
     }
 
-    async seekTo(position: number) {
+    seekTo(position: number) {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_PREPARED || state == PlayerState.STATE_STARTED ||
             state == PlayerState.STATE_PAUSED || state == PlayerState.STATE_COMPLETED) {
@@ -83,7 +71,6 @@ export class CcPlayer implements IPlayer, IRender {
     }
 
     setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
-        this.mediaSource = mediaSource
         this.player.setMediaSource(mediaSource, onReady)
     }
 
@@ -93,6 +80,34 @@ export class CcPlayer implements IPlayer, IRender {
 
     setVolume(vol: number) {
         this.player.setVolume(vol)
+    }
+
+    isPlaying(): boolean {
+        return this.player.isPlaying()
+    }
+
+    getDuration(): number {
+        return this.player.getDuration()
+    }
+
+    getCurrentPosition(): number {
+        return this.player.getCurrentPosition()
+    }
+
+    getPlayerState(): PlayerState {
+        return this.player.getPlayerState()
+    }
+
+    setSurface(surfaceId: string) {
+        this.player.setSurface(surfaceId)
+    }
+
+    getMediaSource(): MediaSource | undefined {
+        return this.player.getMediaSource()
+    }
+
+    getSystemPlayer(): media.AVPlayer {
+        return this.player.getSystemPlayer()
     }
 
     addOnPreparedListener(listener: () => void): IPlayer {
@@ -165,51 +180,23 @@ export class CcPlayer implements IPlayer, IRender {
         return this
     }
 
-    addOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
+    addOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer {
         this.player.addOnVideoSizeChangedListener(listener)
+        return this
     }
 
-    removeOnVideoSizeChangedListener(listener: (newWidth, newHeight) => void) {
+    removeOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer {
         this.player.removeOnVideoSizeChangedListener(listener)
+        return this
     }
 
-    addOnRenderFirstFrameListener(listener: () => void) {
+    addOnRenderFirstFrameListener(listener: () => void): IPlayer {
         this.player.addOnRenderFirstFrameListener(listener)
+        return this
     }
 
-    removeOnRenderFirstFrameListener(listener: () => void) {
+    removeOnRenderFirstFrameListener(listener: () => void): IPlayer {
         this.player.removeOnRenderFirstFrameListener(listener)
-    }
-
-    isPlaying(): boolean {
-        return this.player.isPlaying()
-    }
-
-    getDuration(): number {
-        return this.player.getDuration()
-    }
-
-    getCurrentPosition(): number {
-        return this.player.getCurrentPosition()
-    }
-
-    getPlayerState(): PlayerState {
-        return this.player.getPlayerState()
-    }
-
-    setSurface(surfaceId: string) {
-        this.player.setSurface(surfaceId)
-    }
-
-    /**
-     * Get the playing media source.
-     * @return MediaSource The media source which is playing.
-     */
-    public getMediaSource(): MediaSource | null {
-        return this.mediaSource
-    }
-
-    getSystemPlayer(): media.AVPlayer | media.AudioPlayer | media.VideoPlayer {
-        return this.player.getSystemPlayer()
+        return this
     }
 }
