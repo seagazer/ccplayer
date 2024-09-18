@@ -1,6 +1,6 @@
 import media from '@ohos.multimedia.media';
 import { IPlayer } from './interface/IPlayer';
-import { OhosAvPlayer } from './core/OhosAvPlayer';
+import { AvPlayerImpl } from './core/AvPlayerImpl';
 import { MediaSource } from './data/MediaSource';
 import { PlayerState } from './config/PlayerState';
 import { MediaLogger } from './common/MediaLogger';
@@ -11,7 +11,7 @@ const TAG = '[CcPlayer]'
  * The player for audio or video.
  */
 export class CcPlayer implements IPlayer {
-    private player: IPlayer = OhosAvPlayer.create()
+    private player: IPlayer = AvPlayerImpl.create()
 
     public setPlayer(player: IPlayer) {
         this.player = player

@@ -11,7 +11,7 @@ const TAG = "[OhosAvPlayer]"
 /**
  * A player impl include audio and video for OpenHarmony 4.0+.
  */
-export class OhosAvPlayer implements IPlayer {
+export class AvPlayerImpl implements IPlayer {
     private player?: media.AVPlayer = undefined
     private mediaSource?: MediaSource = undefined
     private curSurfaceId?: string = undefined
@@ -54,7 +54,7 @@ export class OhosAvPlayer implements IPlayer {
     }
 
     static create(): IPlayer {
-        return new OhosAvPlayer()
+        return new AvPlayerImpl()
     }
 
     init() {

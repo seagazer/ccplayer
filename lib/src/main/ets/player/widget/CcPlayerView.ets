@@ -36,6 +36,10 @@ export struct CcPlayerView {
      */
     controlEdgePercent = 0.2
     /**
+     * The type of XComponent to render video.
+     */
+    renderType: XComponentType = XComponentType.TEXTURE
+    /**
      * Set the video ratio, the value is from # AspectRatio.
      */
     @Link @Watch("onAspectRatioChanged") asRatio: AspectRatio
@@ -157,47 +161,25 @@ export struct CcPlayerView {
         this.player!.removeOnVideoSizeChangedListener(this.videoSizeChangedListener)
     }
 
-    @Builder
-    RenderSurface() {
-        XComponent({
-            id: "ccplayer",
-            controller: this.controller,
-            type: XComponentType.SURFACE
-        })
-            .width(this.surfaceWidth)
-            .height(this.surfaceHeight)
-            .onLoad(() => {
-                this.surfaceId = this.controller.getXComponentSurfaceId()
-                MediaLogger.d(TAG, "set surface= " + this.surfaceId)
-                this.player!.setSurface(this.surfaceId)
-                this.onSurfaceCreated && this.onSurfaceCreated()
-            })
-            .onDestroy(() => {
-                this.onSurfaceDestroy && this.onSurfaceDestroy()
-            })
-    }
-
-    @Builder
-    GestureController() {
-        if (this.isShowController) {
-            if (this.controlType == ControlType.PROGRESS) { // action: seek progress
-                Text(timeToString(this.targetDuration) + " / " + timeToString(this.totalDuration))
-                    .fontColor(CONTENT_COLOR)
-                    .fontSize(22)
-                    .width(this.controllerWidth)
-                    .height(this.controllerHeight)
-                    .padding(16)
-                    .textAlign(TextAlign.Center)
-                    .backgroundColor(GESTURE_BACKGROUND)
-                    .border({ radius: 8 })
-            }
-        }
-    }
-
     build() {
         Stack() {
             // surface view
-            this.RenderSurface()
+            XComponent({
+                id: "ccplayer",
+                controller: this.controller,
+                type: this.renderType
+            })
+                .width(this.surfaceWidth)
+                .height(this.surfaceHeight)
+                .onLoad(() => {
+                    this.surfaceId = this.controller.getXComponentSurfaceId()
+                    MediaLogger.d(TAG, "set surface= " + this.surfaceId)
+                    this.player!.setSurface(this.surfaceId)
+                    this.onSurfaceCreated && this.onSurfaceCreated()
+                })
+                .onDestroy(() => {
+                    this.onSurfaceDestroy && this.onSurfaceDestroy()
+                })
         }
         .gesture(TapGesture({ count: 2 }).onAction(() => {
             // the player is prepared
@@ -315,7 +297,7 @@ export struct CcPlayerView {
                     } else {
                         this.targetDuration = seekTemp
                     }
-                    // callback seek action for custom ui
+                // callback seek action for custom ui
                     this.gestureSeekAction && this.gestureSeekAction(this.targetDuration, this.totalDuration)
                     break
             // handle set volume
@@ -323,7 +305,7 @@ export struct CcPlayerView {
                     let moveDistance3 = -Math.floor(dy)
                     let volumePercent = moveDistance3 / (this.hSize - 2 * this.controlEdge)
                     MediaLogger.d(TAG, `volumePercent = ${volumePercent}`)
-                    // callback volume action for custom ui
+                // callback volume action for custom ui
                     this.gestureVolumeAction && this.gestureVolumeAction(volumePercent)
                     break
             // handle set brightness
@@ -350,10 +332,10 @@ export struct CcPlayerView {
                 MediaLogger.d(TAG, `seek targetDuration = ${this.targetDuration}`)
                 break
             case ControlType.BRIGHTNESS:
-                // do nothing, the brightness is changed when touch move
+            // do nothing, the brightness is changed when touch move
                 break
             case ControlType.VOLUME:
-                // do nothing, the volume is changed when touch move
+            // do nothing, the volume is changed when touch move
                 break
         }
         this.downX = -1
