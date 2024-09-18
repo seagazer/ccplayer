@@ -35,6 +35,7 @@ struct Home {
         this.currentPosition = position
     }
     private seekListener = (position: number) => {
+        Logger.w(TAG, "sssss--------" + position)
         this.currentPosition = position
         this.isSeeking = false
     }
@@ -82,19 +83,26 @@ struct Home {
                     Text(timeToString(this.currentPosition))
                     Slider({
                         value: this.currentPosition,
-                        max: this.totalDuration
+                        max: this.totalDuration,
+                        min: 0,
+                        step: 1000,
                     }).layoutWeight(1)
+                        .sliderInteractionMode(SliderInteraction.SLIDE_AND_CLICK)
+                            // .padding({ left: 8, right: 8 })
                         .onChange((value, mode) => {
                             if (mode == SliderChangeMode.End || mode == SliderChangeMode.Click) {
+                                Logger.w(TAG, "--------" + mode + ", " + value)
                                 this.isSeeking = true
-                                this.player.seekTo(value)
+                                let position = Math.ceil(value)
+                                this.player.seekTo(position)
+                                this.currentPosition = position
                             }
                         })
                     Text(timeToString(this.totalDuration))
                 }.width("100%")
 
                 Row() {
-                    Button('setSource')
+                    Button('setSrc')
                         .onClick(() => {
                             this.isLoading = true
                             this.player.reset()
