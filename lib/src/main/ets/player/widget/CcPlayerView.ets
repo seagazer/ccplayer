@@ -36,10 +36,6 @@ export struct CcPlayerView {
      */
     controlEdgePercent = 0.2
     /**
-     * The size of player view.
-     */
-    @Prop viewSize: SizeOptions
-    /**
      * Set the video ratio, the value is from # AspectRatio.
      */
     @Link @Watch("onAspectRatioChanged") asRatio: AspectRatio
@@ -219,12 +215,12 @@ export struct CcPlayerView {
                 this.onTouchEvent(event)
             }
         })
-        .size(this.viewSize)
+        .width('100%')
+        .height('100%')
         .onAreaChange((_, newSize) => {
             this.wSize = newSize.width as number
             this.hSize = newSize.height as number
             if (this.wSize == 0 || this.hSize == 0) {
-                MediaLogger.e(TAG, "The viewSize of this view is not set available!")
                 throw new Error("You must set the width and height when create a instance of CcPlayerView!")
             }
             this.surfaceWidth = this.wSize

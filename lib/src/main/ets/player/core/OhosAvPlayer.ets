@@ -53,7 +53,7 @@ export class OhosAvPlayer implements IPlayer {
         })
     }
 
-    static create(): OhosAvPlayer {
+    static create(): IPlayer {
         return new OhosAvPlayer()
     }
 
@@ -200,7 +200,7 @@ export class OhosAvPlayer implements IPlayer {
     }
 
     async setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
-        MediaLogger.d(TAG, "setMediaSource = " + JSON.stringify(mediaSource))
+        MediaLogger.d(TAG, ">> setMediaSource = " + JSON.stringify(mediaSource))
         this.mediaSource = mediaSource
         this.onReady = onReady
         if (this.isPlayed && this.player) {
@@ -214,7 +214,7 @@ export class OhosAvPlayer implements IPlayer {
     }
 
     private async setMediaSourceInner(mediaSource: MediaSource) {
-        MediaLogger.d(TAG, "set url = " + mediaSource.url)
+        MediaLogger.d(TAG, ">> set url = " + mediaSource.url)
         if (mediaSource.type == MediaSourceType.NETWORK && mediaSource.httpHeaders != null) {
             // impl set media source for api12+
             this.setMediaSourceInner12Impl(mediaSource)
@@ -241,7 +241,7 @@ export class OhosAvPlayer implements IPlayer {
     }
 
     private async setMediaSourceInner12Impl(mediaSource: MediaSource) {
-        MediaLogger.d(TAG, "set http source = " + mediaSource.url + ", header = " + JSON.stringify(mediaSource.httpHeaders))
+        MediaLogger.d(TAG, ">> set http source = " + mediaSource.url + ", header = " + JSON.stringify(mediaSource.httpHeaders))
         const source = media.createMediaSourceWithUrl(mediaSource.url, mediaSource.httpHeaders)
         let playStrategy: media.PlaybackStrategy
         if (mediaSource.strategy != null) {

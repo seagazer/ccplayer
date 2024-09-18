@@ -3,6 +3,6 @@ import window from '@ohos.window';
 
 export default class MainAbility extends UIAbility {
     onWindowStageCreate(windowStage: window.WindowStage): void {
-        windowStage.loadContent("pages/logo")
+        windowStage.loadContent("pages/Logo")
     }
 }

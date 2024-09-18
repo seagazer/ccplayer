@@ -52,7 +52,7 @@ struct Logo {
             }
             setTimeout(() => {
                 router.pushUrl({
-                    url: "pages/main"
+                    url: "pages/Home"
                 })
             }, 500 + this.duration + this.delay * this.translations.length)
         })

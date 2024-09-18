@@ -3,6 +3,9 @@ import { IPlayer } from './interface/IPlayer';
 import { OhosAvPlayer } from './core/OhosAvPlayer';
 import { MediaSource } from './data/MediaSource';
 import { PlayerState } from './config/PlayerState';
+import { MediaLogger } from './common/MediaLogger';
+
+const TAG = '[CcPlayer]'
 
 /**
  * The player for audio or video.
@@ -11,12 +14,13 @@ export class CcPlayer implements IPlayer {
     private player: IPlayer = OhosAvPlayer.create()
 
     public setPlayer(player: IPlayer) {
-        this.player = this.player
+        this.player = player
     }
 
     start() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_STARTED) {
+            MediaLogger.w(TAG, 'current is playing, not start!')
             return
         }
         this.player.start()
