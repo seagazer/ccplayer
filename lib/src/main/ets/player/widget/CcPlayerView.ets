@@ -1,4 +1,3 @@
-import { timeToString } from '../common/Extentions';
 import { MediaLogger } from '../common/MediaLogger';
 import { CcPlayer } from '../CcPlayer';
 import { AspectRatio } from '../config/AspectRatio';
@@ -10,8 +9,6 @@ enum ControlType {
 }
 
 const TOUCH_SHOT = 10
-const GESTURE_BACKGROUND = "#cc1a1a1a"
-const CONTENT_COLOR = "#ffffff"
 
 /**
  * A component to play video, you can control media player with gesture.
@@ -34,7 +31,7 @@ export struct CcPlayerView {
     /**
      * The percent of width of view to handle volume or brightness gesture.
      */
-    controlEdgePercent = 0.2
+    controlEdgePercent: number = 0.2
     /**
      * The type of XComponent to render video.
      */
@@ -46,7 +43,7 @@ export struct CcPlayerView {
     /**
      * Set the delay to auto hide gesture controller ui.
      */
-    autoHideControllerDelay = 1500
+    autoHideControllerDelay: number = 1500
     /**
      * Set support gesture action to control or not, default is true.
      * Attention: the intercept order is: isSupportGesture > isDefaultGestureUI
@@ -71,15 +68,15 @@ export struct CcPlayerView {
     /**
      * If the isDefaultGestureUI is false, you should set this callback to handle custom gesture ui for seek action.
      */
-    gestureSeekAction?: ((seekPosition: number, max: number) => void) = undefined
+    gestureSeekAction?: ((seekPosition: number, max: number, isTouchUp: boolean) => void) = undefined
     /**
      * If the isDefaultGestureUI is false, you should set this callback to handle custom gesture ui for brightness action.
      */
-    gestureBrightnessAction?: ((percent: number) => void) = undefined
+    gestureBrightnessAction?: ((percent: number, isTouchUp: boolean) => void) = undefined
     /**
      * If the isDefaultGestureUI is false, you should set this callback to handle custom gesture ui for volume action.
      */
-    gestureVolumeAction?: ((percent: number) => void) = undefined
+    gestureVolumeAction?: ((percent: number, isTouchUp: boolean) => void) = undefined
     /*-----------------------------------------------------------------------------------------------*/
     private wSize: number = 0
     private hSize: number = 0
@@ -87,19 +84,17 @@ export struct CcPlayerView {
     private surfaceId: string = ""
     private videoWidth: number = 0
     private videoHeight: number = 0
-    private controllerWidth = 250
-    private controllerHeight = 80
-    @Watch("onControllerVisibleChanged") @State isShowController: boolean = false
     private controlType: ControlType = ControlType.PROGRESS
     private controlEdge = 0 // default is 1/5 of the width
     private downX: number = -1
     private downY: number = -1
-    // seek duration
     private startDuration = 0 // the drag start position for display
-    @State targetDuration: number = 0
-    @State totalDuration: number = 0
-    private seekMoveSpeed = 3 // this speed is larger, then the move step is small
-    private hideControllerTaskId = -1
+    private totalDuration: number = 0
+    private targetDuration: number = 0
+    private volumePercent: number = 0
+    private brightnessPercent: number = 0
+    private seekMoveSpeed: number = 3 // this speed is larger, then the move step is small
+    private hideControllerTaskId: number = -1
     private preparedListener = () => {
         this.totalDuration = this.player!.getDuration()
     }
@@ -113,7 +108,7 @@ export struct CcPlayerView {
         }
     }
     @State videoRatio: number = -1
-    private isUserMoved = false
+    private isUserMoved: boolean = false
     @State surfaceWidth: number = 0
     @State surfaceHeight: number = 0
 
@@ -145,8 +140,8 @@ export struct CcPlayerView {
         MediaLogger.d(TAG, "measure surface result = " + this.surfaceWidth + " x " + this.surfaceHeight)
     }
 
-    onControllerVisibleChanged() {
-        this.gestureUIListener && this.gestureUIListener(this.isShowController)
+    onControllerVisibleChanged(visible: boolean) {
+        this.gestureUIListener && this.gestureUIListener(visible)
     }
 
     aboutToAppear() {
@@ -259,7 +254,7 @@ export struct CcPlayerView {
 
     private handleTouchDown(touchEvent: TouchObject) {
         clearTimeout(this.hideControllerTaskId)
-        this.isShowController = false
+        this.onControllerVisibleChanged(false)
         this.downX = touchEvent.x
         this.downY = touchEvent.y
         if (this.downX < this.controlEdge) {
@@ -282,7 +277,7 @@ export struct CcPlayerView {
         let dy = touchEvent.y - this.downY
         if (Math.abs(dx) > TOUCH_SHOT || Math.abs(dy) > TOUCH_SHOT) {
             this.isUserMoved = true
-            this.isShowController = true
+            this.onControllerVisibleChanged(true)
             switch (this.controlType) {
             // handle seek progress
                 case ControlType.PROGRESS:
@@ -297,23 +292,27 @@ export struct CcPlayerView {
                     } else {
                         this.targetDuration = seekTemp
                     }
-                // callback seek action for custom ui
-                    this.gestureSeekAction && this.gestureSeekAction(this.targetDuration, this.totalDuration)
+                    // callback seek action for custom ui
+                    this.gestureSeekAction && this.gestureSeekAction(this.targetDuration, this.totalDuration, false)
                     break
             // handle set volume
                 case ControlType.VOLUME:
                     let moveDistance3 = -Math.floor(dy)
-                    let volumePercent = moveDistance3 / (this.hSize - 2 * this.controlEdge)
-                    MediaLogger.d(TAG, `volumePercent = ${volumePercent}`)
-                // callback volume action for custom ui
-                    this.gestureVolumeAction && this.gestureVolumeAction(volumePercent)
+                    this.volumePercent = moveDistance3 / (this.hSize - 2 * this.controlEdge)
+                    this.volumePercent = Math.max(0, this.volumePercent)
+                    this.volumePercent = Math.min(1, this.volumePercent)
+                    MediaLogger.d(TAG, `volumePercent = ${this.volumePercent}`)
+                    // callback volume action for custom ui
+                    this.gestureVolumeAction && this.gestureVolumeAction(this.volumePercent, false)
                     break
             // handle set brightness
                 case ControlType.BRIGHTNESS:
                     let moveDistance2 = -Math.floor(dy)
-                    let brightnessPercent = moveDistance2 / (this.hSize - 2 * this.controlEdge)
-                    MediaLogger.d(TAG, `brightnessPercent = ${brightnessPercent}`)
-                    this.gestureBrightnessAction && this.gestureBrightnessAction(brightnessPercent)
+                    this.brightnessPercent = moveDistance2 / (this.hSize - 2 * this.controlEdge)
+                    this.brightnessPercent = Math.max(0, this.brightnessPercent)
+                    this.brightnessPercent = Math.min(1, this.brightnessPercent)
+                    MediaLogger.d(TAG, `brightnessPercent = ${this.brightnessPercent}`)
+                    this.gestureBrightnessAction && this.gestureBrightnessAction(this.brightnessPercent, false)
                     break
                 default:
                     break
@@ -328,20 +327,19 @@ export struct CcPlayerView {
         this.isUserMoved = false
         switch (this.controlType) {
             case ControlType.PROGRESS:
-                this.player!.seekTo(this.targetDuration)
-                MediaLogger.d(TAG, `seek targetDuration = ${this.targetDuration}`)
+                this.gestureSeekAction && this.gestureSeekAction(this.targetDuration, this.totalDuration, true)
                 break
             case ControlType.BRIGHTNESS:
-            // do nothing, the brightness is changed when touch move
+                this.gestureBrightnessAction && this.gestureBrightnessAction(this.brightnessPercent, true)
                 break
             case ControlType.VOLUME:
-            // do nothing, the volume is changed when touch move
+                this.gestureVolumeAction && this.gestureVolumeAction(this.volumePercent, true)
                 break
         }
         this.downX = -1
         this.downY = -1
         this.hideControllerTaskId = setTimeout(() => {
-            this.isShowController = false
+            this.onControllerVisibleChanged(false)
         }, this.autoHideControllerDelay)
     }
 }

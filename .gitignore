@@ -12,3 +12,4 @@
 /.clang-tidy
 /oh-package-lock.json5
 **/.test
+/.appanalyzer

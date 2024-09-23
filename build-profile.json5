@@ -1,27 +1,26 @@
 {
   "app": {
-    "signingConfigs": [
-      {
-        "name": "default",
-        "material": {
-          "certpath": "C:/Users/seagazer/.ohos/config/openharmony/default_ccplayer_rFlZOhYb8ppMl9V5450JeqDL6bb_a_UUXztXv7Sc_M4=.cer",
-          "storePassword": "0000001BA4897AD2099893B223A8F26292A04F461F2649D77FE91A3CEA512629105027B492AE46FEDB6C44",
-          "keyAlias": "debugKey",
-          "keyPassword": "0000001BDE7BA1D7F5818E24B34F8428CCEDE84EE0C77AA5FF0979F4410262AFCA5765208C1BF7EEA8C76C",
-          "profile": "C:/Users/seagazer/.ohos/config/openharmony/default_ccplayer_rFlZOhYb8ppMl9V5450JeqDL6bb_a_UUXztXv7Sc_M4=.p7b",
-          "signAlg": "SHA256withECDSA",
-          "storeFile": "C:/Users/seagazer/.ohos/config/openharmony/default_ccplayer_rFlZOhYb8ppMl9V5450JeqDL6bb_a_UUXztXv7Sc_M4=.p12"
-        }
-      }
-    ],
+    "signingConfigs": [],
     "products": [
       {
         "name": "default",
         "signingConfig": "default",
-        "runtimeOS": "OpenHarmony",
-        "compileSdkVersion": 12,
-        "targetSdkVersion": 12,
-        "compatibleSdkVersion": 11
+        "compatibleSdkVersion": "5.0.0(12)",
+        "runtimeOS": "HarmonyOS",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug",
+      },
+      {
+        "name": "release"
       }
     ]
   },

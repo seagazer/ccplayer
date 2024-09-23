@@ -5,7 +5,9 @@
     "description": "$string:entry_desc",
     "mainElement": "MainAbility",
     "deviceTypes": [
-      "default"
+      "default",
+      "phone",
+      "tablet"
     ],
     "deliveryWithInstall": true,
     "installationFree": false,
@@ -34,16 +36,18 @@
     ],
     "requestPermissions": [
       {
-        "name": "ohos.permission.READ_MEDIA"
+        "name": "ohos.permission.READ_MEDIA",
+        "reason": "$string:MainAbility_desc",
+        "usedScene": {
+          "abilities": ["MainAbility"]
+        }
       },
       {
-        "name": "ohos.permission.WRITE_MEDIA"
-      },
-      {
-        "name": "ohos.permission.READ_USER_STORAGE"
-      },
-      {
-        "name": "ohos.permission.WRITE_USER_STORAGE"
+        "name": "ohos.permission.WRITE_MEDIA",
+        "reason": "$string:MainAbility_desc",
+        "usedScene": {
+          "abilities": ["MainAbility"]
+        }
       },
       {
         "name": "ohos.permission.INTERNET"
