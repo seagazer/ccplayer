@@ -47,13 +47,13 @@ export interface IPlayer {
     /**
      * Set the mediaSource.
      * @param mediaSource The mediaSource {@link MediaSource}, use MediaSourceFactory to create a mediaSource.
-     * @param onReady The callback when video is bind surface and set src success, null for audio player.
+     * @param onReady The callback when video is bind surface and set src success, undefined for audio player.
      */
     setMediaSource(mediaSource: MediaSource, onReady?: () => void): void
 
     /**
      * Get current mediaSource.
-     * @returns The mediaSource of current playing, null if not play.{@link MediaSource}
+     * @returns The mediaSource of current playing, undefined if not play.{@link MediaSource}
      */
     getMediaSource(): MediaSource | undefined
 

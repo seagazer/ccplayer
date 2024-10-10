@@ -71,7 +71,7 @@ export class AvPlayerImpl implements IPlayer {
                     break
                 case "initialized": // src ready -> initialized
                     MediaLogger.d(TAG, "System callback: initialized")
-                    if (this.curSurfaceId != null && this.curSurfaceId != this.lastSurfaceId) {
+                    if (this.curSurfaceId && this.curSurfaceId != this.lastSurfaceId) {
                         MediaLogger.d(TAG, ">> set surface: " + this.curSurfaceId)
                         this.player!.surfaceId = this.curSurfaceId
                         this.lastSurfaceId = this.curSurfaceId
@@ -219,12 +219,12 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     private async setMediaSourceInner(mediaSource: MediaSource) {
-        if (mediaSource.type == MediaSourceType.NETWORK && mediaSource.httpHeaders != null) {
+        if (mediaSource.type == MediaSourceType.NETWORK && mediaSource.httpHeaders) {
             // impl set media source for api12+
             this.setMediaSourceInner12Impl(mediaSource)
         } else {
             // the action set surface must between set url and prepare.
-            if (this.player != null) {
+            if (this.player) {
                 switch (mediaSource.type) {
                     case MediaSourceType.ASSETS:
                         const rawFd = this.context.resourceManager.getRawFdSync(mediaSource.rawAssetsPath)
@@ -253,7 +253,7 @@ export class AvPlayerImpl implements IPlayer {
     private async setMediaSourceInner12Impl(mediaSource: MediaSource) {
         const source = media.createMediaSourceWithUrl(mediaSource.url, mediaSource.httpHeaders)
         let playStrategy: media.PlaybackStrategy
-        if (mediaSource.strategy != null) {
+        if (mediaSource.strategy) {
             playStrategy = mediaSource.strategy
         } else {
             playStrategy = {
