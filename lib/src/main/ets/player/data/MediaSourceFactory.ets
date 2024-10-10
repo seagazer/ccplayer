@@ -1,7 +1,6 @@
 import { MediaSource } from './MediaSource';
 import { MediaLogger } from '../common/MediaLogger';
 import fs from '@ohos.file.fs';
-import common from '@ohos.app.ability.common';
 import media from '@ohos.multimedia.media';
 import { MediaSourceType } from './MediaSourceType';
 
@@ -28,18 +27,12 @@ export class MediaSourceFactory {
 
     /**
      * Create a media source for assets file.
-     * @param context The context of ability.
-     * @param assetsPath The path of raw assets file.
+     * @param rawAssetsPath The path of raw assets file.
      */
-    public static async createAssets(context: common.Context, assetsPath: string): Promise<MediaSource | undefined> {
-        if (context == undefined) {
-            MediaLogger.e(TAG, "The context is null!!!")
-            return undefined
-        }
-        MediaLogger.i(TAG, "assetsPath = " + assetsPath)
-        let rfd = await context.resourceManager.getRawFd(assetsPath)
+    public static async createAssets(rawAssetsPath: string): Promise<MediaSource | undefined> {
+        MediaLogger.i(TAG, "rawAssetsPath = " + rawAssetsPath)
         let source = new MediaSource(MediaSourceType.ASSETS)
-        source.rawFd = rfd
+        source.rawAssetsPath = rawAssetsPath
         return source
     }
 

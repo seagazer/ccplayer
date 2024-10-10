@@ -4,6 +4,7 @@ import { PlayerState } from '../config/PlayerState';
 import media from '@ohos.multimedia.media';
 import { IPlayer } from '../interface/IPlayer';
 import { MediaSourceType } from '../data/MediaSourceType';
+import common from '@ohos.app.ability.common';
 
 
 const TAG = "[OhosAvPlayer]"
@@ -32,8 +33,10 @@ export class AvPlayerImpl implements IPlayer {
     private stateChangedListeners: Array<(newState: PlayerState) => void> = []
     private videoSizeChangedListeners: Array<(width: number, height: number) => void> = []
     private renderFirstFrameListeners: Array<() => void> = []
+    private context: common.Context
 
-    private constructor() {
+    private constructor(context: common.Context) {
+        this.context = context
         media.createAVPlayer((err, player) => {
             if (err) {
                 MediaLogger.e(TAG, "init video player error = " + JSON.stringify(err))
@@ -46,15 +49,16 @@ export class AvPlayerImpl implements IPlayer {
             this.init()
             if (this.isLazyInitForPlay && this.mediaSource) {
                 MediaLogger.w(TAG,
-                    "the player is call start before instance is created, need to play now, url = " + JSON.stringify(this.mediaSource))
+                    "the player is call start before instance is created, need to play now, url = " +
+                    JSON.stringify(this.mediaSource))
                 this.setMediaSourceInner(this.mediaSource)
                 this.isLazyInitForPlay = false
             }
         })
     }
 
-    static create(): IPlayer {
-        return new AvPlayerImpl()
+    static create(context: common.Context): IPlayer {
+        return new AvPlayerImpl(context)
     }
 
     init() {
@@ -201,6 +205,7 @@ export class AvPlayerImpl implements IPlayer {
 
     async setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
         MediaLogger.d(TAG, ">> setMediaSource = " + JSON.stringify(mediaSource))
+        this.mediaSource?.release(this.context)
         this.mediaSource = mediaSource
         this.onReady = onReady
         if (this.isPlayed && this.player) {
@@ -214,7 +219,6 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     private async setMediaSourceInner(mediaSource: MediaSource) {
-        MediaLogger.d(TAG, ">> set url = " + mediaSource.url)
         if (mediaSource.type == MediaSourceType.NETWORK && mediaSource.httpHeaders != null) {
             // impl set media source for api12+
             this.setMediaSourceInner12Impl(mediaSource)
@@ -223,8 +227,13 @@ export class AvPlayerImpl implements IPlayer {
             if (this.player != null) {
                 switch (mediaSource.type) {
                     case MediaSourceType.ASSETS:
+                        const rawFd = this.context.resourceManager.getRawFdSync(mediaSource.rawAssetsPath)
                         let avFileDescriptor: media.AVFileDescriptor =
-                            { fd: mediaSource.rawFd!.fd, offset: mediaSource.rawFd!.offset, length: mediaSource.rawFd!.length };
+                            {
+                                fd: rawFd.fd,
+                                offset: rawFd.offset,
+                                length: rawFd.length
+                            };
                         this.player.fdSrc = avFileDescriptor
                         break
                     case MediaSourceType.FILE:
@@ -234,14 +243,14 @@ export class AvPlayerImpl implements IPlayer {
                         break
                 }
             } else {
-                MediaLogger.w(TAG, "the player is not created finish, mark lazy to play when the player instance is created!")
+                MediaLogger.w(TAG,
+                    "the player is not created finish, mark lazy to play when the player instance is created!")
                 this.isLazyInitForPlay = true
             }
         }
     }
 
     private async setMediaSourceInner12Impl(mediaSource: MediaSource) {
-        MediaLogger.d(TAG, ">> set http source = " + mediaSource.url + ", header = " + JSON.stringify(mediaSource.httpHeaders))
         const source = media.createMediaSourceWithUrl(mediaSource.url, mediaSource.httpHeaders)
         let playStrategy: media.PlaybackStrategy
         if (mediaSource.strategy != null) {
@@ -290,14 +299,18 @@ export class AvPlayerImpl implements IPlayer {
 
     async release() {
         MediaLogger.d(TAG, ">> release")
-        this.player!.off("stateChange")
-        this.player!.off("startRenderFrame")
-        this.player!.off("videoSizeChange")
-        this.player!.off("seekDone")
-        this.player!.off("volumeChange")
-        await this.player!.stop()
-        await this.player!.reset()
-        await this.player!.release()
+        if (this.player) {
+            this.player.off("stateChange")
+            this.player.off("error")
+            this.player.off("startRenderFrame")
+            this.player.off("videoSizeChange")
+            this.player.off("seekDone")
+            this.player.off("volumeChange")
+            this.player.off("timeUpdate")
+            await this.player.stop()
+            await this.player.reset()
+            await this.player.release()
+        }
     }
 
     seekTo(position: number) {
