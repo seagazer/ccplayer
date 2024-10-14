@@ -1,7 +1,7 @@
-import router from '@ohos.router';
 import { AspectRatio, CcPlayer, CcPlayerView, GestureType, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer';
 import { timeToString } from '../Extentions';
 import { Logger } from '../Logger';
+import { common, wantAgent } from '@kit.AbilityKit';
 
 const TAG = '[PlayerViewSample]'
 
@@ -45,7 +45,16 @@ export struct PlayerViewSample {
     }
 
     aboutToAppear(): void {
-        router.clear()
+        const context = getContext(this) as common.UIAbilityContext
+        this.player.bindAvSession(getContext(this), 'ccplayer', 'video', {
+            wants: [{
+                bundleName: context.abilityInfo.bundleName,
+                abilityName: context.abilityInfo.name
+            }],
+            requestCode: 0x110,
+            actionType: wantAgent.OperationType.START_ABILITIES,
+            wantAgentFlags: [wantAgent.WantAgentFlags.UPDATE_PRESENT_FLAG]
+        })
         this.player
             .addOnPreparedListener(this.preparedListener)
             .addOnStateChangedListener(this.stateChangedListener)
@@ -172,6 +181,7 @@ export struct PlayerViewSample {
                         min: 0,
                         step: 1000,
                     }).layoutWeight(1)
+                        .sliderInteractionMode(SliderInteraction.SLIDE_AND_CLICK_UP)
                         .onChange((value, mode) => {
                             if (mode == SliderChangeMode.End || mode == SliderChangeMode.Click) {
                                 this.isSeeking = true
@@ -188,11 +198,11 @@ export struct PlayerViewSample {
                         .onClick(() => {
                             this.isLoading = true
                             this.player.reset()
-                            MediaSourceFactory.createAssets("test.mp4")
-                                .then((src) => {
-                                    src && this.player.setMediaSource(src, () => {
-                                    })
+                            MediaSourceFactory.createAssets("Test", "test.mp4").then((src) => {
+                                src && this.player.setMediaSource(src, () => {
+                                    this.player.start()
                                 })
+                            })
                         })
                     Button('start')
                         .onClick(() => {

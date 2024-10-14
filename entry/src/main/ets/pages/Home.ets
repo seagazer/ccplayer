@@ -1,11 +1,16 @@
 import { PlayerSample } from './PlayerSample'
 import { PlayerViewSample } from './PlayerViewSample'
+import router from '@ohos.router'
 
 @Entry
 @Component
 struct Home {
     private style = new HomeButtonStyle()
     private navRouter = new NavPathStack()
+
+    aboutToAppear(): void {
+        router.clear()
+    }
 
     build() {
         Navigation(this.navRouter) {

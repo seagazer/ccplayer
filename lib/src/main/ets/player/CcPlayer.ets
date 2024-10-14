@@ -1,3 +1,4 @@
+import avSession from '@ohos.multimedia.avsession';
 import media from '@ohos.multimedia.media';
 import { IPlayer } from './interface/IPlayer';
 import { AvPlayerImpl } from './core/AvPlayerImpl';
@@ -5,6 +6,8 @@ import { MediaSource } from './data/MediaSource';
 import { PlayerState } from './config/PlayerState';
 import { MediaLogger } from './common/MediaLogger';
 import common from '@ohos.app.ability.common';
+import { AvSessionManager } from './core/AvSessionManager';
+import wantAgent from '@ohos.app.ability.wantAgent';
 
 const TAG = '[CcPlayer]'
 
@@ -13,6 +16,7 @@ const TAG = '[CcPlayer]'
  */
 export class CcPlayer implements IPlayer {
     private player: IPlayer
+    private avSessionManager?: AvSessionManager = undefined
 
     constructor(context: common.Context) {
         this.player = AvPlayerImpl.create(context)
@@ -68,6 +72,7 @@ export class CcPlayer implements IPlayer {
     }
 
     release() {
+        this.avSessionManager?.release()
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_NOT_INIT) {
             return
@@ -85,6 +90,7 @@ export class CcPlayer implements IPlayer {
 
     setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
         this.player.setMediaSource(mediaSource, onReady)
+        this.avSessionManager?.setMediaSource(mediaSource)
     }
 
     setLooper(isLoop: boolean) {
@@ -211,5 +217,13 @@ export class CcPlayer implements IPlayer {
     removeOnRenderFirstFrameListener(listener: () => void): IPlayer {
         this.player.removeOnRenderFirstFrameListener(listener)
         return this
+    }
+
+    async bindAvSession(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType,
+        agentInfo: wantAgent.WantAgentInfo) {
+        this.avSessionManager = new AvSessionManager(this.player)
+        await this.avSessionManager.create(context, sessionName, type)
+        await this.avSessionManager.setLaunchInfo(agentInfo)
+        this.avSessionManager.bind()
     }
 }
