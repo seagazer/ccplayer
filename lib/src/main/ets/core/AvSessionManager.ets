@@ -17,6 +17,26 @@ export class AvSessionManager {
     constructor(player: IPlayer) {
         this.player = player
         this.player.addOnStateChangedListener(this.stateChangedListener)
+        this.player.addOnSeekChangedListener(this.seekChangedListener)
+    }
+
+    private stateChangedListener = (state: PlayerState) => {
+        if (this.avSession) {
+            const avPlaybackState = this.createAvPlaybackState(state)
+            this.avSession.setAVPlaybackState(avPlaybackState)
+        }
+    }
+    private seekChangedListener = (position: number) => {
+        if (this.avSession) {
+            this.avSession.setAVPlaybackState({
+                state: avSession.PlaybackState.PLAYBACK_STATE_PLAY,
+                position: {
+                    elapsedTime: position,
+                    updateTime: new Date().getTime()
+                },
+                duration: this.player.getDuration()
+            })
+        }
     }
 
     async create(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType) {
@@ -31,9 +51,7 @@ export class AvSessionManager {
             let agent = await wantAgent.getWantAgent(agentInfo)
             await this.avSession.setLaunchAbility(agent)
         }
-
     }
-
 
     setMediaSource(mediaSource: MediaSource) {
         MediaLogger.i(TAG, "set media source= " + json.stringify(mediaSource))
@@ -45,7 +63,8 @@ export class AvSessionManager {
             const data: avSession.AVMetadata = {
                 assetId: this.mediaSource.title.toString(),
                 title: this.mediaSource.title,
-                duration: this.player.getDuration(),
+                mediaImage: this.mediaSource.cover,
+                duration: this.player.getDuration()
             }
             MediaLogger.d(TAG, "set meta data= " + json.stringify(data))
             this.avSession.setAVMetadata(data)
@@ -53,7 +72,6 @@ export class AvSessionManager {
     }
 
     async bind() {
-        MediaLogger.i(TAG, "bind session1")
         if (this.avSession) {
             MediaLogger.i(TAG, "bind session")
             this.setupActionListener()
@@ -62,46 +80,55 @@ export class AvSessionManager {
     }
 
     release() {
-        this.player.removeOnStateChangedListener(this.stateChangedListener)
-        if(this.avSession){
+        if (this.avSession) {
+            this.avSession.setAVMetadata({ assetId: "" })
             this.avSession.off("play")
             this.avSession.off("pause")
             this.avSession.off("seek")
             this.avSession.off("fastForward")
             this.avSession.off("rewind")
+            this.avSession.deactivate()
+            this.avSession.destroy()
         }
+        this.player.removeOnStateChangedListener(this.stateChangedListener)
+        this.player.removeOnSeekChangedListener(this.seekChangedListener)
     }
 
-    private stateChangedListener = (state: PlayerState) => {
-        if (this.avSession) {
-            switch (state) {
-                case PlayerState.STATE_PREPARED:
-                    this.setupMediaInfo()
-                    break
-                case PlayerState.STATE_STARTED:
-                    MediaLogger.d(TAG, "update state: play")
-                    this.avSession.setAVPlaybackState({
-                        state: avSession.PlaybackState.PLAYBACK_STATE_PLAY,
-                        position: {
-                            elapsedTime: this.player.getCurrentPosition(),
-                            updateTime: new Date().getTime()
-                        },
-                        duration: this.player.getDuration()
-                    })
-                    break
-                case PlayerState.STATE_PAUSED:
-                    MediaLogger.d(TAG, "update state: pause")
-                    this.avSession.setAVPlaybackState({
-                        state: avSession.PlaybackState.PLAYBACK_STATE_PAUSE,
-                        position: {
-                            elapsedTime: this.player.getCurrentPosition(),
-                            updateTime: new Date().getTime()
-                        },
-                        duration: this.player.getDuration()
-                    })
-                    break
-            }
+    private createAvPlaybackState(state: PlayerState): avSession.AVPlaybackState {
+        let avState = avSession.PlaybackState.PLAYBACK_STATE_INITIAL
+        switch (state) {
+            case PlayerState.STATE_PREPARED:
+                this.setupMediaInfo()
+                avState = avSession.PlaybackState.PLAYBACK_STATE_PREPARE
+                break
+            case PlayerState.STATE_STARTED:
+                avState = avSession.PlaybackState.PLAYBACK_STATE_PLAY
+                break
+            case PlayerState.STATE_PAUSED:
+                avState = avSession.PlaybackState.PLAYBACK_STATE_PAUSE
+                break
+            case PlayerState.STATE_STOPPED:
+                avState = avSession.PlaybackState.PLAYBACK_STATE_STOP
+                break
+            case PlayerState.STATE_COMPLETED:
+                avState = avSession.PlaybackState.PLAYBACK_STATE_COMPLETED
+                break
+            case PlayerState.STATE_COMPLETED:
+                avState = avSession.PlaybackState.PLAYBACK_STATE_COMPLETED
+                break
+            case PlayerState.STATE_ERROR:
+                avState = avSession.PlaybackState.PLAYBACK_STATE_ERROR
+                break
         }
+        const result: avSession.AVPlaybackState = {
+            state: avState,
+            position: {
+                elapsedTime: this.player.getCurrentPosition(),
+                updateTime: new Date().getTime()
+            },
+            duration: this.player.getDuration()
+        }
+        return result
     }
 
     private setupActionListener() {

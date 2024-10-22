@@ -1,6 +1,7 @@
-import { PlayerSample } from './PlayerSample'
-import { PlayerViewSample } from './PlayerViewSample'
+import { MusicSample } from './MusicSample'
+import { VideoViewSample } from './VideoViewSample'
 import router from '@ohos.router'
+import { VideoSample } from './VideoSample'
 
 @Entry
 @Component
@@ -15,17 +16,22 @@ struct Home {
     build() {
         Navigation(this.navRouter) {
             Column() {
-                Text('CcPlayerSample')
+                Text('MusicSample')
                     .attributeModifier(this.style)
                     .onClick(() => {
-                        this.navRouter.pushPathByName("PlayerSample", null)
+                        this.navRouter.pushPathByName("MusicSample", null)
                     })
 
-                Text('CcPlayerViewSample')
+                Text('VideoSample')
                     .attributeModifier(this.style)
-                    .margin({ top: 16 })
                     .onClick(() => {
-                        this.navRouter.pushPathByName("PlayerViewSample", null)
+                        this.navRouter.pushPathByName("VideoSample", null)
+                    })
+
+                Text('VideoViewSample')
+                    .attributeModifier(this.style)
+                    .onClick(() => {
+                        this.navRouter.pushPathByName("VideoViewSample", null)
                     })
             }
             .width("100%")
@@ -41,10 +47,12 @@ struct Home {
 
     @Builder
     RouterMap(name: string) {
-        if (name === "PlayerSample") {
-            PlayerSample()
-        } else if (name === "PlayerViewSample") {
-            PlayerViewSample()
+        if (name === "MusicSample") {
+            MusicSample()
+        } else if (name === "VideoSample") {
+            VideoSample()
+        } else if (name === "VideoViewSample") {
+            VideoViewSample()
         }
     }
 }
@@ -60,5 +68,6 @@ class HomeButtonStyle implements AttributeModifier<TextAttribute> {
             .backgroundColor(Color.Blue)
             .clickEffect({ level: ClickEffectLevel.MIDDLE })
             .borderRadius(4)
+            .margin({ top: 16 })
     }
 }

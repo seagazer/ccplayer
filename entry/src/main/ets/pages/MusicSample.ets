@@ -1,0 +1,133 @@
+import { CcPlayer, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer';
+import { timeToString } from '../Extentions';
+import { Logger } from '../Logger';
+import common from '@ohos.app.ability.common';
+import wantAgent from '@ohos.app.ability.wantAgent';
+
+const TAG = '[MusicSample]'
+
+@Component
+export struct MusicSample {
+    private player = new CcPlayer(getContext(this))
+    @State currentPosition: number = 0
+    @State totalDuration: number = 0
+    @State seekPosition: number = 0
+    private readonly cover = "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg"
+    private isSeeking = false
+    private preparedListener = () => {
+        this.totalDuration = this.player.getDuration()
+        Logger.d(TAG, "prepared= " + this.totalDuration)
+    }
+    private stateChangedListener = (state: PlayerState) => {
+        Logger.d(TAG, "new state= " + state)
+    }
+    private errorListener = (code: number, message: string) => {
+        Logger.e(TAG, "play error= " + code + ", " + message)
+    }
+    private firstFrameListener = () => {
+        Logger.d(TAG, "render first frame")
+    }
+    private progressChangedListener = (position: number) => {
+        if (this.isSeeking) {
+            return
+        }
+        this.currentPosition = position
+    }
+    private seekListener = (position: number) => {
+        this.currentPosition = position
+        this.isSeeking = false
+    }
+
+    aboutToAppear(): void {
+        const context = getContext(this) as common.UIAbilityContext
+        this.player.bindAvSession(getContext(this), 'MusicSample', 'audio', {
+            wants: [{
+                bundleName: context.abilityInfo.bundleName,
+                abilityName: context.abilityInfo.name
+            }],
+            requestCode: 0x110,
+            actionType: wantAgent.OperationType.START_ABILITIES,
+            wantAgentFlags: [wantAgent.WantAgentFlags.UPDATE_PRESENT_FLAG]
+        })
+        this.player
+            .addOnPreparedListener(this.preparedListener)
+            .addOnStateChangedListener(this.stateChangedListener)
+            .addOnRenderFirstFrameListener(this.firstFrameListener)
+            .addOnErrorListener(this.errorListener)
+            .addOnProgressChangedListener(this.progressChangedListener)
+            .addOnSeekChangedListener(this.seekListener)
+    }
+
+    aboutToDisappear(): void {
+        this.player
+            .removeOnPreparedListener(this.preparedListener)
+            .removeOnStateChangedListener(this.stateChangedListener)
+            .removeOnRenderFirstFrameListener(this.firstFrameListener)
+            .removeOnErrorListener(this.errorListener)
+            .removeOnProgressChangedListener(this.progressChangedListener)
+            .removeOnSeekChangedListener(this.seekListener)
+        this.player.release()
+    }
+
+    build() {
+        NavDestination() {
+            Column() {
+                // video view
+                Image(this.cover)
+                    .width(200)
+                    .height(200)
+
+                Row() {
+                    Text(timeToString(this.currentPosition))
+                    Slider({
+                        value: this.currentPosition,
+                        max: this.totalDuration,
+                        min: 0,
+                        step: 1000,
+                    }).layoutWeight(1)
+                        .sliderInteractionMode(SliderInteraction.SLIDE_AND_CLICK_UP)
+                        .onChange((value, mode) => {
+                            if (mode == SliderChangeMode.End || mode == SliderChangeMode.Click) {
+                                this.isSeeking = true
+                                let position = Math.ceil(value)
+                                this.player.seekTo(position)
+                                this.currentPosition = position
+                            }
+                        })
+                    Text(timeToString(this.totalDuration))
+                }.width("100%")
+
+                Row() {
+                    Button('setSrc')
+                        .onClick(() => {
+                            this.player.reset()
+                            MediaSourceFactory.createAssets("TestMusic", "test.mp3", this.cover)
+                                .then((src) => {
+                                    src && this.player.setMediaSource(src, () => {
+                                        this.player.start()
+                                    })
+                                })
+                        })
+                    Button('start')
+                        .onClick(() => {
+                            this.player.start()
+                        })
+                    Button('pause')
+                        .onClick(() => {
+                            this.player.pause()
+                        })
+                }
+                .width("100%")
+                .margin({ top: 32 })
+                .justifyContent(FlexAlign.SpaceEvenly)
+            }
+            .width("100%")
+            .height("100%")
+            .padding(16)
+            .justifyContent(FlexAlign.Center)
+        }
+        .width("100%")
+        .height("100%")
+        .title("MusicSample")
+    }
+}

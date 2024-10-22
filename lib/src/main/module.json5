@@ -8,7 +8,7 @@
     ],
     "requestPermissions": [
       {
-        "name": "ohos.permission.ACCESS_NOTIFICATION_POLICY"
+        "name": "ohos.permission.KEEP_BACKGROUND_RUNNING"
       }
     ]
   }

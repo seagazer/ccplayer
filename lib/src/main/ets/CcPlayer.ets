@@ -8,6 +8,8 @@ import { MediaLogger } from './common/MediaLogger';
 import common from '@ohos.app.ability.common';
 import { AvSessionManager } from './core/AvSessionManager';
 import wantAgent from '@ohos.app.ability.wantAgent';
+import { BackgroundPlayManager } from './core/BackgroundPlayManager';
+import json from '@ohos.util.json';
 
 const TAG = '[CcPlayer]'
 
@@ -16,6 +18,9 @@ const TAG = '[CcPlayer]'
  */
 export class CcPlayer implements IPlayer {
     private player: IPlayer
+    private isBackgroundPlay = false
+    private context?: common.BaseContext = undefined
+    private agentInfo?: wantAgent.WantAgentInfo = undefined
     private avSessionManager?: AvSessionManager = undefined
 
     constructor(context: common.Context) {
@@ -72,7 +77,12 @@ export class CcPlayer implements IPlayer {
     }
 
     release() {
-        this.avSessionManager?.release()
+        if (this.avSessionManager) {
+            this.avSessionManager.release()
+        }
+        if (this.isBackgroundPlay && this.context) {
+            BackgroundPlayManager.stopBackground(this.context)
+        }
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_NOT_INIT) {
             return
@@ -221,9 +231,36 @@ export class CcPlayer implements IPlayer {
 
     async bindAvSession(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType,
         agentInfo: wantAgent.WantAgentInfo) {
+        this.agentInfo = agentInfo
         this.avSessionManager = new AvSessionManager(this.player)
-        await this.avSessionManager.create(context, sessionName, type)
-        await this.avSessionManager.setLaunchInfo(agentInfo)
-        this.avSessionManager.bind()
+        try {
+            await this.avSessionManager.create(context, sessionName, type)
+            await this.avSessionManager.setLaunchInfo(agentInfo)
+            await this.avSessionManager.bind()
+        } catch (e) {
+            MediaLogger.e(TAG, "bindAvSession error: " + JSON.stringify(e))
+        }
+    }
+
+    setBackgroundEnable(backgroundPlay: boolean) {
+        if (!this.context) {
+            MediaLogger.w(TAG, "The context is null, you should call {@Link bindAvSession} first.")
+            return
+        }
+        if (!this.agentInfo) {
+            MediaLogger.w(TAG, "The agent is null, you should call {@Link bindAvSession} first.")
+            return
+        }
+        if (this.isBackgroundPlay == backgroundPlay) {
+            return
+        }
+        if (backgroundPlay) {
+            MediaLogger.d(TAG, "start background play")
+            BackgroundPlayManager.startBackground(this.context, this.agentInfo)
+        } else {
+            MediaLogger.d(TAG, "stop background play")
+            BackgroundPlayManager.stopBackground(this.context)
+        }
+        this.isBackgroundPlay = backgroundPlay
     }
 }

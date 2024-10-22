@@ -1,15 +1,17 @@
-export { CcPlayer } from './src/main/ets/player/CcPlayer'
+export { CcPlayer } from './src/main/ets/CcPlayer'
 
-export { GestureType } from './src/main/ets/player/config/GestureType'
+export { GestureType } from './src/main/ets/config/GestureType'
 
-export { CcPlayerView } from './src/main/ets/player/widget/CcPlayerView'
+export { CcPlayerView } from './src/main/ets/widget/CcPlayerView'
 
-export { PlayerState } from './src/main/ets/player/config/PlayerState'
+export { PlayerState } from './src/main/ets/config/PlayerState'
 
-export { AspectRatio } from './src/main/ets/player/config/AspectRatio'
+export { AspectRatio } from './src/main/ets/config/AspectRatio'
 
-export { MediaSourceFactory } from './src/main/ets/player/data/MediaSourceFactory'
+export { MediaSourceFactory } from './src/main/ets/data/MediaSourceFactory'
 
-export { MediaSource } from './src/main/ets/player/data/MediaSource'
+export { MediaSource } from './src/main/ets/data/MediaSource'
+
+export { MediaLogger } from './src/main/ets/common/MediaLogger'
 
 

@@ -9,14 +9,17 @@ import common from '@ohos.app.ability.common'
 export class MediaSource {
     type: MediaSourceType
     title: string
+    cover?: string | PixelMap
     url?: string = undefined
     rawAssetsPath?: string = undefined
     httpHeaders?: Record<string, string> = undefined
     strategy?: media.PlaybackStrategy = undefined
 
-    constructor(type: MediaSourceType, title: string, httpHeaders?: Record<string, string>, strategy?: media.PlaybackStrategy) {
+    constructor(type: MediaSourceType, title: string, cover?: string | PixelMap, httpHeaders?: Record<string, string>,
+        strategy?: media.PlaybackStrategy) {
         this.type = type
         this.title = title
+        this.cover = cover
         this.httpHeaders = httpHeaders
         this.strategy = strategy
     }

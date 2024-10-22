@@ -1,6 +1,6 @@
 import hilog from '@ohos.hilog';
 
-const domain = 110
+const domain = 0x176
 
 export class MediaLogger {
     private static DEBUG = true
