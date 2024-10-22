@@ -17,12 +17,13 @@ const TAG = '[CcPlayer]'
  */
 export class CcPlayer implements IPlayer {
     private player: IPlayer
+    private context: common.Context
     private isBackgroundPlay = false
-    private context?: common.BaseContext = undefined
     private agentInfo?: wantAgent.WantAgentInfo = undefined
     private avSessionManager?: AvSessionManager = undefined
 
     constructor(context: common.Context) {
+        this.context = context
         this.player = AvPlayerImpl.create(context)
     }
 
@@ -243,7 +244,7 @@ export class CcPlayer implements IPlayer {
 
     setBackgroundPlayEnable(backgroundPlay: boolean) {
         if (!this.context) {
-            MediaLogger.w(TAG, "The context is null, you should call {@Link bindAvSession} first.")
+            MediaLogger.w(TAG, "The context is null.")
             return
         }
         if (!this.agentInfo) {
