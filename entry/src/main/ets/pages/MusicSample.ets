@@ -48,6 +48,8 @@ export struct MusicSample {
             requestCode: 0x110,
             actionType: wantAgent.OperationType.START_ABILITIES,
             wantAgentFlags: [wantAgent.WantAgentFlags.UPDATE_PRESENT_FLAG]
+        }).then(() => {
+            this.player.setBackgroundPlayEnable(true)
         })
         this.player
             .addOnPreparedListener(this.preparedListener)

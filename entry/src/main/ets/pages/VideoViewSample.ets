@@ -55,6 +55,8 @@ export struct VideoViewSample {
             requestCode: 0x112,
             actionType: wantAgent.OperationType.START_ABILITIES,
             wantAgentFlags: [wantAgent.WantAgentFlags.UPDATE_PRESENT_FLAG]
+        }).then(() => {
+            this.player.setBackgroundPlayEnable(true)
         })
         this.player
             .addOnPreparedListener(this.preparedListener)
@@ -199,7 +201,8 @@ export struct VideoViewSample {
                         .onClick(() => {
                             this.isLoading = true
                             this.player.reset()
-                            MediaSourceFactory.createAssets("TestVideo", "test.mp4", "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                            MediaSourceFactory.createAssets("TestVideo", "test.mp4",
+                                "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
                                 .then((src) => {
                                     src && this.player.setMediaSource(src, () => {
                                         this.player.start()

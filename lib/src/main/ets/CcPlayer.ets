@@ -9,7 +9,6 @@ import common from '@ohos.app.ability.common';
 import { AvSessionManager } from './core/AvSessionManager';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { BackgroundPlayManager } from './core/BackgroundPlayManager';
-import json from '@ohos.util.json';
 
 const TAG = '[CcPlayer]'
 
@@ -242,7 +241,7 @@ export class CcPlayer implements IPlayer {
         }
     }
 
-    setBackgroundEnable(backgroundPlay: boolean) {
+    setBackgroundPlayEnable(backgroundPlay: boolean) {
         if (!this.context) {
             MediaLogger.w(TAG, "The context is null, you should call {@Link bindAvSession} first.")
             return

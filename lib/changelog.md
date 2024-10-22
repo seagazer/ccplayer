@@ -4,6 +4,7 @@
 - 项目整体重构，适配Api12新特性
 - CcPlayerView组件重构，删除fullSdk系统接口
 - CcPlayer增加AvSession播控中心能力
+- CcPlayer增加后台播放能力
 
 # 1.0.5
 
