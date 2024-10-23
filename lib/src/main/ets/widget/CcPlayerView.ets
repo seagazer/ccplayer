@@ -33,7 +33,7 @@ export struct CcPlayerView {
     /**
      * The type of XComponent to render video.
      */
-    renderType: XComponentType = XComponentType.TEXTURE
+    renderType: XComponentType = XComponentType.SURFACE
     /**
      * Set the video ratio, the value is from # AspectRatio.
      */
