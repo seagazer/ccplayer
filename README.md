@@ -10,9 +10,10 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 支持后台播放控制
 
 ## 示例效果
-<img src="https://www.freeimg.cn/i/2024/10/23/67190716a5fff.webp" width="180" height="360"/>
-<img src="https://www.freeimg.cn/i/2024/10/23/67190716bb1c8.webp" width="180" height="360"/>
-<img src="https://www.freeimg.cn/i/2024/10/23/67190716e4230.webp" width="180" height="360"/>
+| 视频组件                                                                                     | 音乐播放                                                                                     | 播控中心                                                                                     |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| <img src="https://www.freeimg.cn/i/2024/10/23/67190716a5fff.webp" width="180" height="360"/> | <img src="https://www.freeimg.cn/i/2024/10/23/67190716bb1c8.webp" width="180" height="360"/> | <img src="https://www.freeimg.cn/i/2024/10/23/67190716e4230.webp" width="180" height="360"/> |
+
 
 ## 依赖方式
 
