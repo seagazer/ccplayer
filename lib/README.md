@@ -2,13 +2,12 @@
 
 ## 简介
 
-CcPlayer 是一个为 OpenHarmony 设计，支持音视频媒体的轻量级播放器应用框架，最低兼容至 OpenHarmony3.1(3.1 请使用 v1.0.2 以下版本)。
+CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒体的轻量级播放器应用框架。  
 
 - 支持音频/视频播放
-- 视频播放组件，支持视频宽高比设置
-- 支持手势控制音量、亮度、播放进度
-- 支持自定义手势控制 UI
-- OpenHarmony 3.1 和 3.2+ 自适应使用 AvPlayer 或 AudioPlayer 或 VideoPlayer
+- 视频播放组件，支持视频宽高比设置，支持手势控制
+- 支持播控中心绑定
+- 支持后台播放控制
 
 ## 依赖方式
 
@@ -18,120 +17,113 @@ ohpm install @seagazer/ccplayer
 
 ## 注意事项
 
-- 本库使用到系统接口（例如亮度控制），为了保证功能完整性，应用请使用系统签名（system_core 级别）和 全量 Sdk。
-- 如何修改签名等级可参考官方的应用 APL 等级说明：
-  https://docs.openharmony.cn/pages/v4.0/zh-cn/application-dev/security/accesstoken-overview.md/
-- 从 1.0.3 版本开始，后续迭代均基于 4.0+进行优化和能力扩展，如果需要兼容请使用 1.0.2 及以下的低版本。
+- 从1.0.6版本开始基于API 12进行重构，仅支持OpenHarmony-5.0Release和HarmonyOS Next。
+- 如果需要在5.0-Release之前的系统版本中使用，请采用1.0.5及以下版本。详情可以参照之前版本的ChangeLog说明。
 
 ## 接口能力
 
 - CcPlayer 媒体播放器
-  |接口|参数|返回值|说明|
-  |----|----|----|----|
-  |create| PlayerType 媒体类型| CcPlayer| 创建播放器实例|
-  |start| void| void| 开始/恢复播放|
-  |startTo| position 起播时间戳 | void | 从指定时间戳开始播放|
-  |pause | void| void| 暂停播放|
-  |stop| void| void| 停止播放|
-  |reset| void| void| 重置播放器|
-  |release| void| void| 释放播放器|
-  |seekTo| position 目标进度时间戳| void| 跳转至指定进度|
-  |setMediaSource| mediaSource 媒体资源, onReaady? 设置资源成功回调 | void| 设置媒体资源|
-  |getMediaSource| void| MediaSource| 获取当前播放的媒体资源|
-  |setLooper| isLoop 是否循环播放| void| 设置循环播放|
-  |setVolume| vol 音量大小| void| 设置音量|
-  |isPlaying| void| boolean| 是否正在播放|
-  |getDuration| void| number| 获取媒体资源的总时长|
-  |getCurrentPosition| void| number| 获取当前播放时长|
-  |getPlayerState| void| PlayerState| 获取当前播放状态|
-  |getSystemPlayer| void| AVPlayer,VideoPlayer,AudioPlayer| 获取当前系统播放器实例|
-  |setSurface| surfaceId 渲染表层 id| void| 绑定 surafce(仅媒体类型为视频时有效)|
-  |addOnPreparedListener| listener: () => void| IPlayer| 添加媒体资源 prepare 状态监听|
-  |removeOnPreparedListener| listener: () => void| IPlayer| 移除媒体资源 preapare 状态监听|
-  |addOnCompletionListener| listener: () => void| IPlayer| 添加媒体资源播放结束状态监听|
-  |removeOnCompletionListener| listener: () => void| IPlayer| 移除媒体资源播放结束状态监听|
-  |addOnErrorListener| listener: (code: number, message: string) => void| IPlayer| 添加媒体资源播放异常状态监听|
-  |removeOnErrorListener| listener: (code: number, message: string) => void| IPlayer| 移除媒体资源播放异常状态监听|
-  |addOnProgressChangedListener| listener: (duration: number) => void| IPlayer| 添加播放进度状态监听|
-  |removeOnProgressChangedListener| listener: (duration: number) => void| IPlayer| 移除播放进度状态监听|
-  |addOnSeekChangedListener| listener: (duration: number) => void| IPlayer| 添加播放快进快退状态监听|
-  |removeOnSeekChangedListener| listener: (duration: number) => void| IPlayer| 移除播放快进快退状态监听|
-  |addOnVolumeChangedListener| listener: () => void| IPlayer| 添加媒体音量变化状态监听|
-  |removeOnVolumeChangedListener| listener: () => void| IPlayer| 移除媒体音量变化状态监听|
-  |addOnStateChangedListener| listener: (newState: PlayerState) => void| IPlayer| 添加播放状态变更监听|
-  |removeOnStateChangedListener| listener: (newState: PlayerState) => void| IPlayer| 移除播放状态变更监听|
-  |addOnVideoSizeChangedListener| listener: (newWidth, newHeight) => void| void| 添加视频尺寸变化监听|
-  |removeOnVideoSizeChangedListener| listener: (newWidth, newHeight) => void| void| 移除视频尺寸变化监听|
-  |addOnRenderFirstFrameListener| listener: () => void| void| 添加首帧画面渲染监听|
-  |removeOnRenderFirstFrameListener| listener: () => void| void| 移除首帧画面渲染监听|
+  | 接口                             | 参数                              | 参数类型                                       | 返回值      | 说明                                                          |
+  | -------------------------------- | --------------------------------- | ---------------------------------------------- | ----------- | ------------------------------------------------------------- |
+  | construct                        | context                           | BaseContxt                                     | CcPlayer    | 创建ccplayer实例                                              |
+  | setPlayer                        | player                            | IPlayer                                        | void        | 设置播放器实例，用户可通过实现IPlayer接口来自定义播放业务实现 |
+  | start                            | void                              | \                                              | void        | 开始/恢复播放                                                 |
+  | startTo                          | position                          | number                                         | void        | 从指定时间戳开始播放                                          |
+  | pause                            | void                              | \                                              | void        | 暂停播放                                                      |
+  | stop                             | void                              | \                                              | void        | 停止播放                                                      |
+  | reset                            | void                              | \                                              | void        | 重置播放器                                                    |
+  | release                          | void                              | \                                              | void        | 释放播放器                                                    |
+  | seekTo                           | position                          | number                                         | void        | 跳转至指定进度                                                |
+  | setMediaSource                   | mediaSource , onReaady?           | MediaSource                                    | void        | 设置媒体资源                                                  |
+  | getMediaSource                   | void                              | \                                              | MediaSource | 获取当前播放的媒体资源                                        |
+  | setLooper                        | isLoop                            | boolean                                        | void        | 设置循环播放                                                  |
+  | setVolume                        | vol                               | number                                         | void        | 设置音量                                                      |
+  | isPlaying                        | void                              | \                                              | boolean     | 是否正在播放                                                  |
+  | getDuration                      | void                              | \                                              | number      | 获取媒体资源的总时长                                          |
+  | getCurrentPosition               | void                              | \                                              | number      | 获取当前播放时长                                              |
+  | getPlayerState                   | void                              | \                                              | PlayerState | 获取当前播放状态                                              |
+  | getSystemPlayer                  | void                              | \                                              | AVPlayer    | 获取当前系统播放器实例                                        |
+  | setSurface                       | surfaceId                         | string                                         | void        | 绑定 surafce(仅媒体类型为视频时有效)                          |
+  | addOnPreparedListener            | listener                          | () => void                                     | IPlayer     | 添加媒体资源 prepare 状态监听                                 |
+  | removeOnPreparedListener         | listener                          | () => void                                     | IPlayer     | 移除媒体资源 preapare 状态监听                                |
+  | addOnCompletionListener          | listener                          | () => void                                     | IPlayer     | 添加媒体资源播放结束状态监听                                  |
+  | removeOnCompletionListener       | listener                          | () => void                                     | IPlayer     | 移除媒体资源播放结束状态监听                                  |
+  | addOnErrorListener               | listener                          | (code: number, message: string) => void        | IPlayer     | 添加媒体资源播放异常状态监听                                  |
+  | removeOnErrorListener            | listener                          | (code: number, message: string) => void        | IPlayer     | 移除媒体资源播放异常状态监听                                  |
+  | addOnProgressChangedListener     | listener                          | (duration: number) => void                     | IPlayer     | 添加播放进度状态监听                                          |
+  | removeOnProgressChangedListener  | listener                          | (duration: number) => void                     | IPlayer     | 移除播放进度状态监听                                          |
+  | addOnSeekChangedListener         | listener                          | (duration: number) => void                     | IPlayer     | 添加播放快进快退状态监听                                      |
+  | removeOnSeekChangedListener      | listener                          | (duration: number) => void                     | IPlayer     | 移除播放快进快退状态监听                                      |
+  | addOnVolumeChangedListener       | listener                          | () => void                                     | IPlayer     | 添加媒体音量变化状态监听                                      |
+  | removeOnVolumeChangedListener    | listener                          | () => void                                     | IPlayer     | 移除媒体音量变化状态监听                                      |
+  | addOnStateChangedListener        | listener                          | (newState: PlayerState) => void                | IPlayer     | 添加播放状态变更监听                                          |
+  | removeOnStateChangedListener     | listener                          | (newState: PlayerState) => void                | IPlayer     | 移除播放状态变更监听                                          |
+  | addOnVideoSizeChangedListener    | listener                          | (newWidth, newHeight) => void                  | void        | 添加视频尺寸变化监听                                          |
+  | removeOnVideoSizeChangedListener | listener                          | (newWidth, newHeight) => void                  | void        | 移除视频尺寸变化监听                                          |
+  | addOnRenderFirstFrameListener    | listener                          | () => void                                     | void        | 添加首帧画面渲染监听                                          |
+  | removeOnRenderFirstFrameListener | listener                          | () => void                                     | void        | 移除首帧画面渲染监听                                          |
+  | bindAvSession                    | context,session\me,type,agentInfo | BaseContext,string,AVSessionType,WantAgentInfo | void        | 绑定播控中心                                                  |
+  | addAvSessionCallback             | callback                          | AvSessionCallback                              | void        | 添加播控中心操作事件监听                                      |
+  | removeAvSessionCallback          | callback                          | AvSessionCallback                              | void        | 移除播控中心操作事件监听                                      |
+  | setBackgroundPlayE\ble           | backgroundPlay                    | boolean                                        | void        | 设置是否开启后台长时播放                                      |
+
+
+  - AvSessionCallback 播控中心事件回调
+  | 属性       | 类型       | 说明       |
+  | ---------- | ---------- | ---------- |
+  | onNext     | () => void | 播放上一首 |
+  | onPrevious | () => void | 播放下一首 |
 
 - CcPlayerView 视频播放组件
-  注意：组件使用了系统接口，需要系统签名和 fullSdk 支持。如果不具备条件，可以使用 CcPlayer 结合 XComponent 进行视频播放，参考下面场景示例。
-  | 属性 | 类型 | 说明 | 是否必填 |
-  | ----------------------- | ------------------------------------------- | ------------------------ | -------- |
-  | player | CcPlayer | 媒体播放器 | 是 |
-  | viewSize | SizeOptions | 组件尺寸 | 是 |
-  | asRatio | AspectRatio | 视频画面比例 | 是 |
-  | autoHideControllerDelay | number | 自动隐藏手势 UI 的延时 | 否 |
-  | isSupportGesture | boolean | 是否支持手势操作 | 否 |
-  | onTouchCallback | (event: TouchEvent) => void | 触摸事件回调 | 否 |
-  | onSurfaceCreated | () => void | Surface 创建事件回调 | 否 |
-  | onSurfaceDestroy | () => void | Surface 销毁事件回调 | 否 |
-  | isDefaultGestureUI | boolean | 是否使用内置默认手势 UI | 否 |
-  | gestureUIListener | (isVisible: boolean) => void | 手势 UI 显示/隐藏回调 | 否 |
-  | gestureSeekAction | (seekPosition: number, max: number) => void | 手势 seek 进度回调 | 否 |
-  | gestureBrightnessAction | (brightness: number, max: number) => void | 手势 Brightness 进度回调 | 否 |
-  | gestureVolumeAction | (volume: number, max: number) => void | 手势 Volume 进度回调 | 否 |
+  | 属性                    | 类型                                                             | 说明                             | 是否必填 |
+  | ----------------------- | ---------------------------------------------------------------- | -------------------------------- | -------- |
+  | player                  | CcPlayer                                                         | 媒体播放器                       | 是       |
+  | renderType              | ComponentType                                                    | 视频渲染模式，默认SURFACE        | 否       |
+  | asRatio                 | AspectRatio                                                      | 视频画面比例                     | 是       |
+  | autoHideControllerDelay | number                                                           | 自动隐藏手势 UI 的延时，默认1.5s | 否       |
+  | isSupportGesture        | boolean                                                          | 是否支持手势操作，默认true       | 否       |
+  | onTouchCallback         | (event: TouchEvent) => void                                      | 触摸事件回调                     | 否       |
+  | onSurfaceCreated        | () => void                                                       | Surface 创建事件回调             | 否       |
+  | onSurfaceDestroy        | () => void                                                       | Surface 销毁事件回调             | 否       |
+  | onGestureUIListener     | (isVisible: boolean) => void                                     | 手势 UI 显示/隐藏回调            | 否       |
+  | onGestureAction         | (type: GestureType, percent: number, isTouchUp: boolean) => void | 手势操作回调                     | 否       |
 
-- PlayerView 视频播放组件，可用于HarmonyOS Next，在CcPlayerView基础上裁剪了手势控制音量和亮度(系统API，Next未开放该接口)
-  | 属性 | 类型 | 说明 | 是否必填 |
-  | ----------------------- | ------------------------------------------- | ------------------------ | -------- |
-  | player | CcPlayer | 媒体播放器 | 是 |
-  | viewSize | SizeOptions | 组件尺寸 | 是 |
-  | asRatio | AspectRatio | 视频画面比例 | 是 |
-  | autoHideControllerDelay | number | 自动隐藏手势 UI 的延时 | 否 |
-  | isSupportGesture | boolean | 是否支持手势操作 | 否 |
-  | onTouchCallback | (event: TouchEvent) => void | 触摸事件回调 | 否 |
-  | onSurfaceCreated | () => void | Surface 创建事件回调 | 否 |
-  | onSurfaceDestroy | () => void | Surface 销毁事件回调 | 否 |
-  | isDefaultGestureUI | boolean | 是否使用内置默认手势 UI | 否 |
-  | gestureUIListener | (isVisible: boolean) => void | 手势 UI 显示/隐藏回调 | 否 |
-  | gestureSeekAction | (seekPosition: number, max: number) => void | 手势 seek 进度回调 | 否 |
+- GestureType CcPlayerView视频播放组件手势类型
+  | 属性       | 说明     |
+  | ---------- | -------- |
+  | BRIGHTNESS | 亮度调节 |
+  | PROGRESS   | 进度调节 |
+  | VOLUME     | 音量调节 |
+
 
 - AspectRatio 视频画面比例
-  | 属性 | 说明 |
-  | ------- | ------------------------ |
-  | AUTO | 自动匹配 |
-  | W_16_9 | 16:9 宽屏 |
-  | W_4_3 | 4:3 |
-  | W_21_9 | 21:9 宽屏 |
+  | 属性    | 说明             |
+  | ------- | ---------------- |
+  | AUTO    | 自动匹配         |
+  | W_16_9  | 16:9 宽屏        |
+  | W_4_3   | 4:3              |
+  | W_21_9  | 21:9 宽屏        |
   | STRETCH | 保持比例裁切填充 |
-  | FILL | 拉伸填充 |
+  | FILL    | 拉伸填充         |
 
 - PlayerState 播放器状态
-  | 属性 | 说明 |
+  | 属性            | 说明                   |
   | --------------- | ---------------------- |
-  | STATE_NOT_INIT | 初始状态(未实例化) |
-  | STATE_IDLE | 播放器实例化且闲置状态 |
-  | STATE_PREPARED | 播放器加载资源完成状态 |
-  | STATE_STARTED | 播放器正在播放状态 |
-  | STATE_PAUSED | 播放器暂停状态 |
-  | STATE_STOPPED | 播放器停止状态 |
-  | STATE_COMPLETED | 播放器播放结束状态 |
-  | STATE_ERROR | 播放器播放异常状态 |
-
-- PlayerType 媒体播放器类型
-  | 属性 | 说明 |
-  | ----- | ---------- |
-  | AUDIO | 音频播放器 |
-  | VIDEO | 视频播放器 |
+  | STATE_NOT_INIT  | 初始状态(未实例化)     |
+  | STATE_IDLE      | 播放器实例化且闲置状态 |
+  | STATE_PREPARED  | 播放器加载资源完成状态 |
+  | STATE_STARTED   | 播放器正在播放状态     |
+  | STATE_PAUSED    | 播放器暂停状态         |
+  | STATE_STOPPED   | 播放器停止状态         |
+  | STATE_COMPLETED | 播放器播放结束状态     |
+  | STATE_ERROR     | 播放器播放异常状态     |
 
 - MediaSourceFactory 媒体资源构建器
-  | 接口 | 参数 | 返回值 | 说明 |
-  | ------------ | --------------------------------------------------------------- | -------------------- | ------------------------- |
-  | createFile | filePath 文件绝对路径, title? 媒体标题 | Promise\<MediaSource> | 通过本地文件创建媒体资源 |
-  | createAssets | abilityContext 上下文, assetsPath 资源相对路径, title? 媒体标题 | Promise\<MediaSource> | 通过 Raw 文件创建媒体资源 |
-  | createUrl | url 媒体链接地址, title? 媒体标题 | MediaSource | 通过 url 地址创建媒体资源 |
+  | 接口         | 参数                                                                                                                     | 返回值                | 说明                          |
+  | ------------ | ------------------------------------------------------------------------------------------------------------------------ | --------------------- | ----------------------------- |
+  | createFile   | title: string, filePath: string, cover?: string\|Pixelmap                                                                | Promise\<MediaSource> | 通过本地文件创建媒体资源      |
+  | createAssets | title: string, rawAssetsPath: string, cover?: string\|Pixelmap                                                           | MediaSource           | 通过 Raw 文件创建媒体资源     |
+  | createUrl    | title: string, url: string, cover?: string\|Pixelmap, header?: Record<string, string>, strategy?: media.PlaybackStrategy | MediaSource           | 通过网络 url 地址创建媒体资源 |
 
 ## 场景示例
 
