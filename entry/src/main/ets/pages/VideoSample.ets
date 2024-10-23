@@ -122,13 +122,11 @@ export struct VideoSample {
                         .onClick(() => {
                             this.isLoading = true
                             this.player.reset()
-                            MediaSourceFactory.createAssets("TestVideo", "test.mp4",
+                            let src = MediaSourceFactory.createAssets("TestVideo", "test.mp4",
                                 "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
-                                .then((src) => {
-                                    src && this.player.setMediaSource(src, () => {
-                                        this.player.start()
-                                    })
-                                })
+                            this.player.setMediaSource(src, () => {
+                                this.player.start()
+                            })
                         })
                     Button('start')
                         .onClick(() => {

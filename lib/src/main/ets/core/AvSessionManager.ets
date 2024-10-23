@@ -6,6 +6,7 @@ import { PlayerState } from '../config/PlayerState';
 import { MediaSource } from '../data/MediaSource';
 import { MediaLogger } from '../common/MediaLogger';
 import json from '@ohos.util.json';
+import { AvSessionCallback } from './AvSessionCallback';
 
 const TAG = "[AvSessionManager]"
 
@@ -13,6 +14,7 @@ export class AvSessionManager {
     private avSession?: avSession.AVSession = undefined
     private player: IPlayer
     private mediaSource?: MediaSource = undefined
+    private callbacks: Set<AvSessionCallback> = new Set()
 
     constructor(player: IPlayer) {
         this.player = player
@@ -53,6 +55,14 @@ export class AvSessionManager {
         }
     }
 
+    addAvSessionCallback(callback: AvSessionCallback) {
+        this.callbacks.add(callback)
+    }
+
+    removeAvSessionCallback(callback: AvSessionCallback) {
+        this.callbacks.delete(callback)
+    }
+
     setMediaSource(mediaSource: MediaSource) {
         MediaLogger.i(TAG, "set media source= " + json.stringify(mediaSource))
         this.mediaSource = mediaSource
@@ -80,6 +90,7 @@ export class AvSessionManager {
     }
 
     release() {
+        this.callbacks.clear()
         if (this.avSession) {
             this.avSession.setAVMetadata({ assetId: "" })
             this.avSession.off("play")
@@ -153,6 +164,16 @@ export class AvSessionManager {
                     let currentPosition = this.player.getCurrentPosition()
                     this.player.seekTo(currentPosition - time * 1000)
                 }
+            })
+            this.avSession.on('playNext', () => {
+                this.callbacks.forEach((callback) => {
+                    callback.onNext()
+                })
+            })
+            this.avSession.on('playPrevious', () => {
+                this.callbacks.forEach((callback) => {
+                    callback.onPrevious()
+                })
             })
         }
     }

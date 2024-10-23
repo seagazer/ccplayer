@@ -33,7 +33,7 @@ export class MediaSourceFactory {
      * @param rawAssetsPath The path of raw assets file.
      * @param cover The cover image of media file.
      */
-    public static async createAssets(title: string, rawAssetsPath: string, cover?: string | PixelMap): Promise<MediaSource | undefined> {
+    public static createAssets(title: string, rawAssetsPath: string, cover?: string | PixelMap): MediaSource {
         MediaLogger.i(TAG, "rawAssetsPath = " + rawAssetsPath)
         let source = new MediaSource(MediaSourceType.ASSETS, title, cover)
         source.rawAssetsPath = rawAssetsPath

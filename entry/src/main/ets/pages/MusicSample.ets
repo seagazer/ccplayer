@@ -1,4 +1,4 @@
-import { CcPlayer, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer';
+import { AvSessionCallback, CcPlayer, MediaSource, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer';
 import { timeToString } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
@@ -13,6 +13,7 @@ export struct MusicSample {
     @State totalDuration: number = 0
     @State seekPosition: number = 0
     private readonly cover = "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg"
+    private readonly cover2 = "https://img1.baidu.com/it/u=4039557469,3031542597&fm=253&fmt=auto&app=138&f=JPEG?w=200&h=200"
     private isSeeking = false
     private preparedListener = () => {
         this.totalDuration = this.player.getDuration()
@@ -37,8 +38,12 @@ export struct MusicSample {
         this.currentPosition = position
         this.isSeeking = false
     }
+    @State playIndex: number = 0
+    private playlist: Array<MediaSource> = []
 
     aboutToAppear(): void {
+        this.playlist.push(MediaSourceFactory.createAssets("Song0", "test.mp3", this.cover))
+        this.playlist.push(MediaSourceFactory.createAssets("Song1", "test2.mp3", this.cover2))
         const context = getContext(this) as common.UIAbilityContext
         this.player.bindAvSession(getContext(this), 'MusicSample', 'audio', {
             wants: [{
@@ -51,6 +56,14 @@ export struct MusicSample {
         }).then(() => {
             this.player.setBackgroundPlayEnable(true)
         })
+        this.player.addAvSessionCallback({
+            onNext: () => {
+                this.playNext()
+            },
+            onPrevious: () => {
+                this.playPrevious()
+            }
+        } as AvSessionCallback)
         this.player
             .addOnPreparedListener(this.preparedListener)
             .addOnStateChangedListener(this.stateChangedListener)
@@ -58,6 +71,26 @@ export struct MusicSample {
             .addOnErrorListener(this.errorListener)
             .addOnProgressChangedListener(this.progressChangedListener)
             .addOnSeekChangedListener(this.seekListener)
+    }
+
+    private playPrevious() {
+        this.playIndex--
+        if (this.playIndex < 0) {
+            this.playIndex = this.playlist.length - 1
+        }
+        this.player.setMediaSource(this.playlist[this.playIndex], () => {
+            this.player.start()
+        })
+    }
+
+    private playNext() {
+        this.playIndex++
+        if (this.playIndex > this.playlist.length - 1) {
+            this.playIndex = 0
+        }
+        this.player.setMediaSource(this.playlist[this.playIndex], () => {
+            this.player.start()
+        })
     }
 
     aboutToDisappear(): void {
@@ -75,9 +108,10 @@ export struct MusicSample {
         NavDestination() {
             Column() {
                 // video view
-                Image(this.cover)
+                Image(this.playIndex == 0 ? this.cover : this.cover2)
                     .width(200)
                     .height(200)
+                    .borderRadius(16)
 
                 Row() {
                     Text(timeToString(this.currentPosition))
@@ -98,18 +132,30 @@ export struct MusicSample {
                         })
                     Text(timeToString(this.totalDuration))
                 }.width("100%")
+                .margin({ top: 16 })
 
                 Row() {
                     Button('setSrc')
                         .onClick(() => {
                             this.player.reset()
-                            MediaSourceFactory.createAssets("TestMusic", "test.mp3", this.cover)
-                                .then((src) => {
-                                    src && this.player.setMediaSource(src, () => {
-                                        this.player.start()
-                                    })
-                                })
+                            this.player.setMediaSource(this.playlist[0], () => {
+                                this.player.start()
+                            })
                         })
+                    Button('next')
+                        .onClick(() => {
+                            this.playNext()
+                        })
+                    Button('previous')
+                        .onClick(() => {
+                            this.playPrevious()
+                        })
+                }
+                .width("100%")
+                .margin({ top: 32 })
+                .justifyContent(FlexAlign.SpaceEvenly)
+
+                Row() {
                     Button('start')
                         .onClick(() => {
                             this.player.start()
@@ -120,7 +166,7 @@ export struct MusicSample {
                         })
                 }
                 .width("100%")
-                .margin({ top: 32 })
+                .margin({ top: 16 })
                 .justifyContent(FlexAlign.SpaceEvenly)
             }
             .width("100%")

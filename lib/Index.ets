@@ -1,5 +1,7 @@
 export { CcPlayer } from './src/main/ets/CcPlayer'
 
+export { AvSessionCallback } from './src/main/ets/core/AvSessionCallback'
+
 export { GestureType } from './src/main/ets/config/GestureType'
 
 export { CcPlayerView } from './src/main/ets/widget/CcPlayerView'

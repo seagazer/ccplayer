@@ -9,6 +9,7 @@ import common from '@ohos.app.ability.common';
 import { AvSessionManager } from './core/AvSessionManager';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { BackgroundPlayManager } from './core/BackgroundPlayManager';
+import { AvSessionCallback } from './core/AvSessionCallback';
 
 const TAG = '[CcPlayer]'
 
@@ -19,12 +20,13 @@ export class CcPlayer implements IPlayer {
     private player: IPlayer
     private context: common.Context
     private isBackgroundPlay = false
+    private avSessionManager: AvSessionManager
     private agentInfo?: wantAgent.WantAgentInfo = undefined
-    private avSessionManager?: AvSessionManager = undefined
 
     constructor(context: common.Context) {
         this.context = context
         this.player = AvPlayerImpl.create(context)
+        this.avSessionManager = new AvSessionManager(this.player)
     }
 
     /**
@@ -232,7 +234,6 @@ export class CcPlayer implements IPlayer {
     async bindAvSession(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType,
         agentInfo: wantAgent.WantAgentInfo) {
         this.agentInfo = agentInfo
-        this.avSessionManager = new AvSessionManager(this.player)
         try {
             await this.avSessionManager.create(context, sessionName, type)
             await this.avSessionManager.setLaunchInfo(agentInfo)
@@ -240,6 +241,14 @@ export class CcPlayer implements IPlayer {
         } catch (e) {
             MediaLogger.e(TAG, "bindAvSession error: " + JSON.stringify(e))
         }
+    }
+
+    addAvSessionCallback(callback: AvSessionCallback) {
+        this.avSessionManager.addAvSessionCallback(callback)
+    }
+
+    removeAvSessionCallback(callback: AvSessionCallback) {
+        this.avSessionManager.removeAvSessionCallback(callback)
     }
 
     setBackgroundPlayEnable(backgroundPlay: boolean) {
