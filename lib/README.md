@@ -135,12 +135,8 @@ ohpm install @seagazer/ccplayer
 struct PlayerViewPage {
     // 视频画面比例模式
     @State videoRatio: number = AspectRatio.AUTO
-    private player: CcPlayer | null = null
-
-    aboutToAppear() {
-        // 1.实例化CcPlayer
-        this.player = CcPlayer.create(PlayerType.VIDEO)
-    }
+     // 1.实例化CcPlayer
+    private player = new CcPlayer(getContext(this))
 
     build() {
         Column() {
@@ -148,8 +144,7 @@ struct PlayerViewPage {
                 // 2.引用CcPlayerView视频播放组件，设置参数，绑定CcPlayer
                 CcPlayerView({
                     player: this.player,
-                    viewSize: {width: "100%", height: "100%"},
-                    asRatio: $videoRatio
+                    asRatio: this.videoRatio
                 })
             }
             .width(400)
@@ -173,13 +168,13 @@ struct PlayerViewPage {
         // 4.设置mediaSource
         this.player!.setMediaSource(src, () => {
             // 5.设置成功回调，开始播放
-            this.player!.start()
+            this.player.start()
         })
     }
 
     aboutToDisappear() {
         // 6.释放资源
-        this.player!.release()
+        this.player.release()
     }
 }
 ```
@@ -191,12 +186,8 @@ struct PlayerViewPage {
 @Component
 struct PlayerViewPage {
     private controller = new XComponentController()
-    private player: CcPlayer | null = null
-
-    aboutToAppear() {
-        // 1.实例化CcPlayer
-        this.player = CcPlayer.create(PlayerType.VIDEO)
-    }
+    // 1.实例化CcPlayer
+    private player = new CcPlayer(getContext(this))
 
     build() {
         Column() {
@@ -208,7 +199,7 @@ struct PlayerViewPage {
             }).onLoad(() => {
                 let surfaceId = this.controller.getXComponentSurfaceId()
                 // 2.设置surface，播放前必须设置
-                this.player!.setSurface(surfaceId)
+                this.player.setSurface(surfaceId)
             })
             .width(400)
             .height(300)
@@ -228,15 +219,15 @@ struct PlayerViewPage {
         // 3.创建mediaSource
         let src = await MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
         // 4.设置mediaSource
-        this.player!.setMediaSource(src, () => {
+        this.player.setMediaSource(src, () => {
             // 5.设置成功回调，开始播放
-            this.player!.start()
+            this.player.start()
         })
     }
 
     aboutToDisappear() {
         // 6.释放资源
-        this.player!.release()
+        this.player.release()
     }
 }
 ```
@@ -247,12 +238,8 @@ struct PlayerViewPage {
 @Entry
 @Component
 struct PlayerViewPage {
-    private player: CcPlayer | null = null
-
-    aboutToAppear() {
-        // 1.实例化CcPlayer
-        this.player = CcPlayer.create(PlayerType.AUDIO)
-    }
+     // 1.实例化CcPlayer
+    private player = new CcPlayer(getContext(this))
 
     build() {
         Column() {
@@ -271,7 +258,7 @@ struct PlayerViewPage {
         // 2.创建mediaSource
         let src = await MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp3", "test.mp3")
         // 3.设置mediaSource
-        this.player!.setMediaSource(src, () => {
+        this.player.setMediaSource(src, () => {
             // 4.设置成功回调，开始播放
             this.player!.start()
         })
@@ -279,10 +266,10 @@ struct PlayerViewPage {
 
     aboutToDisappear() {
         // 5.释放资源
-        this.player!.release()
+        this.player.release()
     }
 }
 ```
 
-更多使用场景和示例，例如自定义手势操作 UI，播放器状态事件监听等，可以参考本库代码仓的 entry 工程：
+更多使用场景和示例，例如自定义手势操作 UI，播放器状态事件监听，绑定播控中心等，可以参考本库代码仓的 entry 示例工程：
 https://github.com/seagazer/ccplayer
