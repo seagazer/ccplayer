@@ -5,7 +5,7 @@
 CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒体的轻量级播放器应用框架。
 
 - 支持音频/视频播放
-- 视频播放组件，支持视频宽高比设置，支持手势控制
+- 视频播放组件，支持宽高比设置，支持手势控制
 - 支持播控中心绑定
 - 支持后台播放控制
 
@@ -34,7 +34,7 @@ ohpm install @seagazer/ccplayer
 - CcPlayer 媒体播放器
   | 接口                             | 参数                                                                                | 返回值      | 说明                                                          |
   | -------------------------------- | ----------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------- |
-  | construct                        | context: BaseContxt                                                                 | CcPlayer    | 创建ccplayer实例                                              |
+  | construct                        | context: BaseContxt                                                                 | CcPlayer    | 创建CcPlayer实例                                              |
   | setPlayer                        | player: IPlayer                                                                     | void        | 设置播放器实例，用户可通过实现IPlayer接口来自定义播放业务实现 |
   | start                            | void                                                                                | void        | 开始/恢复播放                                                 |
   | startTo                          | position: number                                                                    | void        | 从指定时间戳开始播放                                          |
@@ -43,7 +43,7 @@ ohpm install @seagazer/ccplayer
   | reset                            | void                                                                                | void        | 重置播放器                                                    |
   | release                          | void                                                                                | void        | 释放播放器                                                    |
   | seekTo                           | position: number                                                                    | void        | 跳转至指定进度                                                |
-  | setMediaSource                   | mediaSource: MediaSource , onReaady?: ()=>void                                      | void        | 设置媒体资源                                                  |
+  | setMediaSource                   | mediaSource: MediaSource , onReaady?: ()=>void                                      | void        | 设置媒体资源，在onReady回调中可以调用start开启播放            |
   | getMediaSource                   | void                                                                                | MediaSource | 获取当前播放的媒体资源                                        |
   | setLooper                        | isLoop: boolean                                                                     | void        | 设置循环播放                                                  |
   | setVolume                        | vol: number                                                                         | void        | 设置音量                                                      |
@@ -71,30 +71,30 @@ ohpm install @seagazer/ccplayer
   | removeOnVideoSizeChangedListener | listener: (newWidth: number, newHeight: number) => void                             | void        | 移除视频尺寸变化监听                                          |
   | addOnRenderFirstFrameListener    | listener: () => void                                                                | void        | 添加首帧画面渲染监听                                          |
   | removeOnRenderFirstFrameListener | listener: () => void                                                                | void        | 移除首帧画面渲染监听                                          |
-  | bindAvSession                    | context:BaseContext, sessioname:string, type:AVSessionType, agentInfo:WantAgentInfo | void        | 绑定播控中心                                                  |
+  | bindAvSession                    | context:BaseContext, sessioName:string, type:AVSessionType, agentInfo:WantAgentInfo | void        | 绑定播控中心                                                  |
   | addAvSessionCallback             | callback: AvSessionCallback                                                         | void        | 添加播控中心操作事件监听                                      |
   | removeAvSessionCallback          | callback: AvSessionCallback                                                         | void        | 移除播控中心操作事件监听                                      |
-  | setBackgroundPlayE\ble           | backgroundPlay: boolean                                                             | void        | 设置是否开启后台长时播放                                      |
+  | setBackgroundPlayEnable          | backgroundPlay: boolean                                                             | void        | 设置是否开启后台长时播放                                      |
 
 
 - AvSessionCallback 播控中心事件回调
   | 属性       | 类型       | 说明       |
   | ---------- | ---------- | ---------- |
-  | onNext     | () => void | 播放上一首 |
-  | onPrevious | () => void | 播放下一首 |
+  | onNext     | () => void | 播放下一首 |
+  | onPrevious | () => void | 播放上一首 |
 
 - CcPlayerView 视频播放组件
   | 属性                    | 类型                                                             | 说明                             | 是否必填 |
   | ----------------------- | ---------------------------------------------------------------- | -------------------------------- | -------- |
   | player                  | CcPlayer                                                         | 媒体播放器                       | 是       |
-  | renderType              | ComponentType                                                    | 视频渲染模式，默认SURFACE        | 否       |
+  | renderType              | XComponentType                                                   | 视频渲染模式，默认SURFACE        | 否       |
   | asRatio                 | AspectRatio                                                      | 视频画面比例                     | 是       |
   | autoHideControllerDelay | number                                                           | 自动隐藏手势 UI 的延时，默认1.5s | 否       |
   | isSupportGesture        | boolean                                                          | 是否支持手势操作，默认true       | 否       |
   | onTouchCallback         | (event: TouchEvent) => void                                      | 触摸事件回调                     | 否       |
   | onSurfaceCreated        | () => void                                                       | Surface 创建事件回调             | 否       |
   | onSurfaceDestroy        | () => void                                                       | Surface 销毁事件回调             | 否       |
-  | onGestureUIListener     | (isVisible: boolean) => void                                     | 手势 UI 显示/隐藏回调            | 否       |
+  | onGestureUIListener     | (visible: boolean) => void                                     | 手势 UI 显示/隐藏回调            | 否       |
   | onGestureAction         | (type: GestureType, percent: number, isTouchUp: boolean) => void | 手势操作回调                     | 否       |
 
 - GestureType CcPlayerView视频播放组件手势类型
