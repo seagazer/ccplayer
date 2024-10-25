@@ -39,7 +39,7 @@ export struct CcPlayerView {
      */
     @Link @Watch("onAspectRatioChanged") asRatio: AspectRatio
     /**
-     * Set the delay to auto hide gesture controller ui.
+     * Set the delay to auto hide gesture controller ui, default is 1500ms.
      */
     autoHideControllerDelay: number = 1500
     /**
@@ -62,7 +62,7 @@ export struct CcPlayerView {
     /**
      * Set a listener to handle the gesture ui visible.
      */
-    onGestureUIListener?: ((isVisible: boolean) => void) = undefined
+    onGestureUIListener?: ((visible: boolean) => void) = undefined
     /**
      * The listener to handle the gesture actions.
      */
@@ -84,7 +84,11 @@ export struct CcPlayerView {
     private volumePercent: number = 0
     private brightnessPercent: number = 0
     private seekMoveSpeed: number = 3 // this speed is larger, then the move step is small
-    private hideControllerTaskId: number = -1
+    private hideControllerTimer: number = -1
+    @State videoRatio: number = -1
+    private isUserMoved: boolean = false
+    @State surfaceWidth: number = 0
+    @State surfaceHeight: number = 0
     private preparedListener = () => {
         this.totalDuration = this.player!.getDuration()
     }
@@ -92,15 +96,11 @@ export struct CcPlayerView {
         this.videoWidth = width
         this.videoHeight = height
         MediaLogger.d(TAG, "video size is " + width + " * " + height)
-        // if the ratio mode is AUTO, refresh videoRatio when get the video size info.
+        // if the ratio mode is AUTO or STRETCH, refresh videoRatio when get the video size info.
         if (this.asRatio == AspectRatio.AUTO || this.asRatio == AspectRatio.STRETCH) {
             this.onAspectRatioChanged()
         }
     }
-    @State videoRatio: number = -1
-    private isUserMoved: boolean = false
-    @State surfaceWidth: number = 0
-    @State surfaceHeight: number = 0
 
     private onAspectRatioChanged() {
         this.videoRatio = this.getVideoRatio()
@@ -135,13 +135,14 @@ export struct CcPlayerView {
     }
 
     aboutToAppear() {
+        MediaLogger.d(TAG, "init, add the listeners")
         this.player!.addOnPreparedListener(this.preparedListener)
         this.player!.addOnVideoSizeChangedListener(this.videoSizeChangedListener)
     }
 
     aboutToDisappear() {
         MediaLogger.d(TAG, "release, remove the listeners")
-        clearTimeout(this.hideControllerTaskId)
+        clearTimeout(this.hideControllerTimer)
         this.player!.removeOnPreparedListener(this.preparedListener)
         this.player!.removeOnVideoSizeChangedListener(this.videoSizeChangedListener)
     }
@@ -164,6 +165,9 @@ export struct CcPlayerView {
                 })
                 .onDestroy(() => {
                     this.onSurfaceDestroy && this.onSurfaceDestroy()
+                })
+                .animation({
+                    duration: 150
                 })
         }
         .gesture(TapGesture({ count: 2 }).onAction(() => {
@@ -192,7 +196,7 @@ export struct CcPlayerView {
             }
             this.surfaceWidth = this.wSize
             this.surfaceHeight = this.hSize
-            MediaLogger.d(TAG, "The player view size is: " + this.wSize + " x " + this.hSize)
+            MediaLogger.d(TAG, "The player view default size is: " + this.wSize + " x " + this.hSize)
             this.controlEdge = this.wSize * this.controlEdgePercent
             this.onAspectRatioChanged()
         })
@@ -204,11 +208,11 @@ export struct CcPlayerView {
     private getVideoRatio(): number {
         switch (this.asRatio) {
             case AspectRatio.W_16_9:
-                return 1.78 // 16:9
+                return 16 / 9 // 16:9
             case AspectRatio.W_4_3:
-                return 1.33 // 4:3
+                return 4 / 3 // 4:3
             case AspectRatio.W_21_9:
-                return 2.33 // 21:9
+                return 21 / 9 // 21:9
             case AspectRatio.FILL:
                 return this.wSize / this.hSize
             case AspectRatio.STRETCH:
@@ -243,7 +247,7 @@ export struct CcPlayerView {
     }
 
     private handleTouchDown(touchEvent: TouchObject) {
-        clearTimeout(this.hideControllerTaskId)
+        clearTimeout(this.hideControllerTimer)
         this.onControllerVisibleChanged(false)
         this.downX = touchEvent.x
         this.downY = touchEvent.y
@@ -332,7 +336,7 @@ export struct CcPlayerView {
         }
         this.downX = -1
         this.downY = -1
-        this.hideControllerTaskId = setTimeout(() => {
+        this.hideControllerTimer = setTimeout(() => {
             this.onControllerVisibleChanged(false)
         }, this.autoHideControllerDelay)
     }

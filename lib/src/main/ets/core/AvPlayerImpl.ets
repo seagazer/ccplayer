@@ -65,12 +65,12 @@ export class AvPlayerImpl implements IPlayer {
         this.player!.on("stateChange", (newState, _) => {
             switch (newState) {
                 case "idle":
-                    MediaLogger.d(TAG, "System callback: idle")
+                    MediaLogger.d(TAG, ">> System callback: idle")
                     this.changePlayerState(PlayerState.STATE_IDLE)
                     this.isPrepared = false
                     break
                 case "initialized": // src ready -> initialized
-                    MediaLogger.d(TAG, "System callback: initialized")
+                    MediaLogger.d(TAG, ">> System callback: initialized")
                     if (this.curSurfaceId && this.curSurfaceId != this.lastSurfaceId) {
                         MediaLogger.d(TAG, ">> set surface: " + this.curSurfaceId)
                         this.player!.surfaceId = this.curSurfaceId
@@ -79,7 +79,7 @@ export class AvPlayerImpl implements IPlayer {
                     this.player!.prepare()
                     break
                 case "prepared":
-                    MediaLogger.d(TAG, "System callback: prepared")
+                    MediaLogger.d(TAG, ">> System callback: prepared")
                     this.isPrepared = true
                     this.player!.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_PREPARED)
@@ -92,18 +92,18 @@ export class AvPlayerImpl implements IPlayer {
                     this.onReady = undefined
                     break
                 case "playing":
-                    MediaLogger.d(TAG, "System callback: playing")
+                    MediaLogger.d(TAG, ">> System callback: playing")
                     this.isPlayed = true
                     this.player!.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_STARTED)
                     break
                 case "paused":
-                    MediaLogger.d(TAG, "System callback: paused")
+                    MediaLogger.d(TAG, ">> System callback: paused")
                     this.player!.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_PAUSED)
                     break
                 case "completed":
-                    MediaLogger.d(TAG, "System callback: completed")
+                    MediaLogger.d(TAG, ">> System callback: completed")
                     this.player!.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_COMPLETED)
                     if (this.completedListeners.length > 0) {
@@ -113,16 +113,16 @@ export class AvPlayerImpl implements IPlayer {
                     }
                     break
                 case "stopped":
-                    MediaLogger.d(TAG, "System callback: stopped")
+                    MediaLogger.d(TAG, ">> System callback: stopped")
                     this.changePlayerState(PlayerState.STATE_STOPPED)
                     this.isPrepared = false
                     break
                 case "released":
-                    MediaLogger.d(TAG, "System callback: released")
+                    MediaLogger.d(TAG, ">> System callback: released")
                     this.changePlayerState(PlayerState.STATE_NOT_INIT)
                     break
                 case "error":
-                    MediaLogger.e(TAG, "System callback: error")
+                    MediaLogger.e(TAG, ">> System callback: error")
                     if (this.errorListeners.length > 0) {
                         this.errorListeners.forEach((callback) => {
                             callback(-1, "state error")
@@ -132,7 +132,7 @@ export class AvPlayerImpl implements IPlayer {
             }
         })
         this.player!.on("error", (err) => {
-            MediaLogger.e(TAG, "System callback: error = " + JSON.stringify(err))
+            MediaLogger.e(TAG, ">> System callback: error = " + JSON.stringify(err))
             if (this.errorListeners.length > 0) {
                 this.errorListeners.forEach((callback) => {
                     if (err) {
@@ -144,7 +144,7 @@ export class AvPlayerImpl implements IPlayer {
             }
         })
         this.player!.on("startRenderFrame", () => {
-            MediaLogger.d(TAG, "System callback: render first frame ")
+            MediaLogger.d(TAG, ">> System callback: render first frame ")
             if (this.renderFirstFrameListeners.length > 0) {
                 this.renderFirstFrameListeners.forEach((callback) => {
                     callback()
@@ -152,7 +152,7 @@ export class AvPlayerImpl implements IPlayer {
             }
         })
         this.player!.on("videoSizeChange", (width: number, height: number) => {
-            MediaLogger.d(TAG, "System callback: videoSizeChanged: " + width + " x " + height)
+            MediaLogger.d(TAG, ">> System callback: videoSizeChanged: " + width + " x " + height)
             if (this.videoSizeChangedListeners.length > 0) {
                 this.videoSizeChangedListeners.forEach((callback) => {
                     callback(width, height)
@@ -160,7 +160,7 @@ export class AvPlayerImpl implements IPlayer {
             }
         })
         this.player!.on("seekDone", (position) => {
-            MediaLogger.d(TAG, "System callback: seekDone: " + position)
+            MediaLogger.d(TAG, ">> System callback: seekDone: " + position)
             if (this.seekChangedListeners.length > 0) {
                 this.seekChangedListeners.forEach((callback) => {
                     callback(position)
@@ -173,7 +173,7 @@ export class AvPlayerImpl implements IPlayer {
             }
         })
         this.player!.on("volumeChange", (volume) => {
-            MediaLogger.d(TAG, "System callback: volumeChange: " + volume)
+            MediaLogger.d(TAG, ">> System callback: volumeChange: " + volume)
             if (this.volumeChangedListeners.length > 0) {
                 this.volumeChangedListeners.forEach((callback) => {
                     callback()

@@ -170,11 +170,21 @@ export struct VideoViewSample {
                         onGestureUIListener: (visible) => {
                             this.gestureOverlayVisible = visible
                         }
-                    })
+                    })// todo test bug by https://github.com/seagazer/ccplayer/issues/9
+                        .onAppear(() => {
+                            this.isLoading = true
+                            this.player.reset()
+                            let src = MediaSourceFactory.createAssets("TestVideo", "test.mp4",
+                                "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                            this.player.setMediaSource(src, () => {
+                                this.player.start()
+                            })
+                        })
                     this.GestureOverlay()
                     this.LoadingOverlay()
-                }.width(300)
-                .height(200)
+                }
+                .width(300)
+                .height(500)
 
                 Row() {
                     Text(timeToString(this.currentPosition))
@@ -214,6 +224,32 @@ export struct VideoViewSample {
                     Button('pause')
                         .onClick(() => {
                             this.player.pause()
+                        })
+                }
+                .width("100%")
+                .margin({ top: 32 })
+                .justifyContent(FlexAlign.SpaceEvenly)
+
+                Row() {
+                    Button('AUTO')
+                        .onClick(() => {
+                            this.ratio = AspectRatio.AUTO
+                        })
+                    Button('21:9')
+                        .onClick(() => {
+                            this.ratio = AspectRatio.W_21_9
+                        })
+                    Button('4:3')
+                        .onClick(() => {
+                            this.ratio = AspectRatio.W_4_3
+                        })
+                    Button('FILL')
+                        .onClick(() => {
+                            this.ratio = AspectRatio.FILL
+                        })
+                    Button('STRETCH')
+                        .onClick(() => {
+                            this.ratio = AspectRatio.STRETCH
                         })
                 }
                 .width("100%")
