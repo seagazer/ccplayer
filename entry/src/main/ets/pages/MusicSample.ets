@@ -3,6 +3,7 @@ import { timeToString } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
+import { CButton } from './CButton';
 
 const TAG = '[MusicSample]'
 
@@ -42,8 +43,9 @@ export struct MusicSample {
     private playlist: Array<MediaSource> = []
 
     aboutToAppear(): void {
-        this.playlist.push(MediaSourceFactory.createAssets("Song0", "test.mp3", this.cover))
-        this.playlist.push(MediaSourceFactory.createAssets("Song1", "test2.mp3", this.cover2))
+        // mock data
+        this.playlist.push(MediaSourceFactory.createAssets("Song1", "music1.mp3", this.cover))
+        this.playlist.push(MediaSourceFactory.createAssets("Song2", "music2.mp3", this.cover2))
         const context = getContext(this) as common.UIAbilityContext
         this.player.bindAvSession(getContext(this), 'MusicSample', 'audio', {
             wants: [{
@@ -135,35 +137,44 @@ export struct MusicSample {
                 .margin({ top: 16 })
 
                 Row() {
-                    Button('setSrc')
-                        .onClick(() => {
-                            this.player.reset()
+                    CButton({
+                        text: "setSrc",
+                        onAction: () => {
                             this.player.setMediaSource(this.playlist[0], () => {
                                 this.player.start()
                             })
-                        })
-                    Button('next')
-                        .onClick(() => {
+                        }
+                    })
+                    CButton({
+                        text: "next",
+                        onAction: () => {
                             this.playNext()
-                        })
-                    Button('previous')
-                        .onClick(() => {
+                        }
+                    })
+                    CButton({
+                        text: "previous",
+                        onAction: () => {
                             this.playPrevious()
-                        })
+                        }
+                    })
                 }
                 .width("100%")
                 .margin({ top: 32 })
                 .justifyContent(FlexAlign.SpaceEvenly)
 
                 Row() {
-                    Button('start')
-                        .onClick(() => {
+                    CButton({
+                        text: "start",
+                        onAction: () => {
                             this.player.start()
-                        })
-                    Button('pause')
-                        .onClick(() => {
+                        }
+                    })
+                    CButton({
+                        text: "pause",
+                        onAction: () => {
                             this.player.pause()
-                        })
+                        }
+                    })
                 }
                 .width("100%")
                 .margin({ top: 16 })

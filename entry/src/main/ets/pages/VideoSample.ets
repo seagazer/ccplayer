@@ -3,6 +3,7 @@ import { timeToString } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
+import { CButton } from './CButton';
 
 const TAG = '[VideoSample]'
 
@@ -118,24 +119,29 @@ export struct VideoSample {
                 }.width("100%")
 
                 Row() {
-                    Button('setSrc')
-                        .onClick(() => {
+                    CButton({
+                        text: "setSrc",
+                        onAction: () => {
                             this.isLoading = true
-                            this.player.reset()
-                            let src = MediaSourceFactory.createAssets("TestVideo", "test.mp4",
+                            let src = MediaSourceFactory.createAssets("TestVideo", "video1.mp4",
                                 "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
                             this.player.setMediaSource(src, () => {
                                 this.player.start()
                             })
-                        })
-                    Button('start')
-                        .onClick(() => {
+                        }
+                    })
+                    CButton({
+                        text: "start",
+                        onAction: () => {
                             this.player.start()
-                        })
-                    Button('pause')
-                        .onClick(() => {
+                        }
+                    })
+                    CButton({
+                        text: "pause",
+                        onAction: () => {
                             this.player.pause()
-                        })
+                        }
+                    })
                 }
                 .width("100%")
                 .margin({ top: 32 })

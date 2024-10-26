@@ -3,6 +3,7 @@ import { timeToString } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
+import { CButton } from './CButton';
 
 const TAG = '[VideoViewSample]'
 
@@ -19,6 +20,7 @@ export struct VideoViewSample {
     @State seekMax: number = 0
     @State volumePercent: number = 0
     @State brightnessPercent: number = 0
+    private playIndex: number = 0
     private isSeeking = false
     private preparedListener = () => {
         this.totalDuration = this.player.getDuration()
@@ -169,17 +171,17 @@ export struct VideoViewSample {
                         onGestureAction: this.handleGesture,
                         onGestureUIListener: (visible) => {
                             this.gestureOverlayVisible = visible
-                        }
-                    })// todo test bug by https://github.com/seagazer/ccplayer/issues/9
-                        .onAppear(() => {
+                        },
+                        onSurfaceCreated: () => {
                             this.isLoading = true
-                            this.player.reset()
-                            let src = MediaSourceFactory.createAssets("TestVideo", "test.mp4",
+                            this.playIndex = 0
+                            let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
                                 "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
                             this.player.setMediaSource(src, () => {
                                 this.player.start()
                             })
-                        })
+                        }
+                    })
                     this.GestureOverlay()
                     this.LoadingOverlay()
                 }
@@ -207,53 +209,87 @@ export struct VideoViewSample {
                 }.width("100%")
 
                 Row() {
-                    Button('setSrc')
-                        .onClick(() => {
-                            this.isLoading = true
-                            this.player.reset()
-                            let src = MediaSourceFactory.createAssets("TestVideo", "test.mp4",
-                                "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
-                            this.player.setMediaSource(src, () => {
-                                this.player.start()
-                            })
-                        })
-                    Button('start')
-                        .onClick(() => {
+                    CButton({
+                        text: "start",
+                        onAction: () => {
                             this.player.start()
-                        })
-                    Button('pause')
-                        .onClick(() => {
+                        }
+                    })
+                    CButton({
+                        text: "pause",
+                        onAction: () => {
                             this.player.pause()
-                        })
+                        }
+                    })
+                    CButton({
+                        text: "next",
+                        onAction: () => {
+                            this.isLoading = true
+                            if (this.playIndex == 0) {
+                                this.playIndex = 1
+                                let src = MediaSourceFactory.createAssets("TestVideo2", "video2.mp4",
+                                    "https://img1.baidu.com/it/u=4039557469,3031542597&fm=253&fmt=auto&app=138&f=JPEG?w=200&h=200")
+                                this.player.setMediaSource(src, () => {
+                                    this.player.start()
+                                })
+                            } else {
+                                this.playIndex = 0
+                                let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
+                                    "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                                this.player.setMediaSource(src, () => {
+                                    this.player.start()
+                                })
+                            }
+                        }
+                    })
                 }
                 .width("100%")
-                .margin({ top: 32 })
+                .margin({ top: 16 })
                 .justifyContent(FlexAlign.SpaceEvenly)
 
+                Text("Video AspectRatio:")
+                    .width("100%")
+                    .textAlign(TextAlign.Start)
+                    .margin({ top: 16, bottom: 8 })
                 Row() {
-                    Button('AUTO')
-                        .onClick(() => {
+                    CButton({
+                        text: "AUTO",
+                        onAction: () => {
                             this.ratio = AspectRatio.AUTO
-                        })
-                    Button('21:9')
-                        .onClick(() => {
+                        }
+                    })
+                    CButton({
+                        text: "21:9",
+                        onAction: () => {
                             this.ratio = AspectRatio.W_21_9
-                        })
-                    Button('4:3')
-                        .onClick(() => {
+                        }
+                    })
+                    CButton({
+                        text: "16:9",
+                        onAction: () => {
+                            this.ratio = AspectRatio.W_16_9
+                        }
+                    })
+                    CButton({
+                        text: "4:3",
+                        onAction: () => {
                             this.ratio = AspectRatio.W_4_3
-                        })
-                    Button('FILL')
-                        .onClick(() => {
+                        }
+                    })
+                    CButton({
+                        text: "FILL",
+                        onAction: () => {
                             this.ratio = AspectRatio.FILL
-                        })
-                    Button('STRETCH')
-                        .onClick(() => {
+                        }
+                    })
+                    CButton({
+                        text: "STRETCH",
+                        onAction: () => {
                             this.ratio = AspectRatio.STRETCH
-                        })
+                        }
+                    })
                 }
                 .width("100%")
-                .margin({ top: 32 })
                 .justifyContent(FlexAlign.SpaceEvenly)
             }
             .width("100%")
