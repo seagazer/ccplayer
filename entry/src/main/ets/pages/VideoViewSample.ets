@@ -11,6 +11,7 @@ const TAG = '[VideoViewSample]'
 export struct VideoViewSample {
     private player = new CcPlayer(getContext(this))
     @State ratio: AspectRatio = AspectRatio.AUTO
+    @State ratioText: string = "AUTO"
     @State isLoading: boolean = false
     @State currentPosition: number = 0
     @State totalDuration: number = 0
@@ -247,7 +248,7 @@ export struct VideoViewSample {
                 .margin({ top: 16 })
                 .justifyContent(FlexAlign.SpaceEvenly)
 
-                Text("Video AspectRatio:")
+                Text("Video AspectRatio: " + this.ratioText)
                     .width("100%")
                     .textAlign(TextAlign.Start)
                     .margin({ top: 16, bottom: 8 })
@@ -256,36 +257,42 @@ export struct VideoViewSample {
                         text: "AUTO",
                         onAction: () => {
                             this.ratio = AspectRatio.AUTO
+                            this.ratioText = "AUTO"
                         }
                     })
                     CButton({
                         text: "21:9",
                         onAction: () => {
                             this.ratio = AspectRatio.W_21_9
+                            this.ratioText = "21:9"
                         }
                     })
                     CButton({
                         text: "16:9",
                         onAction: () => {
                             this.ratio = AspectRatio.W_16_9
+                            this.ratioText = "16:9"
                         }
                     })
                     CButton({
                         text: "4:3",
                         onAction: () => {
                             this.ratio = AspectRatio.W_4_3
+                            this.ratioText = "4:3"
                         }
                     })
                     CButton({
                         text: "FILL",
                         onAction: () => {
                             this.ratio = AspectRatio.FILL
+                            this.ratioText = "FILL"
                         }
                     })
                     CButton({
                         text: "STRETCH",
                         onAction: () => {
                             this.ratio = AspectRatio.STRETCH
+                            this.ratioText = "STRETCH"
                         }
                     })
                 }
