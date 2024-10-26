@@ -107,7 +107,11 @@ export struct CcPlayerView {
     }
     private renderFirstFrameListener = () => {
         this.isFrameReady = true
-        MediaLogger.d(TAG, "render first frame")
+        MediaLogger.i(TAG, "render first frame")
+    }
+    private mediaChangedListener = () => {
+        MediaLogger.d(TAG, "mediaChanged, the first frame is not ready.")
+        this.isFrameReady = false
     }
 
     private onAspectRatioChanged() {
@@ -139,33 +143,39 @@ export struct CcPlayerView {
 
     private onMeasureSurface(videoRatio: number) {
         let parentViewRatio = this.viewWidth / this.viewHeight
+        let measureWidth: number = 0
+        let measureHeight: number = 0
         if (videoRatio < parentViewRatio) {
             if (this.asRatio == AspectRatio.STRETCH) {
-                this.surfaceWidth = this.viewWidth
-                this.surfaceHeight = Math.ceil(this.viewWidth * videoRatio)
+                measureWidth = this.viewWidth
+                measureHeight = Math.ceil(this.viewWidth * videoRatio)
             } else {
                 this.surfaceHeight = this.viewHeight
-                this.surfaceWidth = Math.ceil(this.viewWidth * videoRatio / parentViewRatio)
+                measureWidth = Math.ceil(this.viewWidth * videoRatio / parentViewRatio)
             }
         } else {
             if (this.asRatio == AspectRatio.STRETCH) {
-                this.surfaceHeight = this.viewHeight
-                this.surfaceWidth = Math.ceil(this.viewHeight * videoRatio)
+                measureHeight = this.viewHeight
+                measureWidth = Math.ceil(this.viewHeight * videoRatio)
             } else {
-                this.surfaceWidth = this.viewWidth
-                this.surfaceHeight = Math.ceil(this.viewHeight / videoRatio * parentViewRatio)
+                measureWidth = this.viewWidth
+                measureHeight = Math.ceil(this.viewHeight / videoRatio * parentViewRatio)
             }
+        }
+        if (this.surfaceWidth != measureWidth || this.surfaceHeight != measureHeight) {
+            MediaLogger.d(TAG, "measure surface size changed, resize surface")
+            if (!this.isFrameReady) {
+                MediaLogger.i(TAG, "hide to resize surface, the frame is not ready!")
+                this.isSurfaceResizing = true
+            }
+            this.surfaceWidth = measureWidth
+            this.surfaceHeight = measureHeight
         }
         MediaLogger.d(TAG, "measure surface result = " + this.surfaceWidth + " x " + this.surfaceHeight)
     }
 
     onControllerVisibleChanged(visible: boolean) {
         this.onGestureUIListener && this.onGestureUIListener(visible)
-    }
-
-    private mediaChangedListener = () => {
-        this.isFrameReady = false
-        this.isSurfaceResizing = true
     }
 
     aboutToAppear() {
@@ -195,7 +205,6 @@ export struct CcPlayerView {
             })
                 .width(this.surfaceWidth)
                 .height(this.surfaceHeight)
-                .visibility(this.isSurfaceResizing ? Visibility.Hidden : Visibility.Visible)
                 .onLoad(() => {
                     this.surfaceId = this.controller.getXComponentSurfaceId()
                     MediaLogger.d(TAG, "set surface= " + this.surfaceId)
@@ -208,11 +217,12 @@ export struct CcPlayerView {
                 .animation({
                     duration: this.aspectRatioChangeAnimationDuration, onFinish: () => {
                         if (this.isFrameReady) {
-                            MediaLogger.w(TAG, "first frame & resize completed")
+                            MediaLogger.i(TAG, "first frame and resize completed, show surface")
                             this.isSurfaceResizing = false
                         }
                     }
                 })
+                .visibility(this.isSurfaceResizing ? Visibility.Hidden : Visibility.Visible)
         }
         .gesture(TapGesture({ count: 2 }).onAction(() => {
             if (this.isSupportGesture) {
