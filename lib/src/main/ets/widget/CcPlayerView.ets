@@ -27,11 +27,11 @@ export struct CcPlayerView {
      */
     player?: CcPlayer = undefined
     /**
-     * The percent of width of view to handle volume or brightness gesture.
+     * The percent of width of view to handle volume or brightness gesture, default is |0.2|0.6|0.2|.
      */
     controlEdgePercent: number = 0.2
     /**
-     * The type of XComponent to render video.
+     * The type of XComponent to render video, default is Surface.
      */
     renderType: XComponentType = XComponentType.SURFACE
     /**
@@ -43,8 +43,11 @@ export struct CcPlayerView {
      */
     autoHideControllerDelay: number = 1500
     /**
+     * The duration of animation for aspect ratio changed.
+     */
+    aspectRatioChangeAnimationDuration: number = 150
+    /**
      * Set support gesture action to control or not, default is true.
-     * Attention: the intercept order is: isSupportGesture > isDefaultGestureUI
      */
     isSupportGesture: boolean = true
     /**
@@ -54,11 +57,11 @@ export struct CcPlayerView {
     /**
      * Set a callback to observe the surface state when onLoad.
      */
-    onSurfaceCreated?: (() => void) = undefined
+    onSurfaceCreated?: ((surfaceId: string) => void) = undefined
     /**
      * Set a callback to observe the surface state when onDestroy.
      */
-    onSurfaceDestroy?: (() => void) = undefined
+    onSurfaceDestroy?: ((surfaceId: string) => void) = undefined
     /**
      * Set a listener to handle the gesture ui visible.
      */
@@ -68,8 +71,8 @@ export struct CcPlayerView {
      */
     onGestureAction?: (type: GestureType, percent: number, isTouchUp: boolean) => void
     /*-----------------------------------------------------------------------------------------------*/
-    private wSize: number = 0
-    private hSize: number = 0
+    private viewWidth: number = 0
+    private viewHeight: number = 0
     private controller = new XComponentController()
     private surfaceId: string = ""
     private videoWidth: number = 0
@@ -85,10 +88,11 @@ export struct CcPlayerView {
     private brightnessPercent: number = 0
     private seekMoveSpeed: number = 3 // this speed is larger, then the move step is small
     private hideControllerTimer: number = -1
-    @State videoRatio: number = -1
     private isUserMoved: boolean = false
     @State surfaceWidth: number = 0
     @State surfaceHeight: number = 0
+    @State isSurfaceResizing: boolean = true
+    private isFrameReady: boolean = false
     private preparedListener = () => {
         this.totalDuration = this.player!.getDuration()
     }
@@ -101,30 +105,55 @@ export struct CcPlayerView {
             this.onAspectRatioChanged()
         }
     }
-
-    private onAspectRatioChanged() {
-        this.videoRatio = this.getVideoRatio()
-        MediaLogger.i(TAG, "aspectRatioChanged = " + this.videoRatio + ", type = " + this.asRatio)
-        this.onMeasureSurface()
+    private renderFirstFrameListener = () => {
+        this.isFrameReady = true
+        MediaLogger.d(TAG, "render first frame")
     }
 
-    private onMeasureSurface() {
-        let parentViewRatio = this.wSize / this.hSize
-        if (this.videoRatio < parentViewRatio) {
+    private onAspectRatioChanged() {
+        const videoRatio = this.getVideoRatio()
+        MediaLogger.i(TAG, "aspectRatioChanged = " + videoRatio + ", type = " + this.asRatio)
+        this.onMeasureSurface(videoRatio)
+    }
+
+    private getVideoRatio(): number {
+        switch (this.asRatio) {
+            case AspectRatio.W_16_9:
+                return 1.78 // 16:9
+            case AspectRatio.W_4_3:
+                return 1.33 // 4:3
+            case AspectRatio.W_21_9:
+                return 2.33 // 21:9
+            case AspectRatio.FILL:
+                return this.viewWidth / this.viewHeight
+            case AspectRatio.STRETCH:
+            case AspectRatio.AUTO:
+            default:
+                if (this.videoHeight > 0) {
+                    return this.videoWidth / this.videoHeight
+                } else {
+                    return this.surfaceWidth / this.surfaceHeight
+                }
+        }
+    }
+
+    private onMeasureSurface(videoRatio: number) {
+        let parentViewRatio = this.viewWidth / this.viewHeight
+        if (videoRatio < parentViewRatio) {
             if (this.asRatio == AspectRatio.STRETCH) {
-                this.surfaceWidth = this.wSize
-                this.surfaceHeight = Math.floor(this.wSize * this.videoRatio)
+                this.surfaceWidth = this.viewWidth
+                this.surfaceHeight = Math.ceil(this.viewWidth * videoRatio)
             } else {
-                this.surfaceHeight = this.hSize
-                this.surfaceWidth = Math.floor(this.wSize * this.videoRatio / parentViewRatio)
+                this.surfaceHeight = this.viewHeight
+                this.surfaceWidth = Math.ceil(this.viewWidth * videoRatio / parentViewRatio)
             }
         } else {
             if (this.asRatio == AspectRatio.STRETCH) {
-                this.surfaceHeight = this.hSize
-                this.surfaceWidth = Math.floor(this.hSize * this.videoRatio)
+                this.surfaceHeight = this.viewHeight
+                this.surfaceWidth = Math.ceil(this.viewHeight * videoRatio)
             } else {
-                this.surfaceWidth = this.wSize
-                this.surfaceHeight = Math.floor(this.hSize / this.videoRatio * parentViewRatio)
+                this.surfaceWidth = this.viewWidth
+                this.surfaceHeight = Math.ceil(this.viewHeight / videoRatio * parentViewRatio)
             }
         }
         MediaLogger.d(TAG, "measure surface result = " + this.surfaceWidth + " x " + this.surfaceHeight)
@@ -134,10 +163,17 @@ export struct CcPlayerView {
         this.onGestureUIListener && this.onGestureUIListener(visible)
     }
 
+    private mediaChangedListener = () => {
+        this.isFrameReady = false
+        this.isSurfaceResizing = true
+    }
+
     aboutToAppear() {
         MediaLogger.d(TAG, "init, add the listeners")
         this.player!.addOnPreparedListener(this.preparedListener)
         this.player!.addOnVideoSizeChangedListener(this.videoSizeChangedListener)
+        this.player!.addOnRenderFirstFrameListener(this.renderFirstFrameListener)
+        this.player!.addOnMediaChangedListener(this.mediaChangedListener)
     }
 
     aboutToDisappear() {
@@ -145,6 +181,8 @@ export struct CcPlayerView {
         clearTimeout(this.hideControllerTimer)
         this.player!.removeOnPreparedListener(this.preparedListener)
         this.player!.removeOnVideoSizeChangedListener(this.videoSizeChangedListener)
+        this.player!.removeOnRenderFirstFrameListener(this.renderFirstFrameListener)
+        this.player!.removeOnMediaChangedListener(this.mediaChangedListener)
     }
 
     build() {
@@ -157,27 +195,35 @@ export struct CcPlayerView {
             })
                 .width(this.surfaceWidth)
                 .height(this.surfaceHeight)
+                .visibility(this.isSurfaceResizing ? Visibility.Hidden : Visibility.Visible)
                 .onLoad(() => {
                     this.surfaceId = this.controller.getXComponentSurfaceId()
                     MediaLogger.d(TAG, "set surface= " + this.surfaceId)
                     this.player!.setSurface(this.surfaceId)
-                    this.onSurfaceCreated && this.onSurfaceCreated()
+                    this.onSurfaceCreated && this.onSurfaceCreated(this.surfaceId)
                 })
                 .onDestroy(() => {
-                    this.onSurfaceDestroy && this.onSurfaceDestroy()
+                    this.onSurfaceDestroy && this.onSurfaceDestroy(this.surfaceId)
                 })
                 .animation({
-                    duration: 150
+                    duration: this.aspectRatioChangeAnimationDuration, onFinish: () => {
+                        if (this.isFrameReady) {
+                            MediaLogger.w(TAG, "first frame & resize completed")
+                            this.isSurfaceResizing = false
+                        }
+                    }
                 })
         }
         .gesture(TapGesture({ count: 2 }).onAction(() => {
-            // the player is prepared
-            if (this.totalDuration > 0) {
-                MediaLogger.d(TAG, "current state = " + this.player!.getPlayerState())
-                if (this.player!.isPlaying()) {
-                    this.player!.pause()
-                } else {
-                    this.player!.start()
+            if (this.isSupportGesture) {
+                // the player is prepared
+                if (this.totalDuration > 0) {
+                    MediaLogger.d(TAG, "current state = " + this.player!.getPlayerState())
+                    if (this.player!.isPlaying()) {
+                        this.player!.pause()
+                    } else {
+                        this.player!.start()
+                    }
                 }
             }
         }))
@@ -189,41 +235,22 @@ export struct CcPlayerView {
         .width('100%')
         .height('100%')
         .onAreaChange((_, newSize) => {
-            this.wSize = newSize.width as number
-            this.hSize = newSize.height as number
-            if (this.wSize == 0 || this.hSize == 0) {
+            this.viewWidth = newSize.width as number
+            this.viewHeight = newSize.height as number
+            if (this.viewWidth == 0 || this.viewHeight == 0) {
                 throw new Error("You must set the width and height when create a instance of CcPlayerView!")
             }
-            this.surfaceWidth = this.wSize
-            this.surfaceHeight = this.hSize
-            MediaLogger.d(TAG, "The player view default size is: " + this.wSize + " x " + this.hSize)
-            this.controlEdge = this.wSize * this.controlEdgePercent
-            this.onAspectRatioChanged()
+            this.surfaceWidth = this.viewWidth
+            this.surfaceHeight = this.viewHeight
+            MediaLogger.d(TAG, "The player view default size is: " + this.viewWidth + " x " + this.viewHeight)
+            this.controlEdge = this.viewWidth * this.controlEdgePercent
+            if (this.asRatio != AspectRatio.FILL) {
+                this.onAspectRatioChanged()
+            }
         })
         .alignContent(Alignment.Center)
         .backgroundColor("#FF000000")
         .clip(true)
-    }
-
-    private getVideoRatio(): number {
-        switch (this.asRatio) {
-            case AspectRatio.W_16_9:
-                return 16 / 9 // 16:9
-            case AspectRatio.W_4_3:
-                return 4 / 3 // 4:3
-            case AspectRatio.W_21_9:
-                return 21 / 9 // 21:9
-            case AspectRatio.FILL:
-                return this.wSize / this.hSize
-            case AspectRatio.STRETCH:
-            case AspectRatio.AUTO:
-            default:
-                if (this.videoHeight > 0) {
-                    return this.videoWidth / this.videoHeight
-                } else {
-                    return this.surfaceWidth / this.surfaceHeight
-                }
-        }
     }
 
     private onTouchEvent(event: TouchEvent) {
@@ -254,13 +281,13 @@ export struct CcPlayerView {
         if (this.downX < this.controlEdge) {
             // brightness
             this.controlType = GestureType.BRIGHTNESS
-        } else if (this.downX > this.controlEdge && this.downX < (this.wSize - this.controlEdge)) {
+        } else if (this.downX > this.controlEdge && this.downX < (this.viewWidth - this.controlEdge)) {
             // progress
             this.controlType = GestureType.PROGRESS
             this.targetDuration = this.player!.getCurrentPosition()
             this.startDuration = this.targetDuration
             MediaLogger.d(TAG, "down: start duration = " + this.startDuration)
-        } else if (this.downX > (this.wSize - this.controlEdge)) {
+        } else if (this.downX > (this.viewWidth - this.controlEdge)) {
             // volume
             this.controlType = GestureType.VOLUME
         }
@@ -276,7 +303,7 @@ export struct CcPlayerView {
             // handle seek progress
                 case GestureType.PROGRESS:
                     let moveDistance = Math.floor(dx)
-                    let seekPercent = moveDistance / (this.wSize - 2 * this.controlEdge)
+                    let seekPercent = moveDistance / (this.viewWidth - 2 * this.controlEdge)
                     let seekValue = Math.floor(this.totalDuration / this.seekMoveSpeed * seekPercent)
                     let seekTemp = this.startDuration + seekValue
                     if (seekTemp >= this.totalDuration) {
@@ -293,7 +320,7 @@ export struct CcPlayerView {
             // handle set volume
                 case GestureType.VOLUME:
                     let moveDistance3 = -Math.floor(dy)
-                    this.volumePercent = moveDistance3 / (this.hSize - 2 * this.controlEdge)
+                    this.volumePercent = moveDistance3 / (this.viewHeight - 2 * this.controlEdge)
                     this.volumePercent = Math.max(0, this.volumePercent)
                     this.volumePercent = Math.min(1, this.volumePercent)
                     MediaLogger.d(TAG, `volumePercent = ${this.volumePercent}`)
@@ -303,7 +330,7 @@ export struct CcPlayerView {
             // handle set brightness
                 case GestureType.BRIGHTNESS:
                     let moveDistance2 = -Math.floor(dy)
-                    this.brightnessPercent = moveDistance2 / (this.hSize - 2 * this.controlEdge)
+                    this.brightnessPercent = moveDistance2 / (this.viewHeight - 2 * this.controlEdge)
                     this.brightnessPercent = Math.max(0, this.brightnessPercent)
                     this.brightnessPercent = Math.min(1, this.brightnessPercent)
                     MediaLogger.d(TAG, `brightnessPercent = ${this.brightnessPercent}`)

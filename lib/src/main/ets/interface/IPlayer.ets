@@ -158,14 +158,14 @@ export interface IPlayer {
      * @param listener The listener to observe the state changed of player.
      * @return The player instance.
      */
-    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer
+    addOnStateChangedListener(listener: (state: PlayerState) => void): IPlayer
 
     /**
      * Remove a listener to observe the state changed of player.
      * @param listener The listener to observe the state changed of player.
      * @return The player instance.
      */
-    removeOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer
+    removeOnStateChangedListener(listener: (state: PlayerState) => void): IPlayer
 
     /**
      * Check the player is playing.
@@ -207,13 +207,13 @@ export interface IPlayer {
      * Add a listener to observe the video size changed of player.
      * @param listener The listener to observe the video size changed of player.
      */
-    addOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer
+    addOnVideoSizeChangedListener(listener: (width: number, height: number) => void): IPlayer
 
     /**
      * Remove a listener to observe the video size changed of player.
      * @param listener The listener to observe the video size changed of player.
      */
-    removeOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer
+    removeOnVideoSizeChangedListener(listener: (width: number, height: number) => void): IPlayer
 
     /**
      * Add a listener to observe the timer for first frame of video.

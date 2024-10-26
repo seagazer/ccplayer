@@ -351,7 +351,10 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     removeOnPreparedListener(listener: () => void): IPlayer {
-        this.preparedListeners.splice(this.preparedListeners.indexOf(listener), 1)
+        let index = this.preparedListeners.indexOf(listener)
+        if (index >= 0) {
+            this.preparedListeners.splice(index, 1)
+        }
         return this
     }
 
@@ -361,7 +364,10 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     removeOnCompletionListener(listener: () => void): IPlayer {
-        this.completedListeners.splice(this.completedListeners.indexOf(listener), 1)
+        let index = this.completedListeners.indexOf(listener)
+        if (index >= 0) {
+            this.completedListeners.splice(index, 1)
+        }
         return this
     }
 
@@ -371,7 +377,10 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     removeOnErrorListener(listener: (code: number, message: string) => void): IPlayer {
-        this.errorListeners.splice(this.errorListeners.indexOf(listener), 1)
+        let index = this.errorListeners.indexOf(listener)
+        if (index >= 0) {
+            this.errorListeners.splice(index, 1)
+        }
         return this
     }
 
@@ -381,7 +390,10 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     removeOnProgressChangedListener(listener: (duration: number) => void): IPlayer {
-        this.progressChangedListeners.splice(this.progressChangedListeners.indexOf(listener), 1)
+        let index = this.progressChangedListeners.indexOf(listener)
+        if (index >= 0) {
+            this.progressChangedListeners.splice(index, 1)
+        }
         return this
     }
 
@@ -391,7 +403,10 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     removeOnSeekChangedListener(listener: (duration: number) => void): IPlayer {
-        this.seekChangedListeners.splice(this.seekChangedListeners.indexOf(listener), 1)
+        let index = this.seekChangedListeners.indexOf(listener)
+        if (index >= 0) {
+            this.seekChangedListeners.splice(index, 1)
+        }
         return this
     }
 
@@ -401,27 +416,36 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     removeOnVolumeChangedListener(listener: () => void): IPlayer {
-        this.volumeChangedListeners.splice(this.volumeChangedListeners.indexOf(listener), 1)
+        let index = this.volumeChangedListeners.indexOf(listener)
+        if (index >= 0) {
+            this.volumeChangedListeners.splice(index, 1)
+        }
         return this
     }
 
-    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer {
+    addOnStateChangedListener(listener: (state: PlayerState) => void): IPlayer {
         this.stateChangedListeners.push(listener)
         return this
     }
 
-    removeOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer {
-        this.stateChangedListeners.splice(this.stateChangedListeners.indexOf(listener), 1)
+    removeOnStateChangedListener(listener: (state: PlayerState) => void): IPlayer {
+        let index = this.stateChangedListeners.indexOf(listener)
+        if (index >= 0) {
+            this.stateChangedListeners.splice(index, 1)
+        }
         return this
     }
 
-    addOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer {
+    addOnVideoSizeChangedListener(listener: (width: number, height: number) => void): IPlayer {
         this.videoSizeChangedListeners.push(listener)
         return this
     }
 
-    removeOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer {
-        this.videoSizeChangedListeners.splice(this.videoSizeChangedListeners.indexOf(listener), 1)
+    removeOnVideoSizeChangedListener(listener: (width: number, height: number) => void): IPlayer {
+        let index = this.videoSizeChangedListeners.indexOf(listener)
+        if (index >= 0) {
+            this.videoSizeChangedListeners.splice(index, 1)
+        }
         return this
     }
 
@@ -431,7 +455,10 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     removeOnRenderFirstFrameListener(listener: () => void): IPlayer {
-        this.renderFirstFrameListeners.splice(this.renderFirstFrameListeners.indexOf(listener), 1)
+        let index = this.renderFirstFrameListeners.indexOf(listener)
+        if (index >= 0) {
+            this.renderFirstFrameListeners.splice(index, 1)
+        }
         return this
     }
 }

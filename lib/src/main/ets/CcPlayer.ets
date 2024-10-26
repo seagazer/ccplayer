@@ -22,6 +22,7 @@ export class CcPlayer implements IPlayer {
     private isBackgroundPlay = false
     private avSessionManager: AvSessionManager
     private agentInfo?: wantAgent.WantAgentInfo = undefined
+    private onMediaChangedListeners: Array<(source: MediaSource) => void> = new Array()
 
     constructor(context: common.Context) {
         this.context = context
@@ -101,6 +102,9 @@ export class CcPlayer implements IPlayer {
     }
 
     setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
+        this.onMediaChangedListeners.forEach((onMediaChanged) => {
+            onMediaChanged(mediaSource)
+        })
         this.player.setMediaSource(mediaSource, onReady)
         this.avSessionManager?.setMediaSource(mediaSource)
     }
@@ -201,22 +205,22 @@ export class CcPlayer implements IPlayer {
         return this
     }
 
-    addOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer {
+    addOnStateChangedListener(listener: (state: PlayerState) => void): IPlayer {
         this.player.addOnStateChangedListener(listener)
         return this
     }
 
-    removeOnStateChangedListener(listener: (newState: PlayerState) => void): IPlayer {
+    removeOnStateChangedListener(listener: (state: PlayerState) => void): IPlayer {
         this.player.removeOnStateChangedListener(listener)
         return this
     }
 
-    addOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer {
+    addOnVideoSizeChangedListener(listener: (width: number, height: number) => void): IPlayer {
         this.player.addOnVideoSizeChangedListener(listener)
         return this
     }
 
-    removeOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer {
+    removeOnVideoSizeChangedListener(listener: (width: number, height: number) => void): IPlayer {
         this.player.removeOnVideoSizeChangedListener(listener)
         return this
     }
@@ -271,5 +275,16 @@ export class CcPlayer implements IPlayer {
             BackgroundPlayManager.stopBackground(this.context)
         }
         this.isBackgroundPlay = backgroundPlay
+    }
+
+    addOnMediaChangedListener(listener: (source: MediaSource) => void) {
+        this.onMediaChangedListeners.push(listener)
+    }
+
+    removeOnMediaChangedListener(listener: (source: MediaSource) => void) {
+        let index = this.onMediaChangedListeners.indexOf(listener)
+        if (index >= 0) {
+            this.onMediaChangedListeners.splice(index, 1)
+        }
     }
 }
