@@ -1,3 +1,9 @@
+# 1.0.7
+- 增加视频宽高比切换动效
+- 增加切换媒体资源监听
+- CcPlayerView组件的surface创建和销毁回调增加surfaceId参数
+- 修复一些问题
+
 # 1.0.6
 
 - 适配OpenHarmony 5.0-Release和HarmonyOS Next
