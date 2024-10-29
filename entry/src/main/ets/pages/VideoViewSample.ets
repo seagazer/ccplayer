@@ -1,5 +1,5 @@
 import { AspectRatio, CcPlayer, CcPlayerView, GestureType, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer';
-import { timeToString } from '../Extentions';
+import { timeToString, toast } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
@@ -32,6 +32,7 @@ export struct VideoViewSample {
     }
     private errorListener = (code: number, message: string) => {
         Logger.e(TAG, "play error= " + code + ", " + message)
+        toast("Play error= " + message)
     }
     private firstFrameListener = () => {
         Logger.d(TAG, "render first frame")

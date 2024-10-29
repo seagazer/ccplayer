@@ -91,7 +91,8 @@ export struct CcPlayerView {
     private isUserMoved: boolean = false
     @State surfaceWidth: number = 0
     @State surfaceHeight: number = 0
-    @State isSurfaceResizing: boolean = true
+    private isDoingLayout: boolean = true
+    @State isShowSurface: boolean = true
     private isFrameReady: boolean = false
     private preparedListener = () => {
         this.totalDuration = this.player!.getDuration()
@@ -107,11 +108,13 @@ export struct CcPlayerView {
     }
     private renderFirstFrameListener = () => {
         this.isFrameReady = true
-        MediaLogger.i(TAG, "render first frame")
+        this.isShowSurface = !this.isDoingLayout
+        MediaLogger.i(TAG, "render first frame, isShowSurface= " + this.isShowSurface)
     }
     private mediaChangedListener = () => {
         MediaLogger.d(TAG, "mediaChanged, the first frame is not ready.")
         this.isFrameReady = false
+        this.isShowSurface = false
     }
 
     private onAspectRatioChanged() {
@@ -130,7 +133,7 @@ export struct CcPlayerView {
                 return 2.33 // 21:9
             case AspectRatio.FILL:
                 return this.viewWidth / this.viewHeight
-            case AspectRatio.STRETCH:
+            case AspectRatio.STRETCH: // Auto & stretch mode is dependent to video size.
             case AspectRatio.AUTO:
             default:
                 if (this.videoHeight > 0) {
@@ -166,7 +169,7 @@ export struct CcPlayerView {
             MediaLogger.d(TAG, "measure surface size changed, resize surface")
             if (!this.isFrameReady) {
                 MediaLogger.i(TAG, "hide to resize surface, the frame is not ready!")
-                this.isSurfaceResizing = true
+                this.isDoingLayout = true
             }
             this.surfaceWidth = measureWidth
             this.surfaceHeight = measureHeight
@@ -216,13 +219,12 @@ export struct CcPlayerView {
                 })
                 .animation({
                     duration: this.aspectRatioChangeAnimationDuration, onFinish: () => {
-                        if (this.isFrameReady) {
-                            MediaLogger.i(TAG, "first frame and resize completed, show surface")
-                            this.isSurfaceResizing = false
-                        }
+                        this.isDoingLayout = false
+                        this.isShowSurface = this.isFrameReady
+                        MediaLogger.i(TAG, "resize completed, show surface= " + this.isShowSurface)
                     }
                 })
-                .visibility(this.isSurfaceResizing ? Visibility.Hidden : Visibility.Visible)
+                .visibility(this.isShowSurface ? Visibility.Visible : Visibility.Hidden)
         }
         .gesture(TapGesture({ count: 2 }).onAction(() => {
             if (this.isSupportGesture) {
