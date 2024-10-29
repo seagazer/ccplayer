@@ -10,7 +10,7 @@ const TAG = "[MediaSourceFactory]"
  * Helper to create media source from file, assets and url.
  *
  * Author: Seagazer
- * Date: 2022/08/17
+ * Date: 2022/8/17
  */
 export class MediaSourceFactory {
     /**

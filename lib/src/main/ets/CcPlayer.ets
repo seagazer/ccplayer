@@ -17,7 +17,7 @@ const TAG = '[CcPlayer]'
  * The player for audio or video.
  *
  * Author: Seagazer
- * Date: 2022/08/17
+ * Date: 2022/8/17
  */
 export class CcPlayer implements IPlayer {
     private player: IPlayer

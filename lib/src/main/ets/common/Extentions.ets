@@ -3,7 +3,7 @@
  * @param time The duration by million seconds.
  *
  * Author: Seagazer
- * Date: 2022/09/17
+ * Date: 2022/9/17
  */
 export function timeToString(time: number): string {
     let seconds = Math.floor((time / 1000))

@@ -2,7 +2,7 @@
  * The state of player.
  *
  * Author: Seagazer
- * Date: 2022/08/17
+ * Date: 2022/8/17
  */
 export enum PlayerState {
     STATE_NOT_INIT = "NOT_INIT",

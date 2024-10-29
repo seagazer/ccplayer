@@ -13,7 +13,7 @@ const TAG = "[OhosAvPlayer]"
  * A player impl include audio and video for OpenHarmony 4.0+.
  *
  * Author: Seagazer
- * Date: 2024/09/18
+ * Date: 2024/9/18
  */
 export class AvPlayerImpl implements IPlayer {
     private player?: media.AVPlayer = undefined
