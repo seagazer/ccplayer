@@ -5,6 +5,9 @@ import common from '@ohos.app.ability.common'
 
 /**
  * The data source for media.
+ *
+ * Author: Seagazer
+ * Date: 2024/09/18
  */
 export class MediaSource {
     type: MediaSourceType

@@ -1,5 +1,8 @@
 /**
  * AspectRatio mode define.
+ *
+ * Author: Seagazer
+ * Date: 2022/09/14
  */
 export enum AspectRatio {
     /**

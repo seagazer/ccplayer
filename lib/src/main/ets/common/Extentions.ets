@@ -1,6 +1,9 @@
 /**
  * Converter time duration to display string like 00:00.
  * @param time The duration by million seconds.
+ *
+ * Author: Seagazer
+ * Date: 2022/09/17
  */
 export function timeToString(time: number): string {
     let seconds = Math.floor((time / 1000))

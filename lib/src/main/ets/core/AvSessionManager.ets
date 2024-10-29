@@ -10,6 +10,12 @@ import { AvSessionCallback } from './AvSessionCallback';
 
 const TAG = "[AvSessionManager]"
 
+/**
+ * The manager to handle av session.
+ *
+ * Author: Seagazer
+ * Date: 2024/10/14
+ */
 export class AvSessionManager {
     private avSession?: avSession.AVSession = undefined
     private player: IPlayer

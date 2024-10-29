@@ -9,7 +9,10 @@ const TAG = "[CcPlayerView]"
 const TOUCH_SHOT = 10
 
 /**
- * A component to play video, you can control media player with gesture.
+ * A component to play video, you can control media player with gesture and change the aspect ratio of the picture.
+ *
+ * Author: Seagazer
+ * Date: 2022/09/12
  *
  * The controller area define:
  * |----  Widget Width  ----|

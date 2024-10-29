@@ -1,5 +1,8 @@
 /**
  * The type to define the gesture actions include setBrightness, setVolume and seek.
+ *
+ * Author: Seagazer
+ * Date: 2024/10/10
  */
 export enum GestureType {
     /**

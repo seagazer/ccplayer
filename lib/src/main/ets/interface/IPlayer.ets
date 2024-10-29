@@ -4,7 +4,10 @@ import { PlayerState } from '../config/PlayerState';
 
 
 /**
- * The action of media player.
+ * Define the action of media player.
+ *
+ * Author: Seagazer
+ * Date: 2022/08/17
  */
 export interface IPlayer {
     /**

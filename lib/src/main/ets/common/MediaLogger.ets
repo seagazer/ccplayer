@@ -2,6 +2,12 @@ import hilog from '@ohos.hilog';
 
 const domain = 0x176
 
+/**
+ * The logger to print app log.
+ *
+ * Author: Seagazer
+ * Date: 2024/09/18
+ */
 export class MediaLogger {
     private static DEBUG = true
     private static FILTER_NAME = "ccplayer: "
