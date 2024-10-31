@@ -215,6 +215,7 @@ export struct CcPlayerView {
                     this.surfaceId = this.controller.getXComponentSurfaceId()
                     MediaLogger.d(TAG, "set surface= " + this.surfaceId)
                     this.player!.setSurface(this.surfaceId)
+                    this.player!.setXComponentController(this.controller)
                     this.onSurfaceCreated && this.onSurfaceCreated(this.surfaceId)
                 })
                 .onDestroy(() => {

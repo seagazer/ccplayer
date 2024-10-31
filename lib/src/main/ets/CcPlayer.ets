@@ -10,6 +10,7 @@ import { AvSessionManager } from './core/AvSessionManager';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { BackgroundPlayManager } from './core/BackgroundPlayManager';
 import { AvSessionCallback } from './core/AvSessionCallback';
+import { PiPWindow } from '@kit.ArkUI';
 
 const TAG = '[CcPlayer]'
 
@@ -23,14 +24,31 @@ export class CcPlayer implements IPlayer {
     private player: IPlayer
     private context: common.Context
     private isBackgroundPlay = false
-    private avSessionManager: AvSessionManager
+    private avSessionManager?: AvSessionManager = undefined
     private agentInfo?: wantAgent.WantAgentInfo = undefined
     private onMediaChangedListeners: Array<(source: MediaSource) => void> = new Array()
+    private xComponentController?: XComponentController = undefined
+    private isControllerChanged: boolean = false
+    private pipController?: PiPWindow.PiPController = undefined
 
     constructor(context: common.Context) {
         this.context = context
         this.player = AvPlayerImpl.create(context)
+        this.init()
+    }
+
+    private init() {
         this.avSessionManager = new AvSessionManager(this.player)
+        this.player.addOnStateChangedListener((state) => {
+            if (state == PlayerState.STATE_STARTED) {
+                this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PLAY)
+            } else {
+                this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PAUSE)
+            }
+        })
+        this.player.addOnVideoSizeChangedListener((w, h) => {
+            this.pipController?.updateContentSize(w, h)
+        })
     }
 
     /**
@@ -39,6 +57,7 @@ export class CcPlayer implements IPlayer {
      */
     public setPlayer(player: IPlayer) {
         this.player = player
+        this.init()
     }
 
     start() {
@@ -238,27 +257,46 @@ export class CcPlayer implements IPlayer {
         return this
     }
 
+    /**
+     * Bind av session.
+     * @param context The context of app.
+     * @param sessionName The name of av session.
+     * @param type The type of av session.{@link avSession.AVSessionType}
+     * @param agentInfo The agent info of av session.{@link wantAgent.WantAgentInfo}
+     */
     async bindAvSession(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType,
         agentInfo: wantAgent.WantAgentInfo) {
         this.agentInfo = agentInfo
         try {
-            await this.avSessionManager.create(context, sessionName, type)
-            await this.avSessionManager.setLaunchInfo(agentInfo)
-            await this.avSessionManager.bind()
+            await this.avSessionManager!.create(context, sessionName, type)
+            await this.avSessionManager!.setLaunchInfo(agentInfo)
+            await this.avSessionManager!.bind()
         } catch (e) {
             MediaLogger.e(TAG, "bindAvSession error: " + JSON.stringify(e))
         }
     }
 
+    /**
+     * Add a callback {@link AvSessionCallback} to observe the play action like play next and play previous.
+     * @param callback The callback to observe the play action.
+     */
     addAvSessionCallback(callback: AvSessionCallback) {
-        this.avSessionManager.addAvSessionCallback(callback)
+        this.avSessionManager!.addAvSessionCallback(callback)
     }
 
+    /**
+     * Remove a callback {@link AvSessionCallback} to observe the play action like play next and play previous.
+     * @param callback The callback to observe the play action.
+     */
     removeAvSessionCallback(callback: AvSessionCallback) {
-        this.avSessionManager.removeAvSessionCallback(callback)
+        this.avSessionManager!.removeAvSessionCallback(callback)
     }
 
-    setBackgroundPlayEnable(backgroundPlay: boolean) {
+    /**
+     * Set background play or not.
+     * @param enable True to start background play, false to stop background play.
+     */
+    setBackgroundPlayEnable(enable: boolean) {
         if (!this.context) {
             MediaLogger.w(TAG, "The context is null.")
             return
@@ -267,27 +305,101 @@ export class CcPlayer implements IPlayer {
             MediaLogger.w(TAG, "The agent is null, you should call {@Link bindAvSession} first.")
             return
         }
-        if (this.isBackgroundPlay == backgroundPlay) {
+        if (this.isBackgroundPlay == enable) {
             return
         }
-        if (backgroundPlay) {
+        if (enable) {
             MediaLogger.d(TAG, "start background play")
             BackgroundPlayManager.startBackground(this.context, this.agentInfo)
         } else {
             MediaLogger.d(TAG, "stop background play")
             BackgroundPlayManager.stopBackground(this.context)
         }
-        this.isBackgroundPlay = backgroundPlay
+        this.isBackgroundPlay = enable
     }
 
+    /**
+     * Add a listener to observe the media source changed.
+     * @param listener The listener to observe the media source changed.
+     */
     addOnMediaChangedListener(listener: (source: MediaSource) => void) {
         this.onMediaChangedListeners.push(listener)
     }
 
+    /**
+     * Remove a listener to observe the media source changed.
+     * @param listener The listener to observe the media source changed.
+     */
     removeOnMediaChangedListener(listener: (source: MediaSource) => void) {
         let index = this.onMediaChangedListeners.indexOf(listener)
         if (index >= 0) {
             this.onMediaChangedListeners.splice(index, 1)
+        }
+    }
+
+    /**
+     * Set the controller of XComponent to play video.
+     * @param controller The controller{@link XComponentController} of XComponent to play video.
+     */
+    setXComponentController(controller: XComponentController) {
+        if (this.xComponentController != controller) {
+            MediaLogger.d(TAG, "set xComponent controller= " + controller)
+            this.xComponentController = controller
+            this.isControllerChanged = true
+        }
+    }
+
+    /**
+     * Start pip mode.
+     * @param pipType The type{@link PiPWindow.PiPTemplateType} of pip window, default is VIDEO_PLAY.
+     */
+    async startPip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY) {
+        if (!PiPWindow.isPiPEnabled()) {
+            MediaLogger.w(TAG, "The platform is not support pip mode.")
+            return
+        }
+        if (!this.xComponentController) {
+            MediaLogger.e(TAG,
+                "The xComponentController is null, must call #setXComponentController first.")
+            return
+        }
+        if (!this.pipController || this.isControllerChanged) {
+            this.pipController = await PiPWindow.create({
+                context: this.context,
+                componentController: this.xComponentController,
+                templateType: pipType
+            })
+            this.isControllerChanged = false
+            this.pipController.on("controlPanelActionEvent", (event: PiPWindow.PiPActionEventType, status?: number) => {
+                switch (event) {
+                    case "playbackStateChanged":
+                        if (status == 0) {
+                            this.player.pause()
+                        } else {
+                            this.player.start()
+                        }
+                        break
+                }
+            })
+        }
+        await this.pipController.startPiP()
+    }
+
+    /**
+     * Stop the pip mode.
+     */
+    async stopPip() {
+        if (!PiPWindow.isPiPEnabled()) {
+            MediaLogger.w(TAG, "The platform is not support pip mode.")
+            return
+        }
+        if (!this.xComponentController) {
+            MediaLogger.e(TAG,
+                "The xComponentController is null, must call #setXComponentController first.")
+            return
+        }
+        if (this.pipController) {
+            await this.pipController.stopPiP()
         }
     }
 }

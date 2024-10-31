@@ -224,6 +224,18 @@ export struct VideoViewSample {
                         }
                     })
                     CButton({
+                        text: "StartPip",
+                        onAction: () => {
+                            this.player.startPip()
+                        }
+                    })
+                    CButton({
+                        text: "StopPip",
+                        onAction: () => {
+                            this.player.stopPip()
+                        }
+                    })
+                    CButton({
                         text: "next",
                         onAction: () => {
                             this.isLoading = true
