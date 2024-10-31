@@ -95,7 +95,7 @@ export struct CcPlayerView {
     @State surfaceWidth: number = 0
     @State surfaceHeight: number = 0
     private isDoingLayout: boolean = true
-    @State isShowSurface: boolean = true
+    @State isShowSurface: boolean = false
     private isFrameReady: boolean = false
     private preparedListener = () => {
         this.totalDuration = this.player!.getDuration()
@@ -156,7 +156,7 @@ export struct CcPlayerView {
                 measureWidth = this.viewWidth
                 measureHeight = Math.ceil(this.viewWidth * videoRatio)
             } else {
-                this.surfaceHeight = this.viewHeight
+                measureHeight = this.viewHeight
                 measureWidth = Math.ceil(this.viewWidth * videoRatio / parentViewRatio)
             }
         } else {
