@@ -225,7 +225,8 @@ export struct VideoViewSample {
                     })
                     CButton({
                         text: "StartPip",
-                        onAction: () => {
+                        onAction: async () => {
+                            await this.player.enablePip()
                             this.player.startPip()
                         }
                     })

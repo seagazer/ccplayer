@@ -30,6 +30,7 @@ export class CcPlayer implements IPlayer {
     private xComponentController?: XComponentController = undefined
     private isControllerChanged: boolean = false
     private pipController?: PiPWindow.PiPController = undefined
+    private pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY
 
     constructor(context: common.Context) {
         this.context = context
@@ -108,6 +109,7 @@ export class CcPlayer implements IPlayer {
         if (this.isBackgroundPlay && this.context) {
             BackgroundPlayManager.stopBackground(this.context)
         }
+        this.disablePip()
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_NOT_INIT) {
             return
@@ -350,43 +352,88 @@ export class CcPlayer implements IPlayer {
     }
 
     /**
-     * Start pip mode.
-     * @param pipType The type{@link PiPWindow.PiPTemplateType} of pip window, default is VIDEO_PLAY.
+     * Return the controller of XComponent.
+     * @returns The controller of XComponent, return undefined if not set.
      */
-    async startPip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY) {
-        if (!PiPWindow.isPiPEnabled()) {
-            MediaLogger.w(TAG, "The platform is not support pip mode.")
-            return
-        }
-        if (!this.xComponentController) {
-            MediaLogger.e(TAG,
-                "The xComponentController is null, must call #setXComponentController first.")
-            return
-        }
-        if (!this.pipController || this.isControllerChanged) {
-            this.pipController = await PiPWindow.create({
-                context: this.context,
-                componentController: this.xComponentController,
-                templateType: pipType
-            })
-            this.isControllerChanged = false
-            this.pipController.on("controlPanelActionEvent", (event: PiPWindow.PiPActionEventType, status?: number) => {
-                switch (event) {
-                    case "playbackStateChanged":
-                        if (status == 0) {
-                            this.player.pause()
-                        } else {
-                            this.player.start()
-                        }
-                        break
-                }
-            })
-        }
-        await this.pipController.startPiP()
+    getXComponentController(): XComponentController | undefined {
+        return this.xComponentController
     }
 
     /**
-     * Stop the pip mode.
+     * Set the pip enable.
+     * @param pipType The type{@link PiPWindow.PiPTemplateType} of pip window, default is VIDEO_PLAY.
+     * @returns The pipController {@link PiPWindow.PiPController} if enable success, return undefined if enable failed or not support pip.
+     */
+    async enablePip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY): Promise<PiPWindow.PiPController | undefined> {
+        if (!PiPWindow.isPiPEnabled()) {
+            MediaLogger.w(TAG, "The platform is not support pip mode.")
+            return undefined
+        }
+        if (!this.xComponentController) {
+            MediaLogger.e(TAG, "The xComponentController is null, must call #setXComponentController first.")
+            return undefined
+        }
+        if (this.pipController) {
+            MediaLogger.w(TAG, "The pip is enabled, can not enable again!")
+            return this.pipController
+        }
+        this.pipType = pipType
+        this.pipController = await this.createPipController()
+        MediaLogger.d(TAG, "enable pip")
+        return this.pipController
+    }
+
+    /**
+     * Set the pip disable.
+     */
+    async disablePip() {
+        if (this.pipController) {
+            MediaLogger.d(TAG, "disable pip")
+            await this.stopPip()
+            this.pipController.off("controlPanelActionEvent")
+        }
+    }
+
+    /**
+     * Start the pip.
+     */
+    async startPip() {
+        if (!this.pipController) {
+            return
+        }
+        if (this.isControllerChanged) {
+            this.pipController = await this.createPipController();
+        }
+        MediaLogger.d(TAG, "start pip")
+        await this.pipController.startPiP()
+    }
+
+    private readonly pipActionEventListener = (event: PiPWindow.PiPActionEventType, status?: number) => {
+        switch (event) {
+            case "playbackStateChanged":
+                if (status == 0) {
+                    this.player.pause();
+                } else {
+                    this.player.start();
+                }
+                break;
+        }
+    }
+
+    private async createPipController(): Promise<PiPWindow.PiPController> {
+        const pipController = await PiPWindow.create({
+            context: this.context,
+            componentController: this.xComponentController,
+            templateType: this.pipType
+        });
+        this.isControllerChanged = false;
+        pipController.on("controlPanelActionEvent", this.pipActionEventListener)
+        MediaLogger.d(TAG, "create pip controller success")
+        return pipController
+    }
+
+    /**
+     * Stop the pip.
      */
     async stopPip() {
         if (!PiPWindow.isPiPEnabled()) {
@@ -399,6 +446,7 @@ export class CcPlayer implements IPlayer {
             return
         }
         if (this.pipController) {
+            MediaLogger.d(TAG, "stop pip")
             await this.pipController.stopPiP()
         }
     }

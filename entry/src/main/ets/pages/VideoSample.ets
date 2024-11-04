@@ -93,6 +93,9 @@ export struct VideoSample {
                         controller: this.controller
                     }).onLoad(() => {
                         this.player.setSurface(this.controller.getXComponentSurfaceId())
+                        // set controller to support pip and enable pip.
+                        this.player.setXComponentController(this.controller)
+                        this.player.enablePip()
                     })
                     this.LoadingOverlay()
                 }.width(300)
@@ -140,6 +143,18 @@ export struct VideoSample {
                         text: "pause",
                         onAction: () => {
                             this.player.pause()
+                        }
+                    })
+                    CButton({
+                        text: "StartPip",
+                        onAction: () => {
+                            this.player.startPip()
+                        }
+                    })
+                    CButton({
+                        text: "StopPip",
+                        onAction: () => {
+                            this.player.stopPip()
                         }
                     })
                 }
