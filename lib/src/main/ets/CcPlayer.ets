@@ -360,7 +360,7 @@ export class CcPlayer implements IPlayer {
     }
 
     /**
-     * Set the pip enable.
+     * Set the pip enable, must call #setXComponentController first.
      * @param pipType The type{@link PiPWindow.PiPTemplateType} of pip window, default is VIDEO_PLAY.
      * @returns The pipController {@link PiPWindow.PiPController} if enable success, return undefined if enable failed or not support pip.
      */
@@ -441,8 +441,7 @@ export class CcPlayer implements IPlayer {
             return
         }
         if (!this.xComponentController) {
-            MediaLogger.e(TAG,
-                "The xComponentController is null, must call #setXComponentController first.")
+            MediaLogger.e(TAG, "The xComponentController is null, must call #setXComponentController first.")
             return
         }
         if (this.pipController) {
