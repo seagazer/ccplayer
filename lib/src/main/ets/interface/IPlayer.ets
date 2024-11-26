@@ -73,6 +73,12 @@ export interface IPlayer {
     setVolume(vol: number): void
 
     /**
+     * Set the speed of player.
+     * @param speed The speed to play. If use the AvPlayer, the value is define at {@link media.PlaybackSpeed}.
+     */
+    setPlaySpeed(speed: number | media.PlaybackSpeed): void
+
+    /**
      * Add a listener to observe the prepared state.
      * @param listener The listener to observe the prepared state.
      * @return The player instance.

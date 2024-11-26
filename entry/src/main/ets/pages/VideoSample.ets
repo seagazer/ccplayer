@@ -4,6 +4,7 @@ import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { CButton } from './CButton';
+import { media } from '@kit.MediaKit';
 
 const TAG = '[VideoSample]'
 
@@ -143,6 +144,18 @@ export struct VideoSample {
                         text: "pause",
                         onAction: () => {
                             this.player.pause()
+                        }
+                    })
+                }
+                .width("100%")
+                .margin({ top: 32 })
+                .justifyContent(FlexAlign.SpaceEvenly)
+
+                Row() {
+                    CButton({
+                        text: "speed-2x",
+                        onAction: () => {
+                            this.player.setPlaySpeed(media.PlaybackSpeed.SPEED_FORWARD_2_00_X)
                         }
                     })
                     CButton({

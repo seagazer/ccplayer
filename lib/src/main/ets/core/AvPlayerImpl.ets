@@ -326,6 +326,11 @@ export class AvPlayerImpl implements IPlayer {
         this.player!.setVolume(vol)
     }
 
+    setPlaySpeed(speed: number | media.PlaybackSpeed): void {
+        MediaLogger.d(TAG, ">> set play speed: " + speed)
+        this.player!.setSpeed(speed)
+    }
+
     setLooper(isLoop: boolean) {
         MediaLogger.d(TAG, ">> set loop: " + isLoop)
         this.isLoop = isLoop

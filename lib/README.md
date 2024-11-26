@@ -46,6 +46,7 @@ ohpm install @seagazer/ccplayer
   | getMediaSource                   | void                                                                                | MediaSource             | 获取当前播放的媒体资源                                        |
   | setLooper                        | isLoop: boolean                                                                     | void                    | 设置循环播放                                                  |
   | setVolume                        | vol: number                                                                         | void                    | 设置音量                                                      |
+  | setPlaySpeed                     | speed: number \| media.PlaybackSpeed                                                | void                    | 设置播放倍速                                                  |
   | isPlaying                        | void                                                                                | boolean                 | 是否正在播放                                                  |
   | getDuration                      | void                                                                                | number                  | 获取媒体资源的总时长                                          |
   | getCurrentPosition               | void                                                                                | number                  | 获取当前播放时长                                              |

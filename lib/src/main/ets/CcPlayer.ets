@@ -141,6 +141,10 @@ export class CcPlayer implements IPlayer {
         this.player.setVolume(vol)
     }
 
+    setPlaySpeed(speed: number | media.PlaybackSpeed): void {
+        this.player.setPlaySpeed(speed)
+    }
+
     isPlaying(): boolean {
         return this.player.isPlaying()
     }
