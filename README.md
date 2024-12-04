@@ -288,5 +288,99 @@ struct PlayerViewPage {
 }
 ```
 
+- 使用 CcPlayerView 进行列表播放：
+```ts
+@Component
+export struct PagePlayerSample {
+    private dataList = new DataProvider() //懒加载数据源
+    @State curIndex: number = 0
+
+    aboutToAppear(): void {
+        // 添加mock数据
+        this.dataList.uriList.push('video1.mp4')
+        this.dataList.uriList.push('video2.mp4')
+        this.dataList.uriList.push('video3.mp4')
+        this.dataList.uriList.push('video4.mp4')
+        this.dataList.uriList.push('video5.mp4')
+    }
+
+    build() {
+        NavDestination() {
+            Swiper() {
+                LazyForEach(this.dataList, (uri: string, index: number) => {
+                    ItemPage({
+                        uri: uri,
+                        pageIndex: index,
+                        curPageIndex: this.curIndex
+                    })
+                })
+            }
+            .width('100%')
+            .height('100%')
+            .vertical(true) //设置垂直滑动
+            .loop(true) //设置可循环滑动
+            .cachedCount(1) //设置缓存量
+            .duration(300)
+            .onAnimationStart((_, targetIndex) => { //刷新当前滑动结束的页面索引
+                this.curIndex = targetIndex
+            })
+        }.width('100%')
+        .height('100%')
+    }
+}
+
+@Component
+struct ItemPage {
+    private player = new CcPlayer(getContext(this))
+    pageIndex: number = 0 //自身索引
+    uri: string = "" //媒体资源uri
+    @Watch('onPageChanged') @Prop curPageIndex: number = 0 // 父组件传递过来，当前页面索引
+    @State ratio: AspectRatio = AspectRatio.AUTO
+
+    onPageChanged() {
+        if (this.curPageIndex == this.pageIndex) { //索引变化，如果当前页面显示，直接开启播放
+            Logger.d(TAG, "onPageChanged: page " + this.pageIndex + " play")
+            this.player.start()
+        } else {
+            if (this.player.isPlaying()) { //索引变化，如果当前页面隐藏且正在播放，直接暂停播放
+                Logger.d(TAG, "onPageChanged: page " + this.pageIndex + " pause")
+                this.player.pause()
+            }
+        }
+    }
+
+
+    aboutToDisappear(): void {
+        this.player.release()
+        Logger.w(TAG, "page " + this.pageIndex + " is destroyed")
+    }
+
+    build() {
+        Stack() {
+            CcPlayerView({
+                player: this.player,
+                asRatio: this.ratio,
+                renderType: XComponentType.SURFACE,
+                isSupportGesture: false,
+                onSurfaceCreated: () => { //在该回调中，提前预加载资源
+                    Logger.d(TAG, "page " + this.pageIndex + " is surface ready")
+                    let src = MediaSourceFactory.createAssets('', this.uri)
+                    this.player.setMediaSource(src, () => {
+                        if (this.curPageIndex == this.pageIndex) { //如果当前页面显示，则开启播放，否则仅预加载资源
+                            Logger.d(TAG, "page " + this.pageIndex + " start play")
+                            this.player.start()
+                        }
+                    })
+                }
+            }).width('100%')
+                .height('100%')
+        }
+        .width('100%')
+        .height('100%')
+    }
+}
+```
+
+
 更多使用场景和示例，例如自定义手势操作 UI，播放器状态事件监听，绑定播控中心等，类似抖音的列表预加载播放，可以参考本库代码仓的 entry 示例工程：
 https://github.com/seagazer/ccplayer
