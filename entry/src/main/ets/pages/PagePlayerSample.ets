@@ -39,6 +39,7 @@ export struct PagePlayerSample {
             })
         }.width('100%')
         .height('100%')
+        .title("PagePlayerSample")
     }
 }
 
