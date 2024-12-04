@@ -2,6 +2,7 @@ import { MusicSample } from './MusicSample'
 import { VideoViewSample } from './VideoViewSample'
 import router from '@ohos.router'
 import { VideoSample } from './VideoSample'
+import { PagePlayerSample } from './PagePlayerSample'
 
 @Entry
 @Component
@@ -33,6 +34,12 @@ struct Home {
                     .onClick(() => {
                         this.navRouter.pushPathByName("VideoViewSample", null)
                     })
+
+                Text('PagePlayerSample')
+                    .attributeModifier(this.style)
+                    .onClick(() => {
+                        this.navRouter.pushPathByName("PagePlayerSample", null)
+                    })
             }
             .width("100%")
             .height("100%")
@@ -53,6 +60,8 @@ struct Home {
             VideoSample()
         } else if (name === "VideoViewSample") {
             VideoViewSample()
+        } else if (name === "PagePlayerSample") {
+            PagePlayerSample()
         }
     }
 }
