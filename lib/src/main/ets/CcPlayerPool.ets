@@ -62,5 +62,7 @@ export class CcPlayerPool {
         this.playingCache.forEach((player) => {
             player.release()
         })
+        this.idleCache = []
+        this.playingCache = []
     }
 }

@@ -19,6 +19,10 @@ export struct PagePlayerSample {
         this.dataList.uriList.push('video5.mp4')
     }
 
+    aboutToDisappear(): void {
+        this.playerPool.clear()
+    }
+
     build() {
         NavDestination() {
             Swiper() {
