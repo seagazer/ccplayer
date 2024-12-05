@@ -1,4 +1,4 @@
-import { AspectRatio, CcPlayer, CcPlayerView, MediaSourceFactory } from '@seagazer/ccplayer';
+import { AspectRatio, CcPlayerPool, CcPlayerView, MediaSourceFactory } from '@seagazer/ccplayer';
 import { timeToString } from '../Extentions';
 import { Logger } from '../Logger';
 
@@ -8,8 +8,10 @@ const TAG = '[PagePlayerSample]'
 export struct PagePlayerSample {
     private dataList = new DataProvider()
     @State curIndex: number = 0
+    private playerPool: CcPlayerPool = CcPlayerPool.getInstance()
 
     aboutToAppear(): void {
+        this.playerPool.init(getContext(this))
         this.dataList.uriList.push('video1.mp4')
         this.dataList.uriList.push('video2.mp4')
         this.dataList.uriList.push('video3.mp4')
@@ -63,7 +65,7 @@ class DataProvider implements IDataSource {
 
 @Component
 struct ItemPage {
-    private player = new CcPlayer(getContext(this))
+    private player = CcPlayerPool.getInstance().get()
     pageIndex: number = 0
     uri: string = ""
     @Watch('onPageChanged') @Prop curPageIndex: number = 0
@@ -100,7 +102,7 @@ struct ItemPage {
         this.player
             .removeOnPreparedListener(this.preparedListener)
             .removeOnProgressChangedListener(this.progressChangedListener)
-        this.player.release()
+        CcPlayerPool.getInstance().release(this.player)
         Logger.w(TAG, "page " + this.pageIndex + " is destroyed")
     }
 

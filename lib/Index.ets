@@ -1,5 +1,7 @@
 export { CcPlayer } from './src/main/ets/CcPlayer'
 
+export { CcPlayerPool } from './src/main/ets/CcPlayerPool'
+
 export { CcPlayerView } from './src/main/ets/widget/CcPlayerView'
 
 export { GestureType } from './src/main/ets/config/GestureType'
