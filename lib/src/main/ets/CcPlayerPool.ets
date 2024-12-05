@@ -54,4 +54,13 @@ export class CcPlayerPool {
         }
         this.idleCache.push(player)
     }
+
+    public clear() {
+        this.idleCache.forEach((player) => {
+            player.release()
+        })
+        this.playingCache.forEach((player) => {
+            player.release()
+        })
+    }
 }
