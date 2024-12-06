@@ -8,6 +8,7 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 支持绑定播控中心
 - 支持后台播放
 - 视频播放组件，支持视频宽高比切换，支持手势操作
+- 提供播放器实例缓存池，列表播放进行资源自动管理
 
 ## 示例效果
 | 视频组件                                                                                     | 音乐播放                                                                                     | 播控中心                                                                                     | PIP模式                                                                                      |
@@ -83,6 +84,15 @@ ohpm install @seagazer/ccplayer
   | disablePip                       | void                                                                                | void                    | 禁用pip画中画能力                                             |
   | startPip                         | void                                                                                | void                    | 开启pip画中画                                                 |
   | stopPip                          | void                                                                                | void                    | 关闭pip画中画                                                 |
+
+- CcPlayerPool 播放器实例缓存池(用于同页面多视频需要频繁切换的播放场景，例如列表播放)
+  | 接口        | 参数                                | 返回值       | 说明                                        |
+  | ----------- | ----------------------------------- | ------------ | ------------------------------------------- |
+  | getInstance | void                                | CcPlayerPool | 获取CcPlayerPool实例(单例)                  |
+  | init        | context: Context, cacheSize: number | void         | 设置播放器实例缓存池大小                    |
+  | get         | void                                | CcPlayer     | 从缓存池获取一个可用的播放器实例            |
+  | recycle     | player: CcPlayer                    | void         | 回收从缓存池中获取且使用中的播放器实例      |
+  | destroy     | void                                | void         | 清空缓存池中播放器实例,并且重置CcPlayerPool |
 
 
 - AvSessionCallback 播控中心事件回调
@@ -288,14 +298,17 @@ struct PlayerViewPage {
 }
 ```
 
-- 使用 CcPlayerView 进行列表播放：
+- 使用 CcPlayerView 结合 CcPlayerPool 进行滑动页面切换播放：
 ```ts
 @Component
 export struct PagePlayerSample {
     private dataList = new DataProvider() //懒加载数据源
     @State curIndex: number = 0
+    private playerPool: CcPlayerPool = CcPlayerPool.getInstance()    
 
     aboutToAppear(): void {
+        // 初始化缓存池
+        this.playerPool.init(getContext(this), 4)        
         // 添加mock数据
         this.dataList.uriList.push('video1.mp4')
         this.dataList.uriList.push('video2.mp4')
@@ -303,6 +316,11 @@ export struct PagePlayerSample {
         this.dataList.uriList.push('video4.mp4')
         this.dataList.uriList.push('video5.mp4')
     }
+
+    aboutToDisappear(): void {
+        // 销毁缓存池 
+        this.playerPool.destroy()
+    }    
 
     build() {
         NavDestination() {
@@ -324,14 +342,17 @@ export struct PagePlayerSample {
             .onAnimationStart((_, targetIndex) => { //刷新当前滑动结束的页面索引
                 this.curIndex = targetIndex
             })
-        }.width('100%')
+        }
+        .width('100%')
         .height('100%')
+        .title("PagePlayerSample")        
     }
 }
 
 @Component
 struct ItemPage {
-    private player = new CcPlayer(getContext(this))
+    // 每个page页面从缓存池中获取播放器实例，进行视频播放
+    private player = CcPlayerPool.getInstance().get()
     pageIndex: number = 0 //自身索引
     uri: string = "" //媒体资源uri
     @Watch('onPageChanged') @Prop curPageIndex: number = 0 // 父组件传递过来，当前页面索引
@@ -351,7 +372,8 @@ struct ItemPage {
 
 
     aboutToDisappear(): void {
-        this.player.release()
+        // 通知缓存池进行播放器实例回收
+        CcPlayerPool.getInstance().recycle(this.player)
         Logger.w(TAG, "page " + this.pageIndex + " is destroyed")
     }
 
