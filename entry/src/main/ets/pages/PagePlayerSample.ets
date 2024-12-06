@@ -11,7 +11,7 @@ export struct PagePlayerSample {
     private playerPool: CcPlayerPool = CcPlayerPool.getInstance()
 
     aboutToAppear(): void {
-        this.playerPool.init(getContext(this))
+        this.playerPool.init(getContext(this), 4)
         this.dataList.uriList.push('video1.mp4')
         this.dataList.uriList.push('video2.mp4')
         this.dataList.uriList.push('video3.mp4')
