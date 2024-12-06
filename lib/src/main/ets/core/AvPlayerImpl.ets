@@ -4,7 +4,6 @@ import { PlayerState } from '../config/PlayerState';
 import media from '@ohos.multimedia.media';
 import { IPlayer } from '../interface/IPlayer';
 import { MediaSourceType } from '../data/MediaSourceType';
-import common from '@ohos.app.ability.common';
 
 
 const TAG = "[OhosAvPlayer]"
@@ -36,9 +35,9 @@ export class AvPlayerImpl implements IPlayer {
     private stateChangedListeners: Array<(newState: PlayerState) => void> = []
     private videoSizeChangedListeners: Array<(width: number, height: number) => void> = []
     private renderFirstFrameListeners: Array<() => void> = []
-    private context: common.Context
+    private context: Context
 
-    private constructor(context: common.Context) {
+    private constructor(context: Context) {
         this.context = context
         media.createAVPlayer((err, player) => {
             if (err) {
@@ -60,7 +59,7 @@ export class AvPlayerImpl implements IPlayer {
         })
     }
 
-    static create(context: common.Context): IPlayer {
+    static create(context: Context): IPlayer {
         return new AvPlayerImpl(context)
     }
 

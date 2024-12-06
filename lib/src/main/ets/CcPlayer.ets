@@ -22,7 +22,7 @@ const TAG = '[CcPlayer]'
  */
 export class CcPlayer implements IPlayer {
     private player: IPlayer
-    private context: common.Context
+    private context: Context
     private isBackgroundPlay = false
     private avSessionManager?: AvSessionManager = undefined
     private agentInfo?: wantAgent.WantAgentInfo = undefined
@@ -32,7 +32,7 @@ export class CcPlayer implements IPlayer {
     private pipController?: PiPWindow.PiPController = undefined
     private pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY
 
-    constructor(context: common.Context) {
+    constructor(context: Context) {
         this.context = context
         this.player = AvPlayerImpl.create(context)
         this.init()

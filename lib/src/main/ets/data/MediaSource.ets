@@ -1,7 +1,6 @@
 import fs from '@ohos.file.fs'
 import media from '@ohos.multimedia.media'
 import { MediaSourceType } from './MediaSourceType'
-import common from '@ohos.app.ability.common'
 
 /**
  * The data source for media.
@@ -27,7 +26,7 @@ export class MediaSource {
         this.strategy = strategy
     }
 
-    release(context: common.Context) {
+    release(context: Context) {
         if (this.url && this.url.startsWith("fd")) {
             let fd = Number.parseInt(this.url.split("//")[1])
             fs.closeSync(fd)

@@ -20,7 +20,7 @@ export struct PagePlayerSample {
     }
 
     aboutToDisappear(): void {
-        this.playerPool.clear()
+        this.playerPool.destroy()
     }
 
     build() {
@@ -43,7 +43,8 @@ export struct PagePlayerSample {
             .onAnimationStart((_, targetIndex) => {
                 this.curIndex = targetIndex
             })
-        }.width('100%')
+        }
+        .width('100%')
         .height('100%')
         .title("PagePlayerSample")
     }
@@ -106,7 +107,7 @@ struct ItemPage {
         this.player
             .removeOnPreparedListener(this.preparedListener)
             .removeOnProgressChangedListener(this.progressChangedListener)
-        CcPlayerPool.getInstance().release(this.player)
+        CcPlayerPool.getInstance().recycle(this.player)
         Logger.w(TAG, "page " + this.pageIndex + " is destroyed")
     }
 
