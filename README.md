@@ -8,7 +8,7 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 支持绑定播控中心
 - 支持后台播放
 - 视频播放组件，支持视频宽高比切换，支持手势操作
-- 提供播放器实例缓存池，列表播放进行资源自动管理
+- 提供播放器实例缓存池，提供资源管理能力
 
 ## 示例效果
 | 视频组件                                                                                     | 音乐播放                                                                                     | 播控中心                                                                                     | PIP模式                                                                                      |
@@ -85,13 +85,13 @@ ohpm install @seagazer/ccplayer
   | startPip                         | void                                                                                | void                    | 开启pip画中画                                                 |
   | stopPip                          | void                                                                                | void                    | 关闭pip画中画                                                 |
 
-- CcPlayerPool 播放器实例缓存池(用于同页面多视频需要频繁切换的播放场景，例如列表播放)
+- CcPlayerPool 播放器实例缓存池(用于同页面多视频需要频繁切换的播放场景，实现预加载能力)
   | 接口        | 参数                                | 返回值       | 说明                                        |
   | ----------- | ----------------------------------- | ------------ | ------------------------------------------- |
   | getInstance | void                                | CcPlayerPool | 获取CcPlayerPool实例(单例)                  |
   | init        | context: Context, cacheSize: number | void         | 设置播放器实例缓存池大小                    |
   | get         | void                                | CcPlayer     | 从缓存池获取一个可用的播放器实例            |
-  | recycle     | player: CcPlayer                    | void         | 回收从缓存池中获取且使用中的播放器实例      |
+  | recycle     | player: CcPlayer                    | void         | 回收从缓存池中获取且使用过的播放器实例      |
   | destroy     | void                                | void         | 清空缓存池中播放器实例,并且重置CcPlayerPool |
 
 
@@ -298,7 +298,7 @@ struct PlayerViewPage {
 }
 ```
 
-- 使用 CcPlayerView 结合 CcPlayerPool 进行滑动页面切换播放：
+- 使用 CcPlayerView 结合 CcPlayerPool 进行页面切换预加载播放：
 ```ts
 @Component
 export struct PagePlayerSample {
@@ -350,7 +350,7 @@ export struct PagePlayerSample {
 }
 
 @Component
-struct ItemPage {
+struct VideoItemPageView {
     // 每个page页面从缓存池中获取播放器实例，进行视频播放
     private player = CcPlayerPool.getInstance().get()
     pageIndex: number = 0 //自身索引
