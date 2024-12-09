@@ -9,7 +9,7 @@ const domain = 0x176
  * Date: 2024/9/18
  */
 export class MediaLogger {
-    private static DEBUG = true
+    private static DEBUG = false
     private static FILTER_NAME = "ccplayer: "
 
     static setDebugger(debug: boolean) {

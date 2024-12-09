@@ -11,6 +11,7 @@ import wantAgent from '@ohos.app.ability.wantAgent';
 import { BackgroundPlayManager } from './core/BackgroundPlayManager';
 import { AvSessionCallback } from './core/AvSessionCallback';
 import { PiPWindow } from '@kit.ArkUI';
+import { AudioFocusEvent } from './config/AudioFocusEvent';
 
 const TAG = '[CcPlayer]'
 
@@ -31,6 +32,30 @@ export class CcPlayer implements IPlayer {
     private isControllerChanged: boolean = false
     private pipController?: PiPWindow.PiPController = undefined
     private pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY
+    private defaultStateChangedListener = (state: PlayerState) => {
+        if (state == PlayerState.STATE_STARTED) {
+            this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PLAY)
+        } else {
+            this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PAUSE)
+        }
+    }
+    private defaultVideoSizeChangedListener = (w: number, h: number) => {
+        this.pipController?.updateContentSize(w, h)
+    }
+    private defaultAudioFocusChangedListener: (event: AudioFocusEvent) => void = (event: AudioFocusEvent) => {
+        switch (event) {
+            case AudioFocusEvent.AUDIO_FOCUS_LOST:
+                if (this.player.isPlaying()) {
+                    this.pause()
+                }
+                break
+            case AudioFocusEvent.AUDIO_FOCUS_GAIN:
+                if (this.player.getPlayerState() == PlayerState.STATE_PAUSED) {
+                    this.start()
+                }
+                break
+        }
+    }
 
     constructor(context: Context) {
         this.context = context
@@ -40,16 +65,9 @@ export class CcPlayer implements IPlayer {
 
     private init() {
         this.avSessionManager = new AvSessionManager(this.player)
-        this.player.addOnStateChangedListener((state) => {
-            if (state == PlayerState.STATE_STARTED) {
-                this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PLAY)
-            } else {
-                this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PAUSE)
-            }
-        })
-        this.player.addOnVideoSizeChangedListener((w, h) => {
-            this.pipController?.updateContentSize(w, h)
-        })
+        this.player.addOnStateChangedListener(this.defaultStateChangedListener)
+        this.player.addOnVideoSizeChangedListener(this.defaultVideoSizeChangedListener)
+        this.player.addOnAudioFocusChangeListener(this.defaultAudioFocusChangedListener)
     }
 
     /**
@@ -114,6 +132,9 @@ export class CcPlayer implements IPlayer {
         if (state == PlayerState.STATE_NOT_INIT) {
             return
         }
+        this.player.removeOnStateChangedListener(this.defaultStateChangedListener)
+        this.player.removeOnVideoSizeChangedListener(this.defaultVideoSizeChangedListener)
+        this.player.removeOnAudioFocusChangeListener(this.defaultAudioFocusChangedListener)
         this.player.release()
     }
 
@@ -260,6 +281,17 @@ export class CcPlayer implements IPlayer {
 
     removeOnRenderFirstFrameListener(listener: () => void): IPlayer {
         this.player.removeOnRenderFirstFrameListener(listener)
+        return this
+    }
+
+    addOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer {
+        this.player.removeOnAudioFocusChangeListener(this.defaultAudioFocusChangedListener)
+        this.player.addOnAudioFocusChangeListener(listener)
+        return this
+    }
+
+    removeOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer {
+        this.player.removeOnAudioFocusChangeListener(listener)
         return this
     }
 

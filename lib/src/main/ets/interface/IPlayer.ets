@@ -1,6 +1,7 @@
 import media from '@ohos.multimedia.media';
 import { MediaSource } from '../data/MediaSource';
 import { PlayerState } from '../config/PlayerState';
+import { AudioFocusEvent } from '../config/AudioFocusEvent';
 
 
 /**
@@ -175,6 +176,24 @@ export interface IPlayer {
      * @return The player instance.
      */
     removeOnStateChangedListener(listener: (state: PlayerState) => void): IPlayer
+
+    /**
+     * Add a listener to observe the audio focus state changed of player.
+     *
+     * The CcPlayer has a default listener to handle this event: the player will auto pause when AUDIO_FOCUS_LOST and resume play when AUDIO_FOCUS_GAIN.
+     *
+     * If you call this method, the default listener will not handle this event again, you should handle it by yourself.
+     * @param listener The listener to observe the audio focus state changed of player.
+     * @returns The player instance.
+     */
+    addOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer
+
+    /**
+     * Remove a listener to observe the audio focus state changed of player.
+     * @param listener The listener to observe the audio focus state changed of player.
+     * @returns The player instance.
+     */
+    removeOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer
 
     /**
      * Check the player is playing.

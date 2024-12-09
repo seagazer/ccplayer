@@ -4,7 +4,8 @@ import { PlayerState } from '../config/PlayerState';
 import media from '@ohos.multimedia.media';
 import { IPlayer } from '../interface/IPlayer';
 import { MediaSourceType } from '../data/MediaSourceType';
-
+import { audio } from '@kit.AudioKit';
+import { AudioFocusEvent } from '../config/AudioFocusEvent';
 
 const TAG = "[OhosAvPlayer]"
 
@@ -35,6 +36,7 @@ export class AvPlayerImpl implements IPlayer {
     private stateChangedListeners: Array<(newState: PlayerState) => void> = []
     private videoSizeChangedListeners: Array<(width: number, height: number) => void> = []
     private renderFirstFrameListeners: Array<() => void> = []
+    private audioFocusChangeListener: Array<(event: AudioFocusEvent) => void> = []
     private context: Context
 
     private constructor(context: Context) {
@@ -187,6 +189,26 @@ export class AvPlayerImpl implements IPlayer {
                 callback(time)
             })
         })
+        this.player!.on("audioInterrupt", (event: audio.InterruptEvent) => {
+            if (event.forceType == audio.InterruptForceType.INTERRUPT_FORCE) {
+                switch (event.hintType) {
+                    case audio.InterruptHint.INTERRUPT_HINT_PAUSE:
+                    case audio.InterruptHint.INTERRUPT_HINT_STOP:
+                        this.audioFocusChangeListener.forEach((listener) => {
+                            listener(AudioFocusEvent.AUDIO_FOCUS_LOST)
+                        })
+                        break
+                }
+            } else { //audio.InterruptForceType.INTERRUPT_SHARE
+                switch (event.hintType) {
+                    case audio.InterruptHint.INTERRUPT_HINT_RESUME:
+                        this.audioFocusChangeListener.forEach((listener) => {
+                            listener(AudioFocusEvent.AUDIO_FOCUS_GAIN)
+                        })
+                        break
+                }
+            }
+        })
     }
 
     isPlaying(): boolean {
@@ -309,6 +331,17 @@ export class AvPlayerImpl implements IPlayer {
             this.player.off("seekDone")
             this.player.off("volumeChange")
             this.player.off("timeUpdate")
+            this.player.off("audioInterrupt")
+            this.preparedListeners = []
+            this.completedListeners = []
+            this.progressChangedListeners = []
+            this.errorListeners = []
+            this.seekChangedListeners = []
+            this.volumeChangedListeners = []
+            this.stateChangedListeners = []
+            this.videoSizeChangedListeners = []
+            this.renderFirstFrameListeners = []
+            this.audioFocusChangeListener = []
             await this.player.stop()
             await this.player.reset()
             await this.player.release()
@@ -465,6 +498,19 @@ export class AvPlayerImpl implements IPlayer {
         let index = this.renderFirstFrameListeners.indexOf(listener)
         if (index >= 0) {
             this.renderFirstFrameListeners.splice(index, 1)
+        }
+        return this
+    }
+
+    addOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer {
+        this.audioFocusChangeListener.push(listener)
+        return this
+    }
+
+    removeOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer {
+        let index = this.audioFocusChangeListener.indexOf(listener)
+        if (index >= 0) {
+            this.audioFocusChangeListener.splice(index, 1)
         }
         return this
     }
