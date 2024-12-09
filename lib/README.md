@@ -6,9 +6,11 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 
 - 支持音频/视频播放
 - 支持绑定播控中心
-- 支持后台播放
+- 支持长时后台播放
+- 支持音频焦点监听及默认处理策略
 - 视频播放组件，支持视频宽高比切换，支持手势操作
 - 提供播放器实例缓存池，提供资源管理能力
+- 支持接入自定义播放业务(自定义类需要实现IPlayer接口)
 
 ## 示例效果
 | 视频组件                                                                                     | 音乐播放                                                                                     | 播控中心                                                                                     | PIP模式                                                                                      |
@@ -17,7 +19,7 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 
 ## 依赖方式
 
-```ts
+```shell
 ohpm install @seagazer/ccplayer
 ```
 
@@ -27,11 +29,9 @@ ohpm install @seagazer/ccplayer
 - 如果需要在5.0-Release之前的系统版本中使用，请采用1.0.5及以下版本。各个版本详情可以参照之前版本的ChangeLog说明。
 
 
-
-
 ## 接口能力
 
-- CcPlayer 媒体播放器
+- CcPlayer 媒体播放器  
   | 接口                             | 参数                                                                                | 返回值                  | 说明                                                          |
   | -------------------------------- | ----------------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------- |
   | construct                        | context: BaseContxt                                                                 | CcPlayer                | 创建CcPlayer实例                                              |
@@ -52,8 +52,8 @@ ohpm install @seagazer/ccplayer
   | getDuration                      | void                                                                                | number                  | 获取媒体资源的总时长                                          |
   | getCurrentPosition               | void                                                                                | number                  | 获取当前播放时长                                              |
   | getPlayerState                   | void                                                                                | PlayerState             | 获取当前播放状态                                              |
-  | getSystemPlayer                  | void                                                                                | AVPlayer                | 获取当前系统播放器实例                                        |
-  | setSurface                       | surfaceId: string                                                                   | void                    | 绑定 surafce(仅媒体类型为视频时有效)                          |
+  | getypescriptystemPlayer          | void                                                                                | AVPlayer                | 获取当前系统播放器实例                                        |
+  | setypescripturface               | surfaceId: string                                                                   | void                    | 绑定 surafce(仅媒体类型为视频时有效)                          |
   | addOnPreparedListener            | listener: () => void                                                                | IPlayer                 | 添加媒体资源 prepare 状态监听                                 |
   | removeOnPreparedListener         | listener: () => void                                                                | IPlayer                 | 移除媒体资源 preapare 状态监听                                |
   | addOnCompletionListener          | listener: () => void                                                                | IPlayer                 | 添加媒体资源播放结束状态监听                                  |
@@ -68,10 +68,12 @@ ohpm install @seagazer/ccplayer
   | removeOnVolumeChangedListener    | listener: () => void                                                                | IPlayer                 | 移除媒体音量变化状态监听                                      |
   | addOnStateChangedListener        | listener: (state: PlayerState) => void                                              | IPlayer                 | 添加播放状态变更监听                                          |
   | removeOnStateChangedListener     | listener: (state: PlayerState) => void                                              | IPlayer                 | 移除播放状态变更监听                                          |
-  | addOnVideoSizeChangedListener    | listener: (width: number, height: number) => void                                   | void                    | 添加视频尺寸变化监听                                          |
-  | removeOnVideoSizeChangedListener | listener: (width: number, height: number) => void                                   | void                    | 移除视频尺寸变化监听                                          |
-  | addOnRenderFirstFrameListener    | listener: () => void                                                                | void                    | 添加首帧画面渲染监听                                          |
-  | removeOnRenderFirstFrameListener | listener: () => void                                                                | void                    | 移除首帧画面渲染监听                                          |
+  | addOnVideoSizeChangedListener    | listener: (width: number, height: number) => void                                   | IPlayer                 | 添加视频尺寸变化监听                                          |
+  | removeOnVideoSizeChangedListener | listener: (width: number, height: number) => void                                   | IPlayer                 | 移除视频尺寸变化监听                                          |
+  | addOnRenderFirstFrameListener    | listener: () => void                                                                | IPlayer                 | 添加首帧画面渲染监听                                          |
+  | removeOnRenderFirstFrameListener | listener: () => void                                                                | IPlayer                 | 移除首帧画面渲染监听                                          |
+  | addOnAudioFocusChangeListener    | (event: AudioFocusEvent) => void                                                    | IPlayer                 | 添加音频焦点变化监听                                          |
+  | removeOnAudioFocusChangeListener | (event: AudioFocusEvent) => void                                                    | IPlayer                 | 移除音频焦点变化监听                                          |
   | addOnMediaChangedListener        | (source: MediaSource) => void                                                       | void                    | 添加切换媒体资源监听                                          |
   | removeOnMediaChangedListener     | (source: MediaSource) => void                                                       | void                    | 移除切换媒体资源监听                                          |
   | bindAvSession                    | context:BaseContext, sessioName:string, type:AVSessionType, agentInfo:WantAgentInfo | void                    | 绑定播控中心                                                  |
@@ -85,7 +87,7 @@ ohpm install @seagazer/ccplayer
   | startPip                         | void                                                                                | void                    | 开启pip画中画                                                 |
   | stopPip                          | void                                                                                | void                    | 关闭pip画中画                                                 |
 
-- CcPlayerPool 播放器实例缓存池(用于同页面多视频需要频繁切换的播放场景，实现预加载能力)
+- CcPlayerPool 播放器实例缓存池(用于同页面多视频需要频繁切换的播放场景，实现预加载能力)  
   | 接口        | 参数                                | 返回值       | 说明                                        |
   | ----------- | ----------------------------------- | ------------ | ------------------------------------------- |
   | getInstance | void                                | CcPlayerPool | 获取CcPlayerPool实例(单例)                  |
@@ -95,13 +97,13 @@ ohpm install @seagazer/ccplayer
   | destroy     | void                                | void         | 清空缓存池中播放器实例,并且重置CcPlayerPool |
 
 
-- AvSessionCallback 播控中心事件回调
+- AvSessionCallback 播控中心事件回调  
   | 属性       | 类型       | 说明       |
   | ---------- | ---------- | ---------- |
   | onNext     | () => void | 播放下一首 |
   | onPrevious | () => void | 播放上一首 |
 
-- CcPlayerView 视频播放组件
+- CcPlayerView 视频播放组件  
   | 属性                               | 类型                                                             | 说明                              | 是否必填 |
   | ---------------------------------- | ---------------------------------------------------------------- | --------------------------------- | -------- |
   | player                             | CcPlayer                                                         | 媒体播放器                        | 是       |
@@ -116,15 +118,15 @@ ohpm install @seagazer/ccplayer
   | onGestureAction                    | (type: GestureType, percent: number, isTouchUp: boolean) => void | 手势操作回调                      | 否       |
   | aspectRatioChangeAnimationDuration | number                                                           | 视频切换宽高比动效时长，默认150ms | 否       |
 
-- GestureType 视频播放组件手势类型
-  | 属性       | 说明     |
+- GestureType 视频播放组件手势类型  
+  | 枚举值     | 说明     |
   | ---------- | -------- |
   | BRIGHTNESS | 亮度调节 |
   | PROGRESS   | 进度调节 |
   | VOLUME     | 音量调节 |
 
-- AspectRatio 视频画面比例
-  | 属性    | 说明             |
+- AspectRatio 视频画面比例  
+  | 枚举值  | 说明             |
   | ------- | ---------------- |
   | AUTO    | 自动匹配         |
   | W_16_9  | 16:9 宽屏        |
@@ -133,8 +135,14 @@ ohpm install @seagazer/ccplayer
   | STRETCH | 保持比例裁切填充 |
   | FILL    | 拉伸填充         |
 
-- PlayerState 播放器状态
-  | 属性            | 说明                   |
+- AudioFocusEvent 音频焦点变更事件  
+  | 枚举值           | 说明         |
+  | ---------------- | ------------ |
+  | AUDIO_FOCUS_LOST | 音频焦点丢失 |
+  | AUDIO_FOCUS_GAIN | 音频焦点获取 |
+
+- PlayerState 播放器状态  
+  | 枚举值          | 说明                   |
   | --------------- | ---------------------- |
   | STATE_NOT_INIT  | 初始状态(未实例化)     |
   | STATE_IDLE      | 播放器实例化且闲置状态 |
@@ -145,18 +153,23 @@ ohpm install @seagazer/ccplayer
   | STATE_COMPLETED | 播放器播放结束状态     |
   | STATE_ERROR     | 播放器播放异常状态     |
 
-- MediaSourceFactory 媒体资源构建器
-  | 接口         | 参数                                                                                                                     | 返回值                | 说明                          |
-  | ------------ | ------------------------------------------------------------------------------------------------------------------------ | --------------------- | ----------------------------- |
-  | createFile   | title: string, filePath: string, cover?: string\|Pixelmap                                                                | Promise\<MediaSource> | 通过本地文件创建媒体资源      |
-  | createAssets | title: string, rawAssetsPath: string, cover?: string\|Pixelmap                                                           | MediaSource           | 通过 Raw 文件创建媒体资源     |
-  | createUrl    | title: string, url: string, cover?: string\|Pixelmap, header?: Record<string, string>, strategy?: media.PlaybackStrategy | MediaSource           | 通过网络 url 地址创建媒体资源 |
+- MediaSourceFactory 媒体资源构建器  
+  | 接口                 | 参数                                                                                                                     | 返回值                | 说明                          |
+  | -------------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------- | ----------------------------- |
+  | createFile           | title: string, filePath: string, cover?: string\|Pixelmap                                                                | Promise\<MediaSource> | 通过本地文件创建媒体资源      |
+  | createAssetypescript | title: string, rawAssetypescriptPath: string, cover?: string\|Pixelmap                                                   | MediaSource           | 通过 Raw 文件创建媒体资源     |
+  | createUrl            | title: string, url: string, cover?: string\|Pixelmap, header?: Record<string, string>, strategy?: media.PlaybackStrategy | MediaSource           | 通过网络 url 地址创建媒体资源 |
+
+- MediaLogger 调试信息开关  
+  | 接口        | 参数           | 返回值 | 说明                                |
+  | ----------- | -------------- | ------ | ----------------------------------- |
+  | setDebugger | debug: boolean | void   | 设置是否开始调试信息打印，默认false |
 
 ## 场景示例
 
 - 使用 CcPlayerView 播放视频的方式：
 
-```ts
+```typescript
 @Entry
 @Component
 struct PlayerViewPage {
@@ -208,7 +221,7 @@ struct PlayerViewPage {
 
 - 使用 CcPlayer 播放视频的方式：
 
-```ts
+```typescript
 @Entry
 @Component
 struct PlayerViewPage {
@@ -224,9 +237,9 @@ struct PlayerViewPage {
                 id: "video",
                 controller: this.controller
             }).onLoad(() => {
-                let surfaceId = this.controller.getXComponentSurfaceId()
+                let surfaceId = this.controller.getXComponentypescripturfaceId()
                 // 2.设置surface，播放前必须设置
-                this.player.setSurface(surfaceId)
+                this.player.setypescripturface(surfaceId)
             })
             .width(400)
             .height(300)
@@ -261,7 +274,7 @@ struct PlayerViewPage {
 
 - 使用 CcPlayer 播放音乐的方式：
 
-```ts
+```typescript
 @Entry
 @Component
 struct PlayerViewPage {
@@ -299,7 +312,9 @@ struct PlayerViewPage {
 ```
 
 - 使用 CcPlayerView 结合 CcPlayerPool 进行页面切换预加载播放：
-```ts
+
+```typescript
+// 主页面
 @Component
 export struct PagePlayerSample {
     private dataList = new DataProvider() //懒加载数据源
@@ -326,7 +341,7 @@ export struct PagePlayerSample {
         NavDestination() {
             Swiper() {
                 LazyForEach(this.dataList, (uri: string, index: number) => {
-                    ItemPage({
+                    VideoItemPageView({
                         uri: uri,
                         pageIndex: index,
                         curPageIndex: this.curIndex
@@ -348,7 +363,10 @@ export struct PagePlayerSample {
         .title("PagePlayerSample")        
     }
 }
+```
 
+```typescript
+// 单个子页面
 @Component
 struct VideoItemPageView {
     // 每个page页面从缓存池中获取播放器实例，进行视频播放
@@ -360,11 +378,9 @@ struct VideoItemPageView {
 
     onPageChanged() {
         if (this.curPageIndex == this.pageIndex) { //索引变化，如果当前页面显示，直接开启播放
-            Logger.d(TAG, "onPageChanged: page " + this.pageIndex + " play")
             this.player.start()
         } else {
             if (this.player.isPlaying()) { //索引变化，如果当前页面隐藏且正在播放，直接暂停播放
-                Logger.d(TAG, "onPageChanged: page " + this.pageIndex + " pause")
                 this.player.pause()
             }
         }
@@ -374,7 +390,6 @@ struct VideoItemPageView {
     aboutToDisappear(): void {
         // 通知缓存池进行播放器实例回收
         CcPlayerPool.getInstance().recycle(this.player)
-        Logger.w(TAG, "page " + this.pageIndex + " is destroyed")
     }
 
     build() {
@@ -385,11 +400,9 @@ struct VideoItemPageView {
                 renderType: XComponentType.SURFACE,
                 isSupportGesture: false,
                 onSurfaceCreated: () => { //在该回调中，提前预加载资源
-                    Logger.d(TAG, "page " + this.pageIndex + " is surface ready")
-                    let src = MediaSourceFactory.createAssets('', this.uri)
+                    let src = MediaSourceFactory.createAssetypescript('', this.uri)
                     this.player.setMediaSource(src, () => {
                         if (this.curPageIndex == this.pageIndex) { //如果当前页面显示，则开启播放，否则仅预加载资源
-                            Logger.d(TAG, "page " + this.pageIndex + " start play")
                             this.player.start()
                         }
                     })
