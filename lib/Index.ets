@@ -6,6 +6,8 @@ export { CcPlayerView } from './src/main/ets/widget/CcPlayerView'
 
 export { GestureType } from './src/main/ets/config/GestureType'
 
+export { AudioFocusEvent } from './src/main/ets/config/AudioFocusEvent'
+
 export { AvSessionCallback } from './src/main/ets/core/AvSessionCallback'
 
 export { PlayerState } from './src/main/ets/config/PlayerState'

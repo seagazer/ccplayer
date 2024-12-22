@@ -6,7 +6,8 @@
     "音视频",
     "Video",
     "Music",
-    "Player"
+    "Player",
+    "多媒体"
   ],
   "author": {
     "name": "seagazer",
@@ -16,7 +17,7 @@
   "description": "A media player for OpenHarmony & HarmonyOS.",
   "main": "Index.ets",
   "repository": "https://github.com/seagazer/ccplayer",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "homepage": "https://github.com/seagazer",
   "dependencies": {}
 }

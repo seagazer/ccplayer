@@ -1,3 +1,9 @@
+# 1.1.2
+
+- 增加addOnAudioFocusChangeListener接口，提供音频焦点监听能力和默认的音频焦点处理策略
+- 增加removeOnAudioFocusChangeListener接口，提供音频焦点监听能力和默认的音频焦点处理策略
+- 清除框架内部冗余的非关键日志信息
+
 # 1.1.1
 
 - 增加CcPlayerPool接口，提供播放器实例缓存池管理能力
