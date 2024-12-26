@@ -8,8 +8,9 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 支持绑定播控中心
 - 支持长时后台播放
 - 支持音频焦点监听及默认处理策略
-- 视频播放组件，支持视频宽高比切换，支持手势操作
-- 提供播放器实例缓存池，提供资源管理能力
+- 提供视频播放组件CcPlayerView，支持视频宽高比切换，支持手势操作
+- 提供默认手势UI面板CcGestureOverlay及视频加载UI面板CcLoadingOverlay
+- 提供播放器实例缓存池，提供资源管理及复用能力
 - 支持接入自定义播放业务(自定义类需要实现IPlayer接口)
 
 ## 示例效果
@@ -117,6 +118,24 @@ ohpm install @seagazer/ccplayer
   | onGestureUIListener                | (visible: boolean) => void                                       | 手势 UI 显示/隐藏回调             | 否       |
   | onGestureAction                    | (type: GestureType, percent: number, isTouchUp: boolean) => void | 手势操作回调                      | 否       |
   | aspectRatioChangeAnimationDuration | number                                                           | 视频切换宽高比动效时长，默认150ms | 否       |
+
+- CcGestureOverlay 手势控制UI面板，相关属性可以通过CcPlayerView的onGestureAction和onGestureUIListener中获取  
+  | 属性                  | 类型          | 说明                      | 是否必填 |
+  | --------------------- | ------------- | ------------------------- | -------- |
+  | player                | CcPlayer      | 媒体播放器                | 是       |
+  | gestureType           | GestureType   | 手势类型，prop绑定        | 是       |
+  | gesturePercent        | number        | 手势进度，prop绑定        | 是       |
+  | gestureOverlayVisible | boolean       | 显隐状态，prop绑定        | 是       |
+  | textSize              | number        | UI文本大小，默认14vp      | 否       |
+  | textColor             | ResourceColor | UI文本颜色，默认#ffffffff | 否       |
+  | bgColor               | ResourceColor | UI背景颜色，默认#a6000000 | 否       |
+
+- CcLoadingOverlay 视频加载UI面板    
+  | 属性         | 类型          | 说明                      | 是否必填 |
+  | ------------ | ------------- | ------------------------- | -------- |
+  | player       | CcPlayer      | 媒体播放器                | 是       |
+  | loadingSize  | Size          | 加载进度条尺寸，默认56vp  | 否       |
+  | loadingColor | ResourceColor | 加载进度条颜色，默认White | 否       |
 
 - GestureType 视频播放组件手势类型  
   | 枚举值     | 说明     |
