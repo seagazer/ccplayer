@@ -1,4 +1,13 @@
-import { AspectRatio, CcPlayer, CcPlayerView, GestureType, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer';
+import {
+    AspectRatio,
+    CcGestureOverlay,
+    CcLoadingOverlay,
+    CcPlayer,
+    CcPlayerView,
+    GestureType,
+    MediaSourceFactory,
+    PlayerState
+} from '@seagazer/ccplayer';
 import { timeToString, toast } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
@@ -12,15 +21,13 @@ export struct VideoViewSample {
     private player = new CcPlayer(getContext(this))
     @State ratio: AspectRatio = AspectRatio.AUTO
     @State ratioText: string = "AUTO"
-    @State isLoading: boolean = false
     @State currentPosition: number = 0
     @State totalDuration: number = 0
-    @State gestureOverlayVisible: boolean = false
     @State gestureType: GestureType = GestureType.PROGRESS
+    @State gesturePercent: number = 0
+    @State gestureUIVisible: boolean = false
     @State seekPosition: number = 0
     @State seekMax: number = 0
-    @State volumePercent: number = 0
-    @State brightnessPercent: number = 0
     private playIndex: number = 0
     private isSeeking = false
     private preparedListener = () => {
@@ -33,10 +40,6 @@ export struct VideoViewSample {
     private errorListener = (code: number, message: string) => {
         Logger.e(TAG, "play error= " + code + ", " + message)
         toast("Play error= " + message)
-    }
-    private firstFrameListener = () => {
-        Logger.d(TAG, "render first frame")
-        this.isLoading = false
     }
     private progressChangedListener = (position: number) => {
         if (this.isSeeking) {
@@ -65,7 +68,6 @@ export struct VideoViewSample {
         this.player
             .addOnPreparedListener(this.preparedListener)
             .addOnStateChangedListener(this.stateChangedListener)
-            .addOnRenderFirstFrameListener(this.firstFrameListener)
             .addOnErrorListener(this.errorListener)
             .addOnProgressChangedListener(this.progressChangedListener)
             .addOnSeekChangedListener(this.seekListener)
@@ -75,31 +77,26 @@ export struct VideoViewSample {
         this.player
             .removeOnPreparedListener(this.preparedListener)
             .removeOnStateChangedListener(this.stateChangedListener)
-            .removeOnRenderFirstFrameListener(this.firstFrameListener)
             .removeOnErrorListener(this.errorListener)
             .removeOnProgressChangedListener(this.progressChangedListener)
             .removeOnSeekChangedListener(this.seekListener)
         this.player.release()
     }
 
-    private handleGesture = (type: GestureType, percent: number, isTouchUp: boolean) => {
-        this.gestureType = type
+    private handleGestureAction(type: GestureType, percent: number, isTouchUp: boolean) {
         switch (type) {
             case GestureType.PROGRESS:
                 this.seekPosition = this.totalDuration * percent
-                this.seekMax = this.totalDuration
                 if (isTouchUp) {
                     this.player.seekTo(this.seekPosition)
                 }
                 break
             case GestureType.BRIGHTNESS:
-                this.brightnessPercent = percent
                 if (isTouchUp) {
                     // todo 设置屏幕亮度，目前三方应用未开放接口，仅OpenHarmony的系统应用可用
                 }
                 break
             case GestureType.VOLUME:
-                this.volumePercent = percent
                 if (isTouchUp) {
                     // todo 设置媒体音量，目前三方应用未开放接口，仅OpenHarmony的系统应用可用
                 }
@@ -107,75 +104,25 @@ export struct VideoViewSample {
         }
     }
 
-    @Builder
-    GestureOverlay() {
-        if (this.gestureOverlayVisible && !this.isLoading) {
-            if (this.gestureType == GestureType.PROGRESS) {
-                Row() {
-                    Text(timeToString(this.seekPosition) + " / " + timeToString(this.seekMax))
-                        .fontSize(14)
-                        .fontColor("#ffffffff")
-                        .backgroundColor("#b3000000")
-                        .borderRadius(4)
-                        .padding(8)
-                }.width(100)
-                .height(50)
-                .justifyContent(FlexAlign.Center)
-                .animation({ duration: 150 })
-            } else if (this.gestureType == GestureType.VOLUME) {
-                Row() {
-                    Text("音量：" + Math.round(this.volumePercent * 100) + "%")
-                        .fontSize(14)
-                        .fontSize(14)
-                        .fontColor("#ffffffff")
-                        .backgroundColor("#b3000000")
-                        .borderRadius(4)
-                        .padding(8)
-                }.width(100)
-                .height(50)
-                .justifyContent(FlexAlign.Center)
-                .animation({ duration: 150 })
-            } else {
-                Row() {
-                    Text("亮度：" + Math.round(this.brightnessPercent * 100) + "%")
-                        .fontSize(14)
-                        .fontSize(14)
-                        .fontColor("#ffffffff")
-                        .backgroundColor("#b3000000")
-                        .borderRadius(4)
-                        .padding(8)
-                }.width(100)
-                .height(50)
-                .justifyContent(FlexAlign.Center)
-                .animation({ duration: 150 })
-            }
-        }
-    }
-
-    @Builder
-    LoadingOverlay() {
-        if (this.isLoading) {
-            LoadingProgress()
-                .color(Color.White)
-                .width(60).height(60)
-        }
-    }
-
     build() {
         NavDestination() {
             Column() {
-                // video view
                 Stack() {
+                    // video view
                     CcPlayerView({
                         player: this.player,
                         asRatio: this.ratio,
                         renderType: XComponentType.SURFACE,
-                        onGestureAction: this.handleGesture,
+                        onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
+                            this.gestureType = type
+                            this.gesturePercent = percent
+                            // handle the gesture actions
+                            this.handleGestureAction(type, percent, isTouchUp)
+                        },
                         onGestureUIListener: (visible) => {
-                            this.gestureOverlayVisible = visible
+                            this.gestureUIVisible = visible
                         },
                         onSurfaceCreated: () => {
-                            this.isLoading = true
                             this.playIndex = 0
                             let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
                                 "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
@@ -184,8 +131,18 @@ export struct VideoViewSample {
                             })
                         }
                     })
-                    this.GestureOverlay()
-                    this.LoadingOverlay()
+                    // default gesture overlay
+                    CcGestureOverlay({
+                        player: this.player,
+                        gestureType: this.gestureType,
+                        gesturePercent: this.gesturePercent,
+                        gestureOverlayVisible: this.gestureUIVisible
+                    })
+                    // default loading overlay
+                    CcLoadingOverlay({
+                        player: this.player,
+                        loadingColor: '#ff3071b9'
+                    })
                 }
                 .width(300)
                 .height(500)
@@ -198,10 +155,10 @@ export struct VideoViewSample {
                         min: 0,
                         step: 1000,
                     }).layoutWeight(1)
-                        .sliderInteractionMode(SliderInteraction.SLIDE_AND_CLICK_UP)
                         .onChange((value, mode) => {
-                            if (mode == SliderChangeMode.End || mode == SliderChangeMode.Click) {
+                            if (mode == SliderChangeMode.Begin) {
                                 this.isSeeking = true
+                            } else if (mode == SliderChangeMode.End) {
                                 let position = Math.ceil(value)
                                 this.player.seekTo(position)
                                 this.currentPosition = position
@@ -239,7 +196,6 @@ export struct VideoViewSample {
                     CButton({
                         text: "next",
                         onAction: () => {
-                            this.isLoading = true
                             if (this.playIndex == 0) {
                                 this.playIndex = 1
                                 let src = MediaSourceFactory.createAssets("TestVideo2", "video2.mp4",

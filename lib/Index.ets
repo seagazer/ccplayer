@@ -4,6 +4,10 @@ export { CcPlayerPool } from './src/main/ets/CcPlayerPool'
 
 export { CcPlayerView } from './src/main/ets/widget/CcPlayerView'
 
+export { CcGestureOverlay } from './src/main/ets/widget/CcGestureOverlay'
+
+export { CcLoadingOverlay } from './src/main/ets/widget/CcLoadingOverlay'
+
 export { GestureType } from './src/main/ets/config/GestureType'
 
 export { AudioFocusEvent } from './src/main/ets/config/AudioFocusEvent'

@@ -3,6 +3,7 @@ import { VideoViewSample } from './VideoViewSample'
 import router from '@ohos.router'
 import { VideoSample } from './VideoSample'
 import { PagePlayerSample } from './PagePlayerSample'
+import { CustomOverlaySample } from './CustomOverlaySample'
 
 @Entry
 @Component
@@ -34,6 +35,11 @@ struct Home {
                     .onClick(() => {
                         this.navRouter.pushPathByName("VideoViewSample", null)
                     })
+                Text('CustomOverlaySample')
+                    .attributeModifier(this.style)
+                    .onClick(() => {
+                        this.navRouter.pushPathByName("CustomOverlaySample", null)
+                    })
 
                 Text('PagePlayerSample')
                     .attributeModifier(this.style)
@@ -60,6 +66,8 @@ struct Home {
             VideoSample()
         } else if (name === "VideoViewSample") {
             VideoViewSample()
+        } else if (name === "CustomOverlaySample") {
+            CustomOverlaySample()
         } else if (name === "PagePlayerSample") {
             PagePlayerSample()
         }
