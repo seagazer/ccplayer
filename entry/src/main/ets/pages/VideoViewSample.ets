@@ -141,7 +141,7 @@ export struct VideoViewSample {
                     // default loading overlay
                     CcLoadingOverlay({
                         player: this.player,
-                        loadingColor: '#ff3071b9'
+                        loadingColor: '#ffd4a74f'
                     })
                 }
                 .width(300)

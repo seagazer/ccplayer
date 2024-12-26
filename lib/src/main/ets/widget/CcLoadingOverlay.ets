@@ -16,7 +16,7 @@ export struct CcLoadingOverlay {
     /**
      * The size of loading view.
      */
-    overlaySize: Size = { width: 56, height: 56 }
+    loadingSize: Size = { width: 56, height: 56 }
     /**
      * The color of loading progress.
      */
@@ -47,7 +47,7 @@ export struct CcLoadingOverlay {
             Column() {
                 LoadingProgress()
                     .color(this.loadingColor)
-                    .size(this.overlaySize)
+                    .size(this.loadingSize)
             }
         }
     }
