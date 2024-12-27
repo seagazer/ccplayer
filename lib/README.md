@@ -8,8 +8,8 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 支持绑定播控中心
 - 支持长时后台播放
 - 支持音频焦点监听及默认处理策略
-- 提供视频播放组件CcPlayerView，支持视频宽高比切换，支持手势操作
-- 提供默认手势UI面板CcGestureOverlay及视频加载UI面板CcLoadingOverlay
+- 提供视频播放组件CcPlayerView，支持视频宽高比切换及手势操作
+- 提供默认手势及视频加载Overlay模板，快速添加各种状态界面
 - 提供播放器实例缓存池，提供资源管理及复用能力
 - 支持接入自定义播放业务(自定义类需要实现IPlayer接口)
 
@@ -119,16 +119,16 @@ ohpm install @seagazer/ccplayer
   | onGestureAction                    | (type: GestureType, percent: number, isTouchUp: boolean) => void | 手势操作回调                      | 否       |
   | aspectRatioChangeAnimationDuration | number                                                           | 视频切换宽高比动效时长，默认150ms | 否       |
 
-- CcGestureOverlay 手势控制UI面板，相关属性可以通过CcPlayerView的onGestureAction和onGestureUIListener中获取  
-  | 属性                  | 类型          | 说明                      | 是否必填 |
-  | --------------------- | ------------- | ------------------------- | -------- |
-  | player                | CcPlayer      | 媒体播放器                | 是       |
-  | gestureType           | GestureType   | 手势类型，prop绑定        | 是       |
-  | gesturePercent        | number        | 手势进度，prop绑定        | 是       |
-  | gestureOverlayVisible | boolean       | 显隐状态，prop绑定        | 是       |
-  | textSize              | number        | UI文本大小，默认14vp      | 否       |
-  | textColor             | ResourceColor | UI文本颜色，默认#ffffffff | 否       |
-  | bgColor               | ResourceColor | UI背景颜色，默认#a6000000 | 否       |
+- CcGestureOverlay 手势控制UI面板，需要结合NodeContainer使用，实时的UI状态值可以通过CcPlayerView的onGestureAction和onGestureUIListener回调中获取  
+  | 接口                     | 参数                 | 返回值           | 说明                                   |
+  | ------------------------ | -------------------- | ---------------- | -------------------------------------- |
+  | construct                | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例               |
+  | setTextSize              | size: number         | void             | 设置overlay字体大小，单位fp            |
+  | setTextColor             | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff     |
+  | setBackgroundColor       | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000     |
+  | setGestureType           | size: number         | void             | 设置当前CcPlayerView的手势类型         |
+  | setGesturePercent        | percent: number      | void             | 设置当前CcPlayerView的手势进度值       |
+  | setGestureOverlayVisible | visible: boolean     | void             | 设置当前CcPlayerView的手势UI的显示状态 |
 
 - CcLoadingOverlay 视频加载UI面板    
   | 属性         | 类型          | 说明                      | 是否必填 |
@@ -186,7 +186,7 @@ ohpm install @seagazer/ccplayer
 
 ## 场景示例
 
-- 使用 CcPlayerView 播放视频的方式：
+- 使用 CcPlayerView 播放视频，以及快速集成默认手势和加载Overlay的方式：
 
 ```typescript
 @Entry
@@ -196,15 +196,39 @@ struct PlayerViewPage {
     @State videoRatio: number = AspectRatio.AUTO
      // 1.实例化CcPlayer
     private player = new CcPlayer(getContext(this))
+    // 2.实例化手势UI面板
+    private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
+
+    aboutToAppear(): void {
+        // 3.设置手势UI面板各项参数
+        this.gestureOverlay.setTextSize(18)
+        this.gestureOverlay.setTextColor('#ffead981')
+    }
 
     build() {
         Column() {
             Stack() {
-                // 2.引用CcPlayerView视频播放组件，设置参数，绑定CcPlayer
+                // 4.引用CcPlayerView视频播放组件，设置参数，绑定CcPlayer
                 CcPlayerView({
                     player: this.player,
-                    asRatio: this.videoRatio
+                    asRatio: this.videoRatio,
+                    onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
+                        // 刷新手势UI面板参数
+                        this.gestureOverlay.setGestureType(type)
+                        this.gestureOverlay.setGesturePercent(percent)
+                    },
+                    onGestureUIListener: (visible) => {
+                        // 刷新手势UI面板参数
+                        this.gestureOverlay.setGestureOverlayVisible(visible)
+                    },                    
                 })
+                // 5.使用NodeContainer结合CcGestureOverlay默认手势面板
+                NodeContainer(this.gestureOverlay)
+                // 6.使用CcLoadingOverlay默认加载面板
+                CcLoadingOverlay({
+                    player: this.player,
+                    loadingColor: '#ffd4a74f'
+                })                
             }
             .width(400)
             .height(300)
@@ -222,17 +246,17 @@ struct PlayerViewPage {
     }
 
     private async play() {
-        // 3.创建mediaSource
+        // 7.创建mediaSource
         let src = await MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
-        // 4.设置mediaSource
+        // 8.设置mediaSource
         this.player!.setMediaSource(src, () => {
-            // 5.设置成功回调，开始播放
+            // 9.设置成功回调，开始播放
             this.player.start()
         })
     }
 
     aboutToDisappear() {
-        // 6.释放资源
+        // 10.释放资源
         this.player.release()
     }
 }
