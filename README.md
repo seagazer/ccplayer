@@ -9,7 +9,7 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 支持长时后台播放
 - 支持音频焦点监听及默认处理策略
 - 提供视频播放组件CcPlayerView，支持视频宽高比切换及手势操作
-- 提供默认手势及视频加载Overlay模板，快速添加各种状态界面
+- 提供默认手势及视频加载Overlay模板，快速添加各种UI面板
 - 提供播放器实例缓存池，提供资源管理及复用能力
 - 支持接入自定义播放业务(自定义类需要实现IPlayer接口)
 
@@ -53,8 +53,8 @@ ohpm install @seagazer/ccplayer
   | getDuration                      | void                                                                                | number                  | 获取媒体资源的总时长                                          |
   | getCurrentPosition               | void                                                                                | number                  | 获取当前播放时长                                              |
   | getPlayerState                   | void                                                                                | PlayerState             | 获取当前播放状态                                              |
-  | getypescriptystemPlayer          | void                                                                                | AVPlayer                | 获取当前系统播放器实例                                        |
-  | setypescripturface               | surfaceId: string                                                                   | void                    | 绑定 surafce(仅媒体类型为视频时有效)                          |
+  | getSystemPlayer                  | void                                                                                | AVPlayer                | 获取当前系统播放器实例                                        |
+  | setSurface                       | surfaceId: string                                                                   | void                    | 绑定 surafce(仅媒体类型为视频时有效)                          |
   | addOnPreparedListener            | listener: () => void                                                                | IPlayer                 | 添加媒体资源 prepare 状态监听                                 |
   | removeOnPreparedListener         | listener: () => void                                                                | IPlayer                 | 移除媒体资源 preapare 状态监听                                |
   | addOnCompletionListener          | listener: () => void                                                                | IPlayer                 | 添加媒体资源播放结束状态监听                                  |
@@ -88,6 +88,18 @@ ohpm install @seagazer/ccplayer
   | startPip                         | void                                                                                | void                    | 开启pip画中画                                                 |
   | stopPip                          | void                                                                                | void                    | 关闭pip画中画                                                 |
 
+- MediaSourceFactory 媒体资源构建器  
+  | 接口         | 参数                                                                                                                     | 返回值                | 说明                          |
+  | ------------ | ------------------------------------------------------------------------------------------------------------------------ | --------------------- | ----------------------------- |
+  | createFile   | title: string, filePath: string, cover?: string\|Pixelmap                                                                | Promise\<MediaSource> | 通过本地文件创建媒体资源      |
+  | createAssets | title: string, rawAssetsPath: string, cover?: string\|PixelMap                                                           | MediaSource           | 通过 Raw 文件创建媒体资源     |
+  | createUrl    | title: string, url: string, cover?: string\|Pixelmap, header?: Record<string, string>, strategy?: media.PlaybackStrategy | MediaSource           | 通过网络 url 地址创建媒体资源 |
+
+- MediaLogger 调试信息开关  
+  | 接口        | 参数           | 返回值 | 说明                                |
+  | ----------- | -------------- | ------ | ----------------------------------- |
+  | setDebugger | debug: boolean | void   | 设置是否开始调试信息打印，默认false |
+
 - CcPlayerPool 播放器实例缓存池(用于同页面多视频需要频繁切换的播放场景，实现预加载能力)  
   | 接口        | 参数                                | 返回值       | 说明                                        |
   | ----------- | ----------------------------------- | ------------ | ------------------------------------------- |
@@ -97,12 +109,6 @@ ohpm install @seagazer/ccplayer
   | recycle     | player: CcPlayer                    | void         | 回收从缓存池中获取且使用过的播放器实例      |
   | destroy     | void                                | void         | 清空缓存池中播放器实例,并且重置CcPlayerPool |
 
-
-- AvSessionCallback 播控中心事件回调  
-  | 属性       | 类型       | 说明       |
-  | ---------- | ---------- | ---------- |
-  | onNext     | () => void | 播放下一首 |
-  | onPrevious | () => void | 播放上一首 |
 
 - CcPlayerView 视频播放组件  
   | 属性                               | 类型                                                             | 说明                              | 是否必填 |
@@ -160,6 +166,12 @@ ohpm install @seagazer/ccplayer
   | AUDIO_FOCUS_LOST | 音频焦点丢失 |
   | AUDIO_FOCUS_GAIN | 音频焦点获取 |
 
+- AvSessionCallback 播控中心事件回调  
+  | 属性       | 类型       | 说明       |
+  | ---------- | ---------- | ---------- |
+  | onNext     | () => void | 播放下一首 |
+  | onPrevious | () => void | 播放上一首 |
+
 - PlayerState 播放器状态  
   | 枚举值          | 说明                   |
   | --------------- | ---------------------- |
@@ -172,17 +184,6 @@ ohpm install @seagazer/ccplayer
   | STATE_COMPLETED | 播放器播放结束状态     |
   | STATE_ERROR     | 播放器播放异常状态     |
 
-- MediaSourceFactory 媒体资源构建器  
-  | 接口                 | 参数                                                                                                                     | 返回值                | 说明                          |
-  | -------------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------- | ----------------------------- |
-  | createFile           | title: string, filePath: string, cover?: string\|Pixelmap                                                                | Promise\<MediaSource> | 通过本地文件创建媒体资源      |
-  | createAssetypescript | title: string, rawAssetypescriptPath: string, cover?: string\|Pixelmap                                                   | MediaSource           | 通过 Raw 文件创建媒体资源     |
-  | createUrl            | title: string, url: string, cover?: string\|Pixelmap, header?: Record<string, string>, strategy?: media.PlaybackStrategy | MediaSource           | 通过网络 url 地址创建媒体资源 |
-
-- MediaLogger 调试信息开关  
-  | 接口        | 参数           | 返回值 | 说明                                |
-  | ----------- | -------------- | ------ | ----------------------------------- |
-  | setDebugger | debug: boolean | void   | 设置是否开始调试信息打印，默认false |
 
 ## 场景示例
 
@@ -193,9 +194,9 @@ ohpm install @seagazer/ccplayer
 @Component
 struct PlayerViewPage {
     // 视频画面比例模式
-    @State videoRatio: number = AspectRatio.AUTO
+    @State videoRatio: AspectRatio = AspectRatio.AUTO
      // 1.实例化CcPlayer
-    private player = new CcPlayer(getContext(this))
+    private player: CcPlayer = new CcPlayer(getContext(this))
     // 2.实例化手势UI面板
     private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
 
@@ -207,6 +208,7 @@ struct PlayerViewPage {
 
     build() {
         Column() {
+            // 注意：Overlay面板采用层叠的组合方式，需要使用Stack作为根容器
             Stack() {
                 // 4.引用CcPlayerView视频播放组件，设置参数，绑定CcPlayer
                 CcPlayerView({
@@ -280,9 +282,9 @@ struct PlayerViewPage {
                 id: "video",
                 controller: this.controller
             }).onLoad(() => {
-                let surfaceId = this.controller.getXComponentypescripturfaceId()
+                let surfaceId = this.controller.getXComponentSurfaceId()
                 // 2.设置surface，播放前必须设置
-                this.player.setypescripturface(surfaceId)
+                this.player.setSurface(surfaceId)
             })
             .width(400)
             .height(300)
@@ -354,7 +356,7 @@ struct PlayerViewPage {
 }
 ```
 
-- 使用 CcPlayerView 结合 CcPlayerPool 进行页面切换预加载播放：
+- 使用 CcPlayerView 结合 CcPlayerPool 进行页面上下滑动切换播放(预加载快速启播)：
 
 ```typescript
 // 主页面
@@ -443,7 +445,7 @@ struct VideoItemPageView {
                 renderType: XComponentType.SURFACE,
                 isSupportGesture: false,
                 onSurfaceCreated: () => { //在该回调中，提前预加载资源
-                    let src = MediaSourceFactory.createAssetypescript('', this.uri)
+                    let src = MediaSourceFactory.createAssets('', this.uri)
                     this.player.setMediaSource(src, () => {
                         if (this.curPageIndex == this.pageIndex) { //如果当前页面显示，则开启播放，否则仅预加载资源
                             this.player.start()
