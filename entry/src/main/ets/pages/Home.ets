@@ -1,5 +1,5 @@
 import { MusicSample } from './MusicSample'
-import { VideoViewSample } from './VideoViewSample'
+import { CcPlayerViewSample } from './CcPlayerViewSample'
 import router from '@ohos.router'
 import { VideoSample } from './VideoSample'
 import { PagePlayerSample } from './PagePlayerSample'
@@ -30,11 +30,12 @@ struct Home {
                         this.navRouter.pushPathByName("VideoSample", null)
                     })
 
-                Text('VideoViewSample')
+                Text('CcPlayerViewSample')
                     .attributeModifier(this.style)
                     .onClick(() => {
-                        this.navRouter.pushPathByName("VideoViewSample", null)
+                        this.navRouter.pushPathByName("CcPlayerViewSample", null)
                     })
+
                 Text('CustomOverlaySample')
                     .attributeModifier(this.style)
                     .onClick(() => {
@@ -64,8 +65,8 @@ struct Home {
             MusicSample()
         } else if (name === "VideoSample") {
             VideoSample()
-        } else if (name === "VideoViewSample") {
-            VideoViewSample()
+        } else if (name === "CcPlayerViewSample") {
+            CcPlayerViewSample()
         } else if (name === "CustomOverlaySample") {
             CustomOverlaySample()
         } else if (name === "PagePlayerSample") {

@@ -57,7 +57,7 @@ export struct CustomOverlaySample {
             if (this.gestureType == GestureType.PROGRESS) {
                 Row() {
                     Text(timeToString(this.player.getDuration() * this.seekPercent) + " / " + timeToString(this.player.getDuration()))
-                        .fontSize(16)
+                        .fontSize(18)
                         .fontColor("#ffde4545")
                         .backgroundColor("#b3e5d179")
                         .borderRadius(4)
@@ -69,7 +69,7 @@ export struct CustomOverlaySample {
             } else if (this.gestureType == GestureType.VOLUME) {
                 Row() {
                     Text("音量：" + Math.round(this.volumePercent * 100) + "%")
-                        .fontSize(16)
+                        .fontSize(18)
                         .fontColor("#ffde4545")
                         .backgroundColor("#b3e5d179")
                         .borderRadius(4)
@@ -81,12 +81,13 @@ export struct CustomOverlaySample {
             } else {
                 Row() {
                     Text("亮度：" + Math.round(this.brightnessPercent * 100) + "%")
-                        .fontSize(16)
+                        .fontSize(18)
                         .fontColor("#ffde4545")
                         .backgroundColor("#b3e5d179")
                         .borderRadius(4)
                         .padding(8)
-                }.width(150)
+                }
+                .width(150)
                 .height(50)
                 .justifyContent(FlexAlign.Center)
                 .animation({ duration: 150 })
@@ -105,50 +106,30 @@ export struct CustomOverlaySample {
 
     build() {
         NavDestination() {
-            Column() {
-                // video view
-                Stack() {
-                    CcPlayerView({
-                        player: this.player,
-                        asRatio: this.ratio,
-                        renderType: XComponentType.SURFACE,
-                        onGestureAction: this.handleGesture,
-                        onGestureUIListener: (visible) => {
-                            this.gestureOverlayVisible = visible
-                        },
-                        onSurfaceCreated: () => {
-                            this.isLoading = true
-                            let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
-                                "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
-                            this.player.setMediaSource(src, () => {
-                                this.player.start()
-                            })
-                        }
-                    })
-                    this.GestureOverlay()
-                    this.LoadingOverlay()
-                }
-                .width(300)
-                .height(500)
-
-                Row() {
-                    CButton({
-                        text: "start",
-                        onAction: () => {
+            // video view
+            Stack() {
+                CcPlayerView({
+                    player: this.player,
+                    asRatio: this.ratio,
+                    renderType: XComponentType.SURFACE,
+                    onGestureAction: this.handleGesture,
+                    onGestureUIListener: (visible) => {
+                        this.gestureOverlayVisible = visible
+                    },
+                    onSurfaceCreated: () => {
+                        this.isLoading = true
+                        let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
+                            "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                        this.player.setMediaSource(src, () => {
                             this.player.start()
-                        }
-                    })
-                    CButton({
-                        text: "pause",
-                        onAction: () => {
-                            this.player.pause()
-                        }
-                    })
-                }
-                .width("100%")
-                .margin({ top: 16 })
-                .justifyContent(FlexAlign.SpaceEvenly)
+                        })
+                    }
+                })
+                this.GestureOverlay()
+                this.LoadingOverlay()
             }
+            .width("100%")
+            .height("100%")
         }
         .width("100%")
         .height("100%")

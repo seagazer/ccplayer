@@ -14,18 +14,15 @@ import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { CButton } from './CButton';
 
-const TAG = '[VideoViewSample]'
+const TAG = '[CcPlayerViewSample]'
 
 @Component
-export struct VideoViewSample {
+export struct CcPlayerViewSample {
     private player = new CcPlayer(getContext(this))
     @State ratio: AspectRatio = AspectRatio.AUTO
     @State ratioText: string = "AUTO"
     @State currentPosition: number = 0
     @State totalDuration: number = 0
-    @State gestureType: GestureType = GestureType.PROGRESS
-    @State gesturePercent: number = 0
-    @State gestureUIVisible: boolean = false
     @State seekPosition: number = 0
     @State seekMax: number = 0
     private playIndex: number = 0
@@ -51,8 +48,13 @@ export struct VideoViewSample {
         this.currentPosition = position
         this.isSeeking = false
     }
+    private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
 
     aboutToAppear(): void {
+        // set the gesture overlay ui config
+        this.gestureOverlay.setTextSize(18)
+        this.gestureOverlay.setTextColor('#ffead981')
+        // bind av session
         const context = getContext(this) as common.UIAbilityContext
         this.player.bindAvSession(getContext(this), 'VideoViewSample', 'video', {
             wants: [{
@@ -63,8 +65,10 @@ export struct VideoViewSample {
             actionType: wantAgent.OperationType.START_ABILITIES,
             wantAgentFlags: [wantAgent.WantAgentFlags.UPDATE_PRESENT_FLAG]
         }).then(() => {
+            // set background play
             this.player.setBackgroundPlayEnable(true)
         })
+        // set the listeners of player
         this.player
             .addOnPreparedListener(this.preparedListener)
             .addOnStateChangedListener(this.stateChangedListener)
@@ -114,13 +118,13 @@ export struct VideoViewSample {
                         asRatio: this.ratio,
                         renderType: XComponentType.SURFACE,
                         onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
-                            this.gestureType = type
-                            this.gesturePercent = percent
+                            this.gestureOverlay.setGestureType(type)
+                            this.gestureOverlay.setGesturePercent(percent)
                             // handle the gesture actions
                             this.handleGestureAction(type, percent, isTouchUp)
                         },
                         onGestureUIListener: (visible) => {
-                            this.gestureUIVisible = visible
+                            this.gestureOverlay.setGestureOverlayVisible(visible)
                         },
                         onSurfaceCreated: () => {
                             this.playIndex = 0
@@ -132,19 +136,14 @@ export struct VideoViewSample {
                         }
                     })
                     // default gesture overlay
-                    CcGestureOverlay({
-                        player: this.player,
-                        gestureType: this.gestureType,
-                        gesturePercent: this.gesturePercent,
-                        gestureOverlayVisible: this.gestureUIVisible
-                    })
+                    NodeContainer(this.gestureOverlay)
                     // default loading overlay
                     CcLoadingOverlay({
                         player: this.player,
                         loadingColor: '#ffd4a74f'
                     })
                 }
-                .width(300)
+                .width("100%")
                 .height(500)
 
                 Row() {
@@ -276,6 +275,6 @@ export struct VideoViewSample {
         }
         .width("100%")
         .height("100%")
-        .title("VideoViewSample")
+        .title("CcPlayerViewSample")
     }
 }
