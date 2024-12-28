@@ -3,7 +3,7 @@
 - 适配5.0.1 Api 13
 - 增加CcGestureOverlay，提供默认手势操作UI组件（接口范式，配合NodeContainer使用）
 - 增加CcLoadingOverlay，提供默认视频加载UI组件（属性绑定范式）
-- CcPlayer的addOnVolumeChangeListener接口变更为addOnVolumeChangedListener
+- CcPlayer的addOnAudioFocusChangeListener修改为addOnAudioFocusChangedListener
 - CcPlayer的addOnVolumeChangedListener回调接口中增加音量参数
 - CcPlayerView优化手势判定，提供手势区域设置接口，增加手势滑动阻尼系数设置
 - CcPlayerView初始默认亮度设置为0.5，回调中可通过window的开放接口设置亮度值
