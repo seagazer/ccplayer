@@ -16,6 +16,8 @@ export { AvSessionCallback } from './src/main/ets/core/AvSessionCallback'
 
 export { PlayerState } from './src/main/ets/config/PlayerState'
 
+export { GestureAreaConfig } from './src/main/ets/config/GestureAreaConfig'
+
 export { AspectRatio } from './src/main/ets/config/AspectRatio'
 
 export { MediaSourceFactory } from './src/main/ets/data/MediaSourceFactory'

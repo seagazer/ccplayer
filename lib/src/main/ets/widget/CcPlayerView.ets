@@ -2,6 +2,7 @@ import { MediaLogger } from '../common/MediaLogger';
 import { CcPlayer } from '../CcPlayer';
 import { AspectRatio } from '../config/AspectRatio';
 import { GestureType } from '../config/GestureType';
+import { GestureAreaConfig } from '../config/GestureAreaConfig';
 
 const TAG = "[CcPlayerView]"
 
@@ -30,9 +31,9 @@ export struct CcPlayerView {
      */
     player?: CcPlayer = undefined
     /**
-     * The gesture action type order.
+     * The config of gesture action, default is [left:brightness, right:volume].
      */
-    gestureAreaConfig: Array<GestureType> = [GestureType.BRIGHTNESS, GestureType.VOLUME]
+    gestureAreaConfig: GestureAreaConfig = new GestureAreaConfig()
     /**
      * The type of XComponent to render video, default is Surface.
      */
@@ -253,9 +254,6 @@ export struct CcPlayerView {
             if (this.viewWidth == 0 || this.viewHeight == 0) {
                 throw new Error("You must set the width and height when create a instance of CcPlayerView!")
             }
-            if (this.gestureAreaConfig.length != 2) {
-                throw new Error("You must set the gestureAreaConfig first!")
-            }
             this.surfaceWidth = this.viewWidth
             this.surfaceHeight = this.viewHeight
             MediaLogger.d(TAG, "The player view default size is: " + this.viewWidth + " x " + this.viewHeight)
@@ -304,9 +302,9 @@ export struct CcPlayerView {
                 this.isUserMoved = true
                 if (Math.abs(dy) > Math.abs(dx)) { // vertical gesture
                     if (this.downX < this.viewWidth / 2) { // left
-                        this.controlType = this.gestureAreaConfig[0]
+                        this.controlType = this.gestureAreaConfig.left
                     } else { // right
-                        this.controlType = this.gestureAreaConfig[1]
+                        this.controlType = this.gestureAreaConfig.right
                     }
                 } else { // horizontal gesture
                     this.controlType = GestureType.PROGRESS
