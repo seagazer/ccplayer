@@ -111,19 +111,22 @@ ohpm install @seagazer/ccplayer
 
 
 - CcPlayerView 视频播放组件  
-  | 属性                               | 类型                                                             | 说明                              | 是否必填 |
-  | ---------------------------------- | ---------------------------------------------------------------- | --------------------------------- | -------- |
-  | player                             | CcPlayer                                                         | 媒体播放器                        | 是       |
-  | renderType                         | XComponentType                                                   | 视频渲染模式，默认SURFACE         | 否       |
-  | asRatio                            | AspectRatio                                                      | 视频画面比例                      | 是       |
-  | autoHideControllerDelay            | number                                                           | 自动隐藏手势 UI 的延时，默认1.5s  | 否       |
-  | isSupportGesture                   | boolean                                                          | 是否支持手势操作，默认true        | 否       |
-  | onTouchCallback                    | (event: TouchEvent) => void                                      | 触摸事件回调                      | 否       |
-  | onSurfaceCreated                   | (surfaceId: string) => void                                      | Surface 创建事件回调              | 否       |
-  | onSurfaceDestroy                   | (surfaceId: string) => void                                      | Surface 销毁事件回调              | 否       |
-  | onGestureUIListener                | (visible: boolean) => void                                       | 手势 UI 显示/隐藏回调             | 否       |
-  | onGestureAction                    | (type: GestureType, percent: number, isTouchUp: boolean) => void | 手势操作回调                      | 否       |
-  | aspectRatioChangeAnimationDuration | number                                                           | 视频切换宽高比动效时长，默认150ms | 否       |
+  | 属性                               | 类型                                                             | 说明                                                            | 是否必填 |
+  | ---------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------- | -------- |
+  | player                             | CcPlayer                                                         | 媒体播放器                                                      | 是       |
+  | gestureAreaConfig                  | GestureAreaConfig                                                | 手势区域配置，默认左半边亮度，右半边音量                        | 否       |
+  | horizontalGestureDamping           | number                                                           | 手势水平滑动阻尼系数，默认2，手势滑动距离与进度换算比为2：1     | 否       |
+  | verticalGestureDamping             | number                                                           | 手势垂直滑动阻尼系数，默认1.5，手势滑动距离与进度换算比为1.5：1 | 否       |
+  | renderType                         | XComponentType                                                   | 视频渲染模式，默认SURFACE                                       | 否       |
+  | asRatio                            | AspectRatio                                                      | 视频画面比例                                                    | 是       |
+  | autoHideControllerDelay            | number                                                           | 自动隐藏手势 UI 的延时，默认1.5s                                | 否       |
+  | isSupportGesture                   | boolean                                                          | 是否支持手势操作，默认true                                      | 否       |
+  | onTouchCallback                    | (event: TouchEvent) => void                                      | 触摸事件回调                                                    | 否       |
+  | onSurfaceCreated                   | (surfaceId: string) => void                                      | Surface 创建事件回调                                            | 否       |
+  | onSurfaceDestroy                   | (surfaceId: string) => void                                      | Surface 销毁事件回调                                            | 否       |
+  | onGestureUIListener                | (visible: boolean) => void                                       | 手势 UI 显示/隐藏回调                                           | 否       |
+  | onGestureAction                    | (type: GestureType, percent: number, isTouchUp: boolean) => void | 手势操作回调                                                    | 否       |
+  | aspectRatioChangeAnimationDuration | number                                                           | 视频切换宽高比动效时长，默认150ms                               | 否       |
 
 - CcGestureOverlay 手势控制UI面板，需要结合NodeContainer使用，实时的UI状态值可以通过CcPlayerView的onGestureAction和onGestureUIListener回调中获取  
   | 接口                     | 参数                 | 返回值           | 说明                                   |
@@ -149,6 +152,12 @@ ohpm install @seagazer/ccplayer
   | BRIGHTNESS | 亮度调节 |
   | PROGRESS   | 进度调节 |
   | VOLUME     | 音量调节 |
+
+- GestureAreaConfig 视频播放组件手势区域配置  
+  | 属性  | 类型        | 说明                         | 是否必填 |
+  | ----- | ----------- | ---------------------------- | -------- |
+  | left  | GestureType | 左半边区域手势类型，默认亮度 | 否       |
+  | right | GestureType | 右半边区域手势类型，默认音量 | 否       |
 
 - AspectRatio 视频画面比例  
   | 枚举值  | 说明             |

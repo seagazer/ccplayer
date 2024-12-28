@@ -35,6 +35,14 @@ export struct CcPlayerView {
      */
     gestureAreaConfig: GestureAreaConfig = new GestureAreaConfig()
     /**
+     * The damping of progress gesture move, the value must be positive, default is 2.
+     */
+    horizontalGestureDamping: number = 2
+    /**
+     * The damping of brightness and volume gesture move, the value must be positive, default is 1.5.
+     */
+    verticalGestureDamping: number = 1.5
+    /**
      * The type of XComponent to render video, default is Surface.
      */
     renderType: XComponentType = XComponentType.SURFACE
@@ -312,19 +320,19 @@ export struct CcPlayerView {
                 this.onControllerVisibleChanged(true)
             }
             if (this.controlType == GestureType.PROGRESS) {
-                let changePercent = dx / this.viewWidth
+                let changePercent = dx / this.viewWidth / this.horizontalGestureDamping
                 let begin = this.player!.getCurrentPosition()
                 let current = begin + this.totalDuration * changePercent
                 let result = this.limit(current, this.totalDuration, 0)
                 this.gesturePercentResult = result / this.totalDuration
             } else if (this.controlType == GestureType.VOLUME) {
-                let changePercent = -dy / this.viewHeight
+                let changePercent = -dy / this.viewHeight / this.verticalGestureDamping
                 let begin = this.currentVolume
                 let current = begin + 1 * changePercent
                 let result = this.limit(current, 1, 0)
                 this.gesturePercentResult = result / 1
             } else if (this.controlType == GestureType.BRIGHTNESS) {
-                let changePercent = -dy / this.viewHeight
+                let changePercent = -dy / this.viewHeight / this.verticalGestureDamping
                 let begin = this.currentBrightness
                 let current = begin + 1 * changePercent
                 let result = this.limit(current, 1, 0)
