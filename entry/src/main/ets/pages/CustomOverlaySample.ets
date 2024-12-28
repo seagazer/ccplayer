@@ -1,6 +1,6 @@
 import { AspectRatio, CcPlayer, CcPlayerView, GestureType, MediaSourceFactory } from '@seagazer/ccplayer';
 import { timeToString } from '../Extentions';
-import { CButton } from './CButton';
+import { window } from '@kit.ArkUI';
 
 const TAG = '[CustomOverlaySample]'
 
@@ -17,8 +17,10 @@ export struct CustomOverlaySample {
     private firstFrameListener = () => {
         this.isLoading = false
     }
+    private playerWindow?: window.Window = undefined
 
     aboutToAppear(): void {
+        this.playerWindow = window.findWindow(this.getUIContext().getWindowName())
         this.player.addOnRenderFirstFrameListener(this.firstFrameListener)
     }
 
@@ -38,15 +40,11 @@ export struct CustomOverlaySample {
                 break
             case GestureType.BRIGHTNESS:
                 this.brightnessPercent = percent
-                if (isTouchUp) {
-                    // todo 设置屏幕亮度，目前三方应用未开放接口，仅OpenHarmony的系统应用可用
-                }
+                this.playerWindow?.setWindowBrightness(percent)
                 break
             case GestureType.VOLUME:
                 this.volumePercent = percent
-                if (isTouchUp) {
-                    // todo 设置媒体音量，目前三方应用未开放接口，仅OpenHarmony的系统应用可用
-                }
+                this.player.setVolume(percent)
                 break
         }
     }

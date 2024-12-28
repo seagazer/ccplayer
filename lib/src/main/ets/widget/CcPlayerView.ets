@@ -30,9 +30,9 @@ export struct CcPlayerView {
      */
     player?: CcPlayer = undefined
     /**
-     * The percent of width of view to handle volume or brightness gesture, default is |0.2|0.6|0.2|.
+     * The gesture action type order.
      */
-    controlEdgePercent: number = 0.2
+    gestureAreaConfig: Array<GestureType> = [GestureType.BRIGHTNESS, GestureType.VOLUME]
     /**
      * The type of XComponent to render video, default is Surface.
      */
@@ -81,15 +81,10 @@ export struct CcPlayerView {
     private videoWidth: number = 0
     private videoHeight: number = 0
     private controlType: GestureType = GestureType.PROGRESS
-    private controlEdge = 0 // default is 1/5 of the width
     private downX: number = -1
     private downY: number = -1
-    private startDuration = 0 // the drag start position for display
     private totalDuration: number = 0
-    private targetDuration: number = 0
-    private volumePercent: number = 0
-    private brightnessPercent: number = 0
-    private seekMoveSpeed: number = 3 // this speed is larger, then the move step is small
+    private gesturePercentResult: number = 0
     private hideControllerTimer: number = -1
     private isUserMoved: boolean = false
     @State surfaceWidth: number = 0
@@ -97,6 +92,7 @@ export struct CcPlayerView {
     private isDoingLayout: boolean = true
     @State isShowSurface: boolean = false
     private isFrameReady: boolean = false
+    private currentBrightness: number = 0.5
     private preparedListener = () => {
         this.totalDuration = this.player!.getDuration()
     }
@@ -119,6 +115,7 @@ export struct CcPlayerView {
         this.isFrameReady = false
         this.isShowSurface = false
     }
+    private currentVolume = 1
 
     private onAspectRatioChanged() {
         const videoRatio = this.getVideoRatio()
@@ -256,10 +253,12 @@ export struct CcPlayerView {
             if (this.viewWidth == 0 || this.viewHeight == 0) {
                 throw new Error("You must set the width and height when create a instance of CcPlayerView!")
             }
+            if (this.gestureAreaConfig.length != 2) {
+                throw new Error("You must set the gestureAreaConfig first!")
+            }
             this.surfaceWidth = this.viewWidth
             this.surfaceHeight = this.viewHeight
             MediaLogger.d(TAG, "The player view default size is: " + this.viewWidth + " x " + this.viewHeight)
-            this.controlEdge = this.viewWidth * this.controlEdgePercent
             if (this.asRatio != AspectRatio.FILL) {
                 this.onAspectRatioChanged()
             }
@@ -294,68 +293,53 @@ export struct CcPlayerView {
         this.onControllerVisibleChanged(false)
         this.downX = touchEvent.x
         this.downY = touchEvent.y
-        if (this.downX < this.controlEdge) {
-            // brightness
-            this.controlType = GestureType.BRIGHTNESS
-        } else if (this.downX > this.controlEdge && this.downX < (this.viewWidth - this.controlEdge)) {
-            // progress
-            this.controlType = GestureType.PROGRESS
-            this.targetDuration = this.player!.getCurrentPosition()
-            this.startDuration = this.targetDuration
-            MediaLogger.d(TAG, "down: start duration = " + this.startDuration)
-        } else if (this.downX > (this.viewWidth - this.controlEdge)) {
-            // volume
-            this.controlType = GestureType.VOLUME
-        }
     }
 
     private handleTouchMove(touchEvent: TouchObject) {
         let dx = touchEvent.x - this.downX
         let dy = touchEvent.y - this.downY
         if (Math.abs(dx) > TOUCH_SHOT || Math.abs(dy) > TOUCH_SHOT) {
-            this.isUserMoved = true
-            this.onControllerVisibleChanged(true)
-            switch (this.controlType) {
-            // handle seek progress
-                case GestureType.PROGRESS:
-                    let moveDistance = Math.floor(dx)
-                    let seekPercent = moveDistance / (this.viewWidth - 2 * this.controlEdge)
-                    let seekValue = Math.floor(this.totalDuration / this.seekMoveSpeed * seekPercent)
-                    let seekTemp = this.startDuration + seekValue
-                    if (seekTemp >= this.totalDuration) {
-                        this.targetDuration = this.totalDuration
-                    } else if (seekTemp <= 0) {
-                        this.targetDuration = 0
-                    } else {
-                        this.targetDuration = seekTemp
+            // check the gesture type
+            if (!this.isUserMoved) {
+                this.isUserMoved = true
+                if (Math.abs(dy) > Math.abs(dx)) { // vertical gesture
+                    if (this.downX < this.viewWidth / 2) { // left
+                        this.controlType = this.gestureAreaConfig[0]
+                    } else { // right
+                        this.controlType = this.gestureAreaConfig[1]
                     }
-                    // callback seek action for custom ui
-                    let percent = this.targetDuration / this.totalDuration
-                    this.onGestureAction && this.onGestureAction(GestureType.PROGRESS, percent, false)
-                    break
-            // handle set volume
-                case GestureType.VOLUME:
-                    let moveDistance3 = -Math.floor(dy)
-                    this.volumePercent = moveDistance3 / (this.viewHeight - 2 * this.controlEdge)
-                    this.volumePercent = Math.max(0, this.volumePercent)
-                    this.volumePercent = Math.min(1, this.volumePercent)
-                    MediaLogger.d(TAG, `volumePercent = ${this.volumePercent}`)
-                    // callback volume action for custom ui
-                    this.onGestureAction && this.onGestureAction(GestureType.VOLUME, this.volumePercent, false)
-                    break
-            // handle set brightness
-                case GestureType.BRIGHTNESS:
-                    let moveDistance2 = -Math.floor(dy)
-                    this.brightnessPercent = moveDistance2 / (this.viewHeight - 2 * this.controlEdge)
-                    this.brightnessPercent = Math.max(0, this.brightnessPercent)
-                    this.brightnessPercent = Math.min(1, this.brightnessPercent)
-                    MediaLogger.d(TAG, `brightnessPercent = ${this.brightnessPercent}`)
-                    this.onGestureAction && this.onGestureAction(GestureType.BRIGHTNESS, this.brightnessPercent, false)
-                    break
-                default:
-                    break
+                } else { // horizontal gesture
+                    this.controlType = GestureType.PROGRESS
+                }
+                this.onControllerVisibleChanged(true)
             }
+            if (this.controlType == GestureType.PROGRESS) {
+                let changePercent = dx / this.viewWidth
+                let begin = this.player!.getCurrentPosition()
+                let current = begin + this.totalDuration * changePercent
+                let result = this.limit(current, this.totalDuration, 0)
+                this.gesturePercentResult = result / this.totalDuration
+            } else if (this.controlType == GestureType.VOLUME) {
+                let changePercent = -dy / this.viewHeight
+                let begin = this.currentVolume
+                let current = begin + 1 * changePercent
+                let result = this.limit(current, 1, 0)
+                this.gesturePercentResult = result / 1
+            } else if (this.controlType == GestureType.BRIGHTNESS) {
+                let changePercent = -dy / this.viewHeight
+                let begin = this.currentBrightness
+                let current = begin + 1 * changePercent
+                let result = this.limit(current, 1, 0)
+                this.gesturePercentResult = result / 1
+            }
+            this.onGestureAction && this.onGestureAction(this.controlType, this.gesturePercentResult, false)
         }
+    }
+
+    private limit(value: number, max: number, min: number): number {
+        value = Math.max(value, min)
+        value = Math.min(value, max)
+        return value
     }
 
     private handleTouchUp() {
@@ -363,19 +347,11 @@ export struct CcPlayerView {
             return
         }
         this.isUserMoved = false
-        switch (this.controlType) {
-            case GestureType.PROGRESS:
-                if (this.onGestureAction) {
-                    let percent = this.targetDuration / this.totalDuration
-                    this.onGestureAction(GestureType.PROGRESS, percent, true)
-                }
-                break
-            case GestureType.BRIGHTNESS:
-                this.onGestureAction && this.onGestureAction(GestureType.BRIGHTNESS, this.brightnessPercent, true)
-                break
-            case GestureType.VOLUME:
-                this.onGestureAction && this.onGestureAction(GestureType.VOLUME, this.volumePercent, true)
-                break
+        this.onGestureAction && this.onGestureAction(this.controlType, this.gesturePercentResult, true)
+        if (this.controlType == GestureType.VOLUME) {
+            this.currentVolume = this.gesturePercentResult
+        } else if (this.controlType == GestureType.BRIGHTNESS) {
+            this.currentBrightness = this.gesturePercentResult
         }
         this.downX = -1
         this.downY = -1

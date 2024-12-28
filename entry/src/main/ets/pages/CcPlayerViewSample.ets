@@ -13,6 +13,7 @@ import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { CButton } from './CButton';
+import { window } from '@kit.ArkUI';
 
 const TAG = '[CcPlayerViewSample]'
 
@@ -49,8 +50,10 @@ export struct CcPlayerViewSample {
         this.isSeeking = false
     }
     private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
+    private playerWindow?: window.Window = undefined
 
     aboutToAppear(): void {
+        this.playerWindow = window.findWindow(this.getUIContext().getWindowName())
         // set the gesture overlay ui config
         this.gestureOverlay.setTextSize(18)
         this.gestureOverlay.setTextColor('#ffead981')
@@ -96,14 +99,10 @@ export struct CcPlayerViewSample {
                 }
                 break
             case GestureType.BRIGHTNESS:
-                if (isTouchUp) {
-                    // todo 设置屏幕亮度，目前三方应用未开放接口，仅OpenHarmony的系统应用可用
-                }
+                this.playerWindow?.setWindowBrightness(percent)
                 break
             case GestureType.VOLUME:
-                if (isTouchUp) {
-                    // todo 设置媒体音量，目前三方应用未开放接口，仅OpenHarmony的系统应用可用
-                }
+                this.player.setVolume(percent)
                 break
         }
     }
@@ -131,7 +130,10 @@ export struct CcPlayerViewSample {
                             let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
                                 "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
                             this.player.setMediaSource(src, () => {
-                                this.player.start()
+                                // 模拟1.5s的loading状态，用于展示LoadingOverlay
+                                setTimeout(() => {
+                                    this.player.start()
+                                }, 1500)
                             })
                         }
                     })
@@ -200,14 +202,20 @@ export struct CcPlayerViewSample {
                                 let src = MediaSourceFactory.createAssets("TestVideo2", "video2.mp4",
                                     "https://img1.baidu.com/it/u=4039557469,3031542597&fm=253&fmt=auto&app=138&f=JPEG?w=200&h=200")
                                 this.player.setMediaSource(src, () => {
-                                    this.player.start()
+                                    // 模拟1.5s的loading状态，用于展示LoadingOverlay
+                                    setTimeout(() => {
+                                        this.player.start()
+                                    }, 1500)
                                 })
                             } else {
                                 this.playIndex = 0
                                 let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
                                     "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
                                 this.player.setMediaSource(src, () => {
-                                    this.player.start()
+                                    // 模拟1.5s的loading状态，用于展示LoadingOverlay
+                                    setTimeout(() => {
+                                        this.player.start()
+                                    }, 1500)
                                 })
                             }
                         }
