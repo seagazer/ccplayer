@@ -32,7 +32,7 @@ export class AvPlayerImpl implements IPlayer {
     private progressChangedListeners: Array<(position: number) => void> = []
     private errorListeners: Array<(code: number, message: string) => void> = []
     private seekChangedListeners: Array<(position: number) => void> = []
-    private volumeChangedListeners: Array<() => void> = []
+    private volumeChangedListeners: Array<(volume: number) => void> = []
     private stateChangedListeners: Array<(newState: PlayerState) => void> = []
     private videoSizeChangedListeners: Array<(width: number, height: number) => void> = []
     private renderFirstFrameListeners: Array<() => void> = []
@@ -180,7 +180,7 @@ export class AvPlayerImpl implements IPlayer {
             MediaLogger.d(TAG, ">> System callback: volumeChange: " + volume)
             if (this.volumeChangedListeners.length > 0) {
                 this.volumeChangedListeners.forEach((callback) => {
-                    callback()
+                    callback(volume)
                 })
             }
         })
@@ -450,12 +450,12 @@ export class AvPlayerImpl implements IPlayer {
         return this
     }
 
-    addOnVolumeChangedListener(listener: () => void): IPlayer {
+    addOnVolumeChangedListener(listener: (volume: number) => void): IPlayer {
         this.volumeChangedListeners.push(listener)
         return this
     }
 
-    removeOnVolumeChangedListener(listener: () => void): IPlayer {
+    removeOnVolumeChangedListener(listener: (volume: number) => void): IPlayer {
         let index = this.volumeChangedListeners.indexOf(listener)
         if (index >= 0) {
             this.volumeChangedListeners.splice(index, 1)
@@ -502,12 +502,12 @@ export class AvPlayerImpl implements IPlayer {
         return this
     }
 
-    addOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer {
+    addOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer {
         this.audioFocusChangeListener.push(listener)
         return this
     }
 
-    removeOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer {
+    removeOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer {
         let index = this.audioFocusChangeListener.indexOf(listener)
         if (index >= 0) {
             this.audioFocusChangeListener.splice(index, 1)

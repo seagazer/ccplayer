@@ -154,14 +154,14 @@ export interface IPlayer {
      * @param listener The listener to observe the volume changed.
      * @return The player instance.
      */
-    addOnVolumeChangedListener(listener: () => void): IPlayer
+    addOnVolumeChangedListener(listener: (volume: number) => void): IPlayer
 
     /**
      * Remove a listener to observe the volume changed.
      * @param listener The listener to observe the volume changed.
      * @return The player instance.
      */
-    removeOnVolumeChangedListener(listener: () => void): IPlayer
+    removeOnVolumeChangedListener(listener: (volume: number) => void): IPlayer
 
     /**
      * Add a listener to observe the state changed of player.
@@ -186,14 +186,14 @@ export interface IPlayer {
      * @param listener The listener to observe the audio focus state changed of player.
      * @returns The player instance.
      */
-    addOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer
+    addOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer
 
     /**
      * Remove a listener to observe the audio focus state changed of player.
      * @param listener The listener to observe the audio focus state changed of player.
      * @returns The player instance.
      */
-    removeOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer
+    removeOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer
 
     /**
      * Check the player is playing.

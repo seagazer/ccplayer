@@ -44,7 +44,7 @@ ohpm install @seagazer/ccplayer
   | reset                            | void                                                                                | void                    | 重置播放器                                                    |
   | release                          | void                                                                                | void                    | 释放播放器                                                    |
   | seekTo                           | position: number                                                                    | void                    | 跳转至指定进度                                                |
-  | setMediaSource                   | mediaSource: MediaSource , onReaady?: ()=>void                                      | void                    | 设置媒体资源，在onReady回调中可以调用start开启播放            |
+  | setMediaSource                   | mediaSource: MediaSource , onReady?: ()=>void                                       | void                    | 设置媒体资源，在onReady回调中可以调用start开启播放            |
   | getMediaSource                   | void                                                                                | MediaSource             | 获取当前播放的媒体资源                                        |
   | setLooper                        | isLoop: boolean                                                                     | void                    | 设置循环播放                                                  |
   | setVolume                        | vol: number                                                                         | void                    | 设置音量                                                      |
@@ -65,8 +65,8 @@ ohpm install @seagazer/ccplayer
   | removeOnProgressChangedListener  | listener: (duration: number) => void                                                | IPlayer                 | 移除播放进度状态监听                                          |
   | addOnSeekChangedListener         | listener: (duration: number) => void                                                | IPlayer                 | 添加播放快进快退状态监听                                      |
   | removeOnSeekChangedListener      | listener: (duration: number) => void                                                | IPlayer                 | 移除播放快进快退状态监听                                      |
-  | addOnVolumeChangedListener       | listener: () => void                                                                | IPlayer                 | 添加媒体音量变化状态监听                                      |
-  | removeOnVolumeChangedListener    | listener: () => void                                                                | IPlayer                 | 移除媒体音量变化状态监听                                      |
+  | addOnVolumeChangedListener       | listener: (volume: number) => void                                                  | IPlayer                 | 添加媒体音量变化状态监听                                      |
+  | removeOnVolumeChangedListener    | listener: (volume: number) => void                                                  | IPlayer                 | 移除媒体音量变化状态监听                                      |
   | addOnStateChangedListener        | listener: (state: PlayerState) => void                                              | IPlayer                 | 添加播放状态变更监听                                          |
   | removeOnStateChangedListener     | listener: (state: PlayerState) => void                                              | IPlayer                 | 移除播放状态变更监听                                          |
   | addOnVideoSizeChangedListener    | listener: (width: number, height: number) => void                                   | IPlayer                 | 添加视频尺寸变化监听                                          |
@@ -132,7 +132,7 @@ ohpm install @seagazer/ccplayer
   | 接口                     | 参数                 | 返回值           | 说明                                   |
   | ------------------------ | -------------------- | ---------------- | -------------------------------------- |
   | construct                | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例               |
-  | setTextSize              | size: number         | void             | 设置overlay字体大小，单位fp            |
+  | setTextSize              | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp  |
   | setTextColor             | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff     |
   | setBackgroundColor       | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000     |
   | setGestureType           | size: number         | void             | 设置当前CcPlayerView的手势类型         |

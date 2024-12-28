@@ -67,7 +67,7 @@ export class CcPlayer implements IPlayer {
         this.avSessionManager = new AvSessionManager(this.player)
         this.player.addOnStateChangedListener(this.defaultStateChangedListener)
         this.player.addOnVideoSizeChangedListener(this.defaultVideoSizeChangedListener)
-        this.player.addOnAudioFocusChangeListener(this.defaultAudioFocusChangedListener)
+        this.player.addOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
     }
 
     /**
@@ -134,7 +134,7 @@ export class CcPlayer implements IPlayer {
         }
         this.player.removeOnStateChangedListener(this.defaultStateChangedListener)
         this.player.removeOnVideoSizeChangedListener(this.defaultVideoSizeChangedListener)
-        this.player.removeOnAudioFocusChangeListener(this.defaultAudioFocusChangedListener)
+        this.player.removeOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
         this.player.release()
     }
 
@@ -244,12 +244,12 @@ export class CcPlayer implements IPlayer {
         return this
     }
 
-    addOnVolumeChangedListener(listener: () => void): IPlayer {
+    addOnVolumeChangedListener(listener: (volume: number) => void): IPlayer {
         this.player.addOnVolumeChangedListener(listener)
         return this
     }
 
-    removeOnVolumeChangedListener(listener: () => void): IPlayer {
+    removeOnVolumeChangedListener(listener: (volume: number) => void): IPlayer {
         this.player.removeOnVolumeChangedListener(listener)
         return this
     }
@@ -284,14 +284,14 @@ export class CcPlayer implements IPlayer {
         return this
     }
 
-    addOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer {
-        this.player.removeOnAudioFocusChangeListener(this.defaultAudioFocusChangedListener)
-        this.player.addOnAudioFocusChangeListener(listener)
+    addOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer {
+        this.player.removeOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
+        this.player.addOnAudioFocusChangedListener(listener)
         return this
     }
 
-    removeOnAudioFocusChangeListener(listener: (event: AudioFocusEvent) => void): IPlayer {
-        this.player.removeOnAudioFocusChangeListener(listener)
+    removeOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer {
+        this.player.removeOnAudioFocusChangedListener(listener)
         return this
     }
 
