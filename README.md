@@ -9,7 +9,10 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 支持长时后台播放
 - 支持音频焦点监听及默认处理策略
 - 提供视频播放组件CcPlayerView，支持视频宽高比切换及手势操作
-- 提供默认手势及视频加载Overlay模板，快速添加各种UI面板
+- 提供默认手势控制面板组件CcGestureOverlay
+- 提供默认媒体控制面板组件CcControllerOverlay
+- 提供默认标题面板组件CcTitleBarOverlay
+- 提供默认加载面板组件CcLoadingOverlay
 - 提供播放器实例缓存池，提供资源管理及复用能力
 - 支持接入自定义播放业务(自定义类需要实现IPlayer接口)
 
