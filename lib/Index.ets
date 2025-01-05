@@ -6,6 +6,10 @@ export { CcPlayerView } from './src/main/ets/widget/CcPlayerView'
 
 export { CcGestureOverlay } from './src/main/ets/widget/CcGestureOverlay'
 
+export { CcTitleBarOverlay } from './src/main/ets/widget/CcTitleBarOverlay'
+
+export { CcControllerOverlay } from './src/main/ets/widget/CcControllerOverlay'
+
 export { CcLoadingOverlay } from './src/main/ets/widget/CcLoadingOverlay'
 
 export { GestureType } from './src/main/ets/config/GestureType'

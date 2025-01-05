@@ -1,5 +1,4 @@
 import { timeToString } from '../common/Extentions'
-import { GestureOverlayConfig } from '../config/GestureOverlayConfig'
 import { GestureType } from '../config/GestureType'
 import { BuilderNode, FrameNode, NodeController, UIContext } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
@@ -91,9 +90,9 @@ export class CcGestureOverlay extends NodeController {
      * Set the visible of overlay.
      * @param type The visible of this view.
      */
-    setGestureOverlayVisible(visible: boolean) {
-        if (this.config.gestureOverlayVisible != visible) {
-            this.config.gestureOverlayVisible = visible
+    setVisible(visible: boolean) {
+        if (this.config.visible != visible) {
+            this.config.visible = visible
             this.builderNode?.update(this.config)
         }
     }
@@ -101,7 +100,7 @@ export class CcGestureOverlay extends NodeController {
 
 @Builder
 function overlay(config: GestureOverlayConfig) {
-    if (config.gestureOverlayVisible) {
+    if (config.visible) {
         if (config.gestureType == GestureType.PROGRESS) {
             Row() {
                 SymbolGlyph($r('sys.symbol.fast_forward'))
@@ -160,3 +159,16 @@ function overlay(config: GestureOverlayConfig) {
     }
 }
 
+class GestureOverlayConfig {
+    player: CcPlayer
+    gestureType: GestureType = GestureType.PROGRESS
+    gesturePercent: number = 0
+    visible: boolean = false
+    textSize: number = 14
+    textColor: ResourceColor = "#ffffffff"
+    bgColor: ResourceColor = "#a6000000"
+
+    constructor(player: CcPlayer) {
+        this.player = player;
+    }
+}

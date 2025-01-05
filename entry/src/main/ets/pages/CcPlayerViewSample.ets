@@ -1,14 +1,16 @@
 import {
     AspectRatio,
+    CcControllerOverlay,
     CcGestureOverlay,
     CcLoadingOverlay,
     CcPlayer,
     CcPlayerView,
+    CcTitleBarOverlay,
     GestureType,
     MediaSourceFactory,
     PlayerState
 } from '@seagazer/ccplayer';
-import { timeToString, toast } from '../Extentions';
+import { toast } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
@@ -22,12 +24,9 @@ export struct CcPlayerViewSample {
     private player = new CcPlayer(getContext(this))
     @State ratio: AspectRatio = AspectRatio.AUTO
     @State ratioText: string = "AUTO"
-    @State currentPosition: number = 0
     @State totalDuration: number = 0
     @State seekPosition: number = 0
-    @State seekMax: number = 0
     private playIndex: number = 0
-    private isSeeking = false
     private preparedListener = () => {
         this.totalDuration = this.player.getDuration()
         Logger.d(TAG, "prepared= " + this.totalDuration)
@@ -39,18 +38,11 @@ export struct CcPlayerViewSample {
         Logger.e(TAG, "play error= " + code + ", " + message)
         toast("Play error= " + message)
     }
-    private progressChangedListener = (position: number) => {
-        if (this.isSeeking) {
-            return
-        }
-        this.currentPosition = position
-    }
-    private seekListener = (position: number) => {
-        this.currentPosition = position
-        this.isSeeking = false
-    }
     private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
+    private controllerOverlay: CcControllerOverlay = new CcControllerOverlay(this.player)
+    private titleOverlay: CcTitleBarOverlay = new CcTitleBarOverlay(this.player)
     private playerWindow?: window.Window = undefined
+    private controllerHideTimer = -1
 
     aboutToAppear(): void {
         this.playerWindow = window.findWindow(this.getUIContext().getWindowName())
@@ -76,17 +68,14 @@ export struct CcPlayerViewSample {
             .addOnPreparedListener(this.preparedListener)
             .addOnStateChangedListener(this.stateChangedListener)
             .addOnErrorListener(this.errorListener)
-            .addOnProgressChangedListener(this.progressChangedListener)
-            .addOnSeekChangedListener(this.seekListener)
     }
 
     aboutToDisappear(): void {
+        clearTimeout(this.controllerHideTimer)
         this.player
             .removeOnPreparedListener(this.preparedListener)
             .removeOnStateChangedListener(this.stateChangedListener)
             .removeOnErrorListener(this.errorListener)
-            .removeOnProgressChangedListener(this.progressChangedListener)
-            .removeOnSeekChangedListener(this.seekListener)
         this.player.release()
     }
 
@@ -110,7 +99,7 @@ export struct CcPlayerViewSample {
     build() {
         NavDestination() {
             Column() {
-                Stack() {
+                RelativeContainer() {
                     // video view
                     CcPlayerView({
                         player: this.player,
@@ -123,7 +112,7 @@ export struct CcPlayerViewSample {
                             this.handleGestureAction(type, percent, isTouchUp)
                         },
                         onGestureUIListener: (visible) => {
-                            this.gestureOverlay.setGestureOverlayVisible(visible)
+                            this.gestureOverlay.setVisible(visible)
                         },
                         onSurfaceCreated: () => {
                             this.playIndex = 0
@@ -139,34 +128,45 @@ export struct CcPlayerViewSample {
                     })
                     // default gesture overlay
                     NodeContainer(this.gestureOverlay)
+                        .alignRules({
+                            center: { anchor: '__container__', align: VerticalAlign.Center },
+                            middle: { anchor: '__container__', align: HorizontalAlign.Center },
+                        })
+                    // default controller overlay
+                    NodeContainer(this.controllerOverlay)
+                        .alignRules({
+                            bottom: { anchor: '__container__', align: VerticalAlign.Bottom },
+                        })
+                    // default title overlay
+                    NodeContainer(this.titleOverlay)
+                        .alignRules({
+                            top: { anchor: '__container__', align: VerticalAlign.Top },
+                        })
                     // default loading overlay
                     CcLoadingOverlay({
                         player: this.player,
                         loadingColor: '#ffd4a74f'
+                    }).alignRules({
+                        center: { anchor: '__container__', align: VerticalAlign.Center },
+                        middle: { anchor: '__container__', align: HorizontalAlign.Center },
                     })
                 }
                 .width("100%")
                 .height(500)
+                .onTouch((ev) => {
+                    if (ev.type == TouchType.Down) {
+                        clearTimeout(this.controllerHideTimer)
+                        this.titleOverlay.setVisible(true)
+                        this.controllerOverlay.setVisible(true)
+                    }
+                    if (ev.type == TouchType.Up) {
+                        this.controllerHideTimer = setTimeout(() => {
+                            this.titleOverlay.setVisible(false)
+                            this.controllerOverlay.setVisible(false)
+                        }, 2000)
+                    }
+                })
 
-                Row() {
-                    Text(timeToString(this.currentPosition))
-                    Slider({
-                        value: this.currentPosition,
-                        max: this.totalDuration,
-                        min: 0,
-                        step: 1000,
-                    }).layoutWeight(1)
-                        .onChange((value, mode) => {
-                            if (mode == SliderChangeMode.Begin) {
-                                this.isSeeking = true
-                            } else if (mode == SliderChangeMode.End) {
-                                let position = Math.ceil(value)
-                                this.player.seekTo(position)
-                                this.currentPosition = position
-                            }
-                        })
-                    Text(timeToString(this.totalDuration))
-                }.width("100%")
 
                 Row() {
                     CButton({
