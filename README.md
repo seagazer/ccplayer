@@ -142,7 +142,7 @@ ohpm install @seagazer/ccplayer
 - CcControllerOverlay 媒体播放控制UI面板
   | 接口                   | 参数                 | 返回值           | 说明                                                        |
   | ---------------------- | -------------------- | ---------------- | ----------------------------------------------------------- |
-  | construct              | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例                                    |
+  | construct              | player: CcPlayer     | CcGestureOverlay | 创建CcControllerOverlay实例                                 |
   | setTextSize            | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp                       |
   | setTextColor           | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff                          |
   | setSliderTrackColor    | color: ResourceColor | void             | 设置进度条轨道颜色，默认#ccffffff                           |
@@ -155,19 +155,24 @@ ohpm install @seagazer/ccplayer
 - CcTitleBarOverlay 媒体标题UI面板
   | 接口               | 参数                 | 返回值           | 说明                                   |
   | ------------------ | -------------------- | ---------------- | -------------------------------------- |
-  | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例               |
+  | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcTitleBarOverlay实例              |
   | setTextSize        | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp  |
   | setTextColor       | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff     |
   | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000     |
   | setVisible         | visible: boolean     | void             | 设置当前CcPlayerView的标题UI的显示状态 |
 
+- CcLoadingOverlay 视频加载UI面板  
+  | 接口               | 参数                 | 返回值           | 说明                                      |
+  | ------------------ | -------------------- | ---------------- | ----------------------------------------- |
+  | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcLoadingOverlay实例                  |
+  | setLoadingText     | text: string         | void             | 设置loading提示文本                       |
+  | setLoadingSize     | size: number         | void             | 设置loading的大小，单位vp，默认56vp       |
+  | setLoadingMargin   | margin: number       | void             | 设置loading和文本的间距，单位vp，默认16vp |
+  | setPadding         | padding: Padding     | void             | 设置loading组件四周边距                   |
+  | setTextSize        | size: number         | void             | 设置loading字体大小，单位fp，默认14fp     |
+  | setTextColor       | color: ResourceColor | void             | 设置loading字体颜色，默认#ffffffff        |
+  | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000        |
 
-- CcLoadingOverlay 视频加载UI面板    
-  | 属性         | 类型          | 说明                      | 是否必填 |
-  | ------------ | ------------- | ------------------------- | -------- |
-  | player       | CcPlayer      | 媒体播放器                | 是       |
-  | loadingSize  | Size          | 加载进度条尺寸，默认56vp  | 否       |
-  | loadingColor | ResourceColor | 加载进度条颜色，默认White | 否       |
 
 - GestureType 视频播放组件手势类型  
   | 枚举值     | 说明     |

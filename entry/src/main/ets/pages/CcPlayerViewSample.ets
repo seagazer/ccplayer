@@ -38,6 +38,7 @@ export struct CcPlayerViewSample {
         Logger.e(TAG, "play error= " + code + ", " + message)
         toast("Play error= " + message)
     }
+    private loadingOverlay: CcLoadingOverlay = new CcLoadingOverlay(this.player)
     private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
     private controllerOverlay: CcControllerOverlay = new CcControllerOverlay(this.player)
     private titleOverlay: CcTitleBarOverlay = new CcTitleBarOverlay(this.player)
@@ -49,6 +50,7 @@ export struct CcPlayerViewSample {
         // set the gesture overlay ui config
         this.gestureOverlay.setTextSize(18)
         this.gestureOverlay.setTextColor('#ffead981')
+        this.loadingOverlay.setLoadingText("loading...")
         // bind av session
         const context = getContext(this) as common.UIAbilityContext
         this.player.bindAvSession(getContext(this), 'VideoViewSample', 'video', {
@@ -143,13 +145,11 @@ export struct CcPlayerViewSample {
                             top: { anchor: '__container__', align: VerticalAlign.Top },
                         })
                     // default loading overlay
-                    CcLoadingOverlay({
-                        player: this.player,
-                        loadingColor: '#ffd4a74f'
-                    }).alignRules({
-                        center: { anchor: '__container__', align: VerticalAlign.Center },
-                        middle: { anchor: '__container__', align: HorizontalAlign.Center },
-                    })
+                    NodeContainer(this.loadingOverlay)
+                        .alignRules({
+                            center: { anchor: '__container__', align: VerticalAlign.Center },
+                            middle: { anchor: '__container__', align: HorizontalAlign.Center },
+                        })
                 }
                 .width("100%")
                 .height(500)

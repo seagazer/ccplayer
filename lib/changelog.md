@@ -2,6 +2,7 @@
 
 - 新增CcControllerOverlay，提供默认媒体控制操作UI组件
 - 新增CcTitleBarOverlay，提供默认媒体标题显示UI组件
+- CcLoadingOverlay更新为接口范式，新增loading文本设置接口
 - 提供更多的overlay样式设置接口
 
 # 1.1.3
