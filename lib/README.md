@@ -245,7 +245,7 @@ struct PlayerViewPage {
 
     build() {
         Column() {
-            // 注意：Overlay面板采用层叠的组合方式，需要使用Stack作为根容器
+            // 注意：Overlay面板采用层叠的组合方式，需要使用Stack或者RelativeContainer作为根容器
             Stack() {
                 // 4.引用CcPlayerView视频播放组件，设置参数，绑定CcPlayer
                 CcPlayerView({
@@ -262,12 +262,8 @@ struct PlayerViewPage {
                     },                    
                 })
                 // 5.使用NodeContainer结合CcGestureOverlay默认手势面板
-                NodeContainer(this.gestureOverlay)
-                // 6.使用CcLoadingOverlay默认加载面板
-                CcLoadingOverlay({
-                    player: this.player,
-                    loadingColor: '#ffd4a74f'
-                })                
+                NodeContainer(this.gestureOverlay)            
+                // 6.参照上面的手势Overlay使用其他Overlay进行组合  
             }
             .width(400)
             .height(300)
