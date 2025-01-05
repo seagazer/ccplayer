@@ -143,8 +143,8 @@ ohpm install @seagazer/ccplayer
   | 接口                   | 参数                 | 返回值           | 说明                                                        |
   | ---------------------- | -------------------- | ---------------- | ----------------------------------------------------------- |
   | construct              | player: CcPlayer     | CcGestureOverlay | 创建CcControllerOverlay实例                                 |
-  | setTextSize            | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp                       |
-  | setTextColor           | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff                          |
+  | setTextSize            | size: number         | void             | 设置进度值字体大小，单位fp，默认14fp                       |
+  | setTextColor           | color: ResourceColor | void             | 设置进度值字体颜色，默认#ffffffff                          |
   | setSliderTrackColor    | color: ResourceColor | void             | 设置进度条轨道颜色，默认#ccffffff                           |
   | setSliderBlockColor    | color: ResourceColor | void             | 设置进度条滑块颜色，默认#ffffffff                           |
   | setSliderSelectedColor | color: ResourceColor | void             | 设置进度条的进度颜色，默认sys.color.ohos_id_color_emphasize |
@@ -156,8 +156,8 @@ ohpm install @seagazer/ccplayer
   | 接口               | 参数                 | 返回值           | 说明                                   |
   | ------------------ | -------------------- | ---------------- | -------------------------------------- |
   | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcTitleBarOverlay实例              |
-  | setTextSize        | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp  |
-  | setTextColor       | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff     |
+  | setTextSize        | size: number         | void             | 设置标题字体大小，单位fp，默认14fp  |
+  | setTextColor       | color: ResourceColor | void             | 设置标题字体颜色，默认#ffffffff     |
   | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000     |
   | setVisible         | visible: boolean     | void             | 设置当前CcPlayerView的标题UI的显示状态 |
 
