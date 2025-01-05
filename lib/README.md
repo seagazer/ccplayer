@@ -129,15 +129,38 @@ ohpm install @seagazer/ccplayer
   | aspectRatioChangeAnimationDuration | number                                                           | 视频切换宽高比动效时长，默认150ms                               | 否       |
 
 - CcGestureOverlay 手势控制UI面板，需要结合NodeContainer使用，实时的UI状态值可以通过CcPlayerView的onGestureAction和onGestureUIListener回调中获取  
-  | 接口                     | 参数                 | 返回值           | 说明                                   |
-  | ------------------------ | -------------------- | ---------------- | -------------------------------------- |
-  | construct                | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例               |
-  | setTextSize              | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp  |
-  | setTextColor             | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff     |
-  | setBackgroundColor       | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000     |
-  | setGestureType           | size: number         | void             | 设置当前CcPlayerView的手势类型         |
-  | setGesturePercent        | percent: number      | void             | 设置当前CcPlayerView的手势进度值       |
-  | setGestureOverlayVisible | visible: boolean     | void             | 设置当前CcPlayerView的手势UI的显示状态 |
+  | 接口               | 参数                 | 返回值           | 说明                                   |
+  | ------------------ | -------------------- | ---------------- | -------------------------------------- |
+  | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例               |
+  | setTextSize        | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp  |
+  | setTextColor       | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff     |
+  | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000     |
+  | setGestureType     | size: number         | void             | 设置当前CcPlayerView的手势类型         |
+  | setGesturePercent  | percent: number      | void             | 设置当前CcPlayerView的手势进度值       |
+  | setVisible         | visible: boolean     | void             | 设置当前CcPlayerView的手势UI的显示状态 |
+
+- CcControllerOverlay 媒体播放控制UI面板
+  | 接口                   | 参数                 | 返回值           | 说明                                                        |
+  | ---------------------- | -------------------- | ---------------- | ----------------------------------------------------------- |
+  | construct              | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例                                    |
+  | setTextSize            | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp                       |
+  | setTextColor           | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff                          |
+  | setSliderTrackColor    | color: ResourceColor | void             | 设置进度条轨道颜色，默认#ccffffff                           |
+  | setSliderBlockColor    | color: ResourceColor | void             | 设置进度条滑块颜色，默认#ffffffff                           |
+  | setSliderSelectedColor | color: ResourceColor | void             | 设置进度条的进度颜色，默认sys.color.ohos_id_color_emphasize |
+  | setPadding             | padding: Padding     | void             | 设置overlay字体与左右边缘的水平边距                         |
+  | setSliderMargin        | margin: Margin       | void             | 设置seekbar与文本的水平间距                                 |
+  | setVisible             | visible: boolean     | void             | 设置当前CcPlayerView的控制UI的显示状态                      |
+
+- CcTitleBarOverlay 媒体标题UI面板
+  | 接口               | 参数                 | 返回值           | 说明                                   |
+  | ------------------ | -------------------- | ---------------- | -------------------------------------- |
+  | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例               |
+  | setTextSize        | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp  |
+  | setTextColor       | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff     |
+  | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000     |
+  | setVisible         | visible: boolean     | void             | 设置当前CcPlayerView的标题UI的显示状态 |
+
 
 - CcLoadingOverlay 视频加载UI面板    
   | 属性         | 类型          | 说明                      | 是否必填 |

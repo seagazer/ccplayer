@@ -1,3 +1,9 @@
+# 1.1.4
+
+- 新增CcControllerOverlay，提供默认媒体控制操作UI组件
+- 新增CcTitleBarOverlay，提供默认媒体标题显示UI组件
+- 提供更多的overlay样式设置接口
+
 # 1.1.3
 
 - 适配5.0.1 Api 13
