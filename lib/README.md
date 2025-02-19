@@ -7,6 +7,7 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 支持音频/视频播放
 - 支持绑定播控中心
 - 支持长时后台播放
+- 支持画中画悬浮窗播放
 - 支持音频焦点监听及默认处理策略
 - 提供视频播放组件CcPlayerView，支持视频宽高比切换及手势操作
 - 提供默认手势控制面板组件CcGestureOverlay
@@ -15,11 +16,12 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 提供默认加载面板组件CcLoadingOverlay
 - 提供播放器实例缓存池，提供资源管理及复用能力
 - 支持接入自定义播放业务(自定义类需要实现IPlayer接口)
+- 支持获取本地视频文件缩略图
 
 ## 示例效果
 | 视频组件                                                                                     | 音乐播放                                                                                     | 播控中心                                                                                     | PIP模式                                                                                      |
 | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| <img src="https://www.freeimg.cn/i/2024/10/26/671cf02bb57b1.webp" width="180" height="360"/> | <img src="https://www.freeimg.cn/i/2024/10/26/671cf02bcdc90.webp" width="180" height="360"/> | <img src="https://www.freeimg.cn/i/2024/10/23/67190716e4230.webp" width="180" height="360"/> | <img src="https://www.freeimg.cn/i/2024/10/31/67239dd93dd19.webp" width="180" height="360"/> |
+| <img src="https://s21.ax1x.com/2025/02/19/pEQPjj1.png" width="180" height="360"/> | <img src="https://s21.ax1x.com/2025/02/19/pEQPzB6.png" width="180" height="360"/> | <img src="https://s21.ax1x.com/2025/02/19/pEQPXcR.png" width="180" height="360"/> | <img src="https://s21.ax1x.com/2025/02/19/pEQPxnx.png" width="180" height="360"/> |
 
 ## 依赖方式
 
@@ -29,7 +31,7 @@ ohpm install @seagazer/ccplayer
 
 ## 注意事项
 
-- 从1.0.6版本开始基于API 12进行重构，仅支持OpenHarmony-5.0Release和HarmonyOS Next。
+- 从1.0.6版本开始基于API 12进行重构，仅支持OpenHarmony-5.0+ Release和HarmonyOS 5.0.0+。
 - 如果需要在5.0-Release之前的系统版本中使用，请采用1.0.5及以下版本。各个版本详情可以参照之前版本的ChangeLog说明。
 
 
@@ -90,6 +92,8 @@ ohpm install @seagazer/ccplayer
   | disablePip                        | void                                                                                | void                    | 禁用pip画中画能力                                             |
   | startPip                          | void                                                                                | void                    | 开启pip画中画                                                 |
   | stopPip                           | void                                                                                | void                    | 关闭pip画中画                                                 |
+  | getSnapshotFromFile               | filePath: string, width: number, height: number, timestamp: number                  | Promise\<PixelMap>      | 关闭pip画中画                                                 |
+  | getSnapshotFromAssets             | rawPath: string, width: number, height: number, timestamp: number                   | Promise\<PixelMap>      | 关闭pip画中画                                                 |
 
 - MediaSourceFactory 媒体资源构建器  
   | 接口         | 参数                                                                                                                     | 返回值                | 说明                          |
@@ -146,8 +150,8 @@ ohpm install @seagazer/ccplayer
   | 接口                   | 参数                 | 返回值           | 说明                                                        |
   | ---------------------- | -------------------- | ---------------- | ----------------------------------------------------------- |
   | construct              | player: CcPlayer     | CcGestureOverlay | 创建CcControllerOverlay实例                                 |
-  | setTextSize            | size: number         | void             | 设置进度值字体大小，单位fp，默认14fp                       |
-  | setTextColor           | color: ResourceColor | void             | 设置进度值字体颜色，默认#ffffffff                          |
+  | setTextSize            | size: number         | void             | 设置进度值字体大小，单位fp，默认14fp                        |
+  | setTextColor           | color: ResourceColor | void             | 设置进度值字体颜色，默认#ffffffff                           |
   | setSliderTrackColor    | color: ResourceColor | void             | 设置进度条轨道颜色，默认#ccffffff                           |
   | setSliderBlockColor    | color: ResourceColor | void             | 设置进度条滑块颜色，默认#ffffffff                           |
   | setSliderSelectedColor | color: ResourceColor | void             | 设置进度条的进度颜色，默认sys.color.ohos_id_color_emphasize |
@@ -159,8 +163,8 @@ ohpm install @seagazer/ccplayer
   | 接口               | 参数                 | 返回值           | 说明                                   |
   | ------------------ | -------------------- | ---------------- | -------------------------------------- |
   | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcTitleBarOverlay实例              |
-  | setTextSize        | size: number         | void             | 设置标题字体大小，单位fp，默认14fp  |
-  | setTextColor       | color: ResourceColor | void             | 设置标题字体颜色，默认#ffffffff     |
+  | setTextSize        | size: number         | void             | 设置标题字体大小，单位fp，默认14fp     |
+  | setTextColor       | color: ResourceColor | void             | 设置标题字体颜色，默认#ffffffff        |
   | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000     |
   | setVisible         | visible: boolean     | void             | 设置当前CcPlayerView的标题UI的显示状态 |
 
