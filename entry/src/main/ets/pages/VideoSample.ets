@@ -14,6 +14,7 @@ export struct VideoSample {
     @State isLoading: boolean = false
     @State currentPosition: number = 0
     @State totalDuration: number = 0
+    @State snapshot?: PixelMap = undefined
     private controller: XComponentController = new XComponentController()
     private isSeeking = false
     private preparedListener = () => {
@@ -99,8 +100,18 @@ export struct VideoSample {
                         this.player.enablePip()
                     })
                     this.LoadingOverlay()
-                }.width(300)
+                }
+                .width(300)
                 .height(200)
+
+                Row() {
+                    Text('Snapshot:').fontSize(18).margin({ left: 16, right: 16 })
+                    Image(this.snapshot ? this.snapshot : $r('app.media.app_icon'))
+                        .objectFit(ImageFit.Cover)
+                        .width(200)
+                        .height(150)
+                }.width('100%')
+                .margin({ top: 16 })
 
                 Row() {
                     Text(timeToString(this.currentPosition))
@@ -123,6 +134,16 @@ export struct VideoSample {
                 }.width("100%")
 
                 Row() {
+                    CButton({
+                        text: "snapshot",
+                        onAction: () => {
+                            // 注意：该方法不支持在开始播放流程之后调用，因为获取缩略图会操作媒体文件，播放过程不允许和播放器同时操作同一个文件
+                            this.player.getSnapshotFromAssets('video1.mp4', 200, 150, 1500)
+                                .then((result) => {
+                                    this.snapshot = result
+                                })
+                        }
+                    })
                     CButton({
                         text: "setSrc",
                         onAction: () => {
