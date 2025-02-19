@@ -265,7 +265,7 @@ struct PlayerViewPage {
                     },
                     onGestureUIListener: (visible) => {
                         // 刷新手势UI面板参数
-                        this.gestureOverlay.setGestureOverlayVisible(visible)
+                        this.gestureOverlay.setVisible(visible)
                     },                    
                 })
                 // 5.使用NodeContainer结合CcGestureOverlay默认手势面板
