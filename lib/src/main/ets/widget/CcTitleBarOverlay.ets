@@ -1,6 +1,7 @@
-import { BuilderNode, NodeController, UIContext } from '@kit.ArkUI';
+import { BuilderNode, UIContext } from '@kit.ArkUI';
 import { CcPlayer } from '../CcPlayer';
 import { MediaSource } from '../data/MediaSource';
+import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay';
 
 /**
  * The default overlay for title bar of CcPlayerView.
@@ -8,12 +9,10 @@ import { MediaSource } from '../data/MediaSource';
  * Author: Seagazer
  * Date: 2025/1/5
  */
-export class CcTitleBarOverlay extends NodeController {
-    private builderNode?: BuilderNode<[TitleBarOverlayConfig]> = undefined
+export class CcTitleBarOverlay extends BaseOverlayController<TitleBarOverlayConfig> {
     private overlayView: WrappedBuilder<[TitleBarOverlayConfig]> = wrapBuilder(overlay)
-    private config: TitleBarOverlayConfig
     private mediaChangedListener = (source: MediaSource) => {
-        this.config.title = source.title
+        this.config!.title = source.title
         this.invalidate()
     }
 
@@ -27,17 +26,17 @@ export class CcTitleBarOverlay extends NodeController {
     }
 
     aboutToAppear(): void {
-        this.config.player.addOnMediaChangedListener(this.mediaChangedListener)
+        this.config!.player.addOnMediaChangedListener(this.mediaChangedListener)
     }
 
     aboutToDisappear(): void {
-        this.config.player.removeOnMediaChangedListener(this.mediaChangedListener)
+        this.config!.player.removeOnMediaChangedListener(this.mediaChangedListener)
     }
 
     makeNode(uiContext: UIContext): FrameNode | null {
         if (!this.builderNode) {
             this.builderNode = new BuilderNode(uiContext)
-            this.builderNode.build(this.overlayView, this.config)
+            this.builderNode.build(this.overlayView, this.config!)
         }
         return this.builderNode.getFrameNode()
     }
@@ -47,8 +46,8 @@ export class CcTitleBarOverlay extends NodeController {
      * @param size The size of text with unit fp.
      */
     setTextSize(size: number) {
-        if (this.config.textSize != size) {
-            this.config.textSize = size
+        if (this.config!.textSize != size) {
+            this.config!.textSize = size
             this.invalidate()
         }
     }
@@ -58,19 +57,8 @@ export class CcTitleBarOverlay extends NodeController {
      * @param color The color of text.
      */
     setTextColor(color: ResourceColor) {
-        if (this.config.textColor != color) {
-            this.config.textColor = color
-            this.invalidate()
-        }
-    }
-
-    /**
-     * Set the visible of overlay.
-     * @param type The visible of this view.
-     */
-    setVisible(visible: boolean) {
-        if (this.config.visible != visible) {
-            this.config.visible = visible
+        if (this.config!.textColor != color) {
+            this.config!.textColor = color
             this.invalidate()
         }
     }
@@ -80,14 +68,14 @@ export class CcTitleBarOverlay extends NodeController {
      * @param color The color of overlay background.
      */
     setBackgroundColor(color: ResourceColor) {
-        if (this.config.bgColor != color) {
-            this.config.bgColor = color
-            this.builderNode?.update(this.config)
+        if (this.config!.bgColor != color) {
+            this.config!.bgColor = color
+            this.builderNode?.update(this.config!)
         }
     }
 
     private invalidate() {
-        this.builderNode?.update(this.config);
+        this.builderNode?.update(this.config!);
     }
 }
 
@@ -107,15 +95,9 @@ function overlay(config: TitleBarOverlayConfig) {
     .visibility(config.visible ? Visibility.Visible : Visibility.Hidden)
 }
 
-class TitleBarOverlayConfig {
-    player: CcPlayer
+class TitleBarOverlayConfig extends BaseOverlayConfig {
     title: string = ""
     textSize: number = 14
     textColor: ResourceColor = "#ffffffff"
-    visible: boolean = false
     bgColor: ResourceColor = "#a6000000"
-
-    constructor(player: CcPlayer) {
-        this.player = player;
-    }
 }

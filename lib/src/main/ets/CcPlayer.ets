@@ -12,6 +12,8 @@ import { BackgroundPlayManager } from './core/BackgroundPlayManager';
 import { AvSessionCallback } from './core/AvSessionCallback';
 import { PiPWindow } from '@kit.ArkUI';
 import { AudioFocusEvent } from './config/AudioFocusEvent';
+import { IMediaExt } from './interface/IMediaExt';
+import { fileIo } from '@kit.CoreFileKit';
 
 const TAG = '[CcPlayer]'
 
@@ -21,7 +23,7 @@ const TAG = '[CcPlayer]'
  * Author: Seagazer
  * Date: 2022/8/17
  */
-export class CcPlayer implements IPlayer {
+export class CcPlayer implements IPlayer, IMediaExt {
     private player: IPlayer
     private context: Context
     private isBackgroundPlay = false
@@ -295,13 +297,6 @@ export class CcPlayer implements IPlayer {
         return this
     }
 
-    /**
-     * Bind av session.
-     * @param context The context of app.
-     * @param sessionName The name of av session.
-     * @param type The type of av session.{@link avSession.AVSessionType}
-     * @param agentInfo The agent info of av session.{@link wantAgent.WantAgentInfo}
-     */
     async bindAvSession(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType,
         agentInfo: wantAgent.WantAgentInfo) {
         this.agentInfo = agentInfo
@@ -314,26 +309,14 @@ export class CcPlayer implements IPlayer {
         }
     }
 
-    /**
-     * Add a callback {@link AvSessionCallback} to observe the play action like play next and play previous.
-     * @param callback The callback to observe the play action.
-     */
     addAvSessionCallback(callback: AvSessionCallback) {
         this.avSessionManager!.addAvSessionCallback(callback)
     }
 
-    /**
-     * Remove a callback {@link AvSessionCallback} to observe the play action like play next and play previous.
-     * @param callback The callback to observe the play action.
-     */
     removeAvSessionCallback(callback: AvSessionCallback) {
         this.avSessionManager!.removeAvSessionCallback(callback)
     }
 
-    /**
-     * Set background play or not.
-     * @param enable True to start background play, false to stop background play.
-     */
     setBackgroundPlayEnable(enable: boolean) {
         if (!this.context) {
             MediaLogger.w(TAG, "The context is null.")
@@ -356,18 +339,10 @@ export class CcPlayer implements IPlayer {
         this.isBackgroundPlay = enable
     }
 
-    /**
-     * Add a listener to observe the media source changed.
-     * @param listener The listener to observe the media source changed.
-     */
     addOnMediaChangedListener(listener: (source: MediaSource) => void) {
         this.onMediaChangedListeners.push(listener)
     }
 
-    /**
-     * Remove a listener to observe the media source changed.
-     * @param listener The listener to observe the media source changed.
-     */
     removeOnMediaChangedListener(listener: (source: MediaSource) => void) {
         let index = this.onMediaChangedListeners.indexOf(listener)
         if (index >= 0) {
@@ -375,10 +350,6 @@ export class CcPlayer implements IPlayer {
         }
     }
 
-    /**
-     * Set the controller of XComponent to play video.
-     * @param controller The controller{@link XComponentController} of XComponent to play video.
-     */
     setXComponentController(controller: XComponentController) {
         if (this.xComponentController != controller) {
             MediaLogger.d(TAG, "set xComponent controller= " + controller)
@@ -387,19 +358,10 @@ export class CcPlayer implements IPlayer {
         }
     }
 
-    /**
-     * Return the controller of XComponent.
-     * @returns The controller of XComponent, return undefined if not set.
-     */
     getXComponentController(): XComponentController | undefined {
         return this.xComponentController
     }
 
-    /**
-     * Set the pip enable, must call #setXComponentController first.
-     * @param pipType The type{@link PiPWindow.PiPTemplateType} of pip window, default is VIDEO_PLAY.
-     * @returns The pipController {@link PiPWindow.PiPController} if enable success, return undefined if enable failed or not support pip.
-     */
     async enablePip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY): Promise<PiPWindow.PiPController | undefined> {
         if (!PiPWindow.isPiPEnabled()) {
             MediaLogger.w(TAG, "The platform is not support pip mode.")
@@ -419,9 +381,6 @@ export class CcPlayer implements IPlayer {
         return this.pipController
     }
 
-    /**
-     * Set the pip disable.
-     */
     async disablePip() {
         if (this.pipController) {
             MediaLogger.d(TAG, "disable pip")
@@ -430,9 +389,6 @@ export class CcPlayer implements IPlayer {
         }
     }
 
-    /**
-     * Start the pip.
-     */
     async startPip() {
         if (!this.pipController) {
             return
@@ -468,9 +424,6 @@ export class CcPlayer implements IPlayer {
         return pipController
     }
 
-    /**
-     * Stop the pip.
-     */
     async stopPip() {
         if (!PiPWindow.isPiPEnabled()) {
             MediaLogger.w(TAG, "The platform is not support pip mode.")
@@ -483,6 +436,38 @@ export class CcPlayer implements IPlayer {
         if (this.pipController) {
             MediaLogger.d(TAG, "stop pip")
             await this.pipController.stopPiP()
+        }
+    }
+
+    async getSnapshotFromFile(filePath: string, width: number, height: number, timestamp: number): Promise<PixelMap | undefined> {
+        try {
+            const imageG = await media.createAVImageGenerator()
+            let file = await fileIo.open(filePath, fileIo.OpenMode.READ_ONLY)
+            imageG.fdSrc = { fd: file.fd }
+            const result =
+                await imageG.fetchFrameByTime(timestamp, media.AVImageQueryOptions.AV_IMAGE_QUERY_NEXT_SYNC, { width: width, height: height })
+            await imageG.release()
+            fileIo.close(file.fd)
+            return result
+        } catch (e) {
+            MediaLogger.e(TAG, 'getSnapshotFromFile error= ' + JSON.stringify(e))
+            return undefined
+        }
+    }
+
+    async getSnapshotFromAssets(rawPath: string, width: number, height: number, timestamp: number): Promise<PixelMap | undefined> {
+        try {
+            const imageG = await media.createAVImageGenerator()
+            const afd = this.context.resourceManager.getRawFdSync(rawPath)
+            imageG.fdSrc = afd
+            const result =
+                await imageG.fetchFrameByTime(timestamp, media.AVImageQueryOptions.AV_IMAGE_QUERY_NEXT_SYNC, { width: width, height: height })
+            await imageG.release()
+            this.context.resourceManager.closeRawFdSync(rawPath)
+            return result
+        } catch (e) {
+            MediaLogger.e(TAG, 'getSnapshotFromAssets error= ' + JSON.stringify(e))
+            return undefined
         }
     }
 }

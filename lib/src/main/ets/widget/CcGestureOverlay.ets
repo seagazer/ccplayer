@@ -1,7 +1,8 @@
 import { timeToString } from '../common/Extentions'
 import { GestureType } from '../config/GestureType'
-import { BuilderNode, FrameNode, NodeController, UIContext } from '@kit.ArkUI'
+import { BuilderNode, FrameNode, UIContext } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
+import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'
 
 /**
  * The default overlay for gesture actions of CcPlayerView.
@@ -9,10 +10,8 @@ import { CcPlayer } from '../CcPlayer'
  * Author: Seagazer
  * Date: 2024/12/26
  */
-export class CcGestureOverlay extends NodeController {
-    private builderNode?: BuilderNode<[GestureOverlayConfig]> = undefined
+export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig> {
     private overlayView: WrappedBuilder<[GestureOverlayConfig]> = wrapBuilder(overlay)
-    private config: GestureOverlayConfig
 
     /**
      * The default constructor.
@@ -26,7 +25,7 @@ export class CcGestureOverlay extends NodeController {
     makeNode(uiContext: UIContext): FrameNode | null {
         if (!this.builderNode) {
             this.builderNode = new BuilderNode(uiContext)
-            this.builderNode.build(this.overlayView, this.config)
+            this.builderNode.build(this.overlayView, this.config!)
         }
         return this.builderNode.getFrameNode()
     }
@@ -36,9 +35,9 @@ export class CcGestureOverlay extends NodeController {
      * @param size The size of text with unit fp.
      */
     setTextSize(size: number) {
-        if (this.config.textSize != size) {
-            this.config.textSize = size
-            this.builderNode?.update(this.config)
+        if (this.config!.textSize != size) {
+            this.config!.textSize = size
+            this.builderNode?.update(this.config!)
         }
     }
 
@@ -47,9 +46,9 @@ export class CcGestureOverlay extends NodeController {
      * @param color The color of text.
      */
     setTextColor(color: ResourceColor) {
-        if (this.config.textColor != color) {
-            this.config.textColor = color
-            this.builderNode?.update(this.config)
+        if (this.config!.textColor != color) {
+            this.config!.textColor = color
+            this.builderNode?.update(this.config!)
         }
     }
 
@@ -58,9 +57,9 @@ export class CcGestureOverlay extends NodeController {
      * @param color The color of overlay background.
      */
     setBackgroundColor(color: ResourceColor) {
-        if (this.config.bgColor != color) {
-            this.config.bgColor = color
-            this.builderNode?.update(this.config)
+        if (this.config!.bgColor != color) {
+            this.config!.bgColor = color
+            this.builderNode?.update(this.config!)
         }
     }
 
@@ -69,9 +68,9 @@ export class CcGestureOverlay extends NodeController {
      * @param type The gesture type.{@link GestureType}
      */
     setGestureType(type: GestureType) {
-        if (this.config.gestureType != type) {
-            this.config.gestureType = type
-            this.builderNode?.update(this.config)
+        if (this.config!.gestureType != type) {
+            this.config!.gestureType = type
+            this.builderNode?.update(this.config!)
         }
     }
 
@@ -80,20 +79,9 @@ export class CcGestureOverlay extends NodeController {
      * @param type The gesture percent value.
      */
     setGesturePercent(percent: number) {
-        if (this.config.gesturePercent != percent) {
-            this.config.gesturePercent = percent
-            this.builderNode?.update(this.config)
-        }
-    }
-
-    /**
-     * Set the visible of overlay.
-     * @param type The visible of this view.
-     */
-    setVisible(visible: boolean) {
-        if (this.config.visible != visible) {
-            this.config.visible = visible
-            this.builderNode?.update(this.config)
+        if (this.config!.gesturePercent != percent) {
+            this.config!.gesturePercent = percent
+            this.builderNode?.update(this.config!)
         }
     }
 }
@@ -159,16 +147,10 @@ function overlay(config: GestureOverlayConfig) {
     }
 }
 
-class GestureOverlayConfig {
-    player: CcPlayer
+class GestureOverlayConfig extends BaseOverlayConfig {
     gestureType: GestureType = GestureType.PROGRESS
     gesturePercent: number = 0
-    visible: boolean = false
     textSize: number = 14
     textColor: ResourceColor = "#ffffffff"
     bgColor: ResourceColor = "#a6000000"
-
-    constructor(player: CcPlayer) {
-        this.player = player;
-    }
 }
