@@ -92,8 +92,8 @@ ohpm install @seagazer/ccplayer
   | disablePip                        | void                                                                                | void                    | 禁用pip画中画能力                                             |
   | startPip                          | void                                                                                | void                    | 开启pip画中画                                                 |
   | stopPip                           | void                                                                                | void                    | 关闭pip画中画                                                 |
-  | getSnapshotFromFile               | filePath: string, width: number, height: number, timestamp: number                  | Promise\<PixelMap>      | 关闭pip画中画                                                 |
-  | getSnapshotFromAssets             | rawPath: string, width: number, height: number, timestamp: number                   | Promise\<PixelMap>      | 关闭pip画中画                                                 |
+  | getSnapshotFromFile               | filePath: string, width: number, height: number, timestamp: number                  | Promise\<PixelMap>      | 获取视频文件缩略图                                                 |
+  | getSnapshotFromAssets             | rawPath: string, width: number, height: number, timestamp: number                   | Promise\<PixelMap>      | 获取视频文件缩略图                                                 |
 
 - MediaSourceFactory 媒体资源构建器  
   | 接口         | 参数                                                                                                                     | 返回值                | 说明                          |
