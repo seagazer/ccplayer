@@ -4,6 +4,8 @@ export { CcPlayerPool } from './src/main/ets/CcPlayerPool'
 
 export { CcPlayerView } from './src/main/ets/widget/CcPlayerView'
 
+export { CcPlayerViewV2 } from './src/main/ets/widget/CcPlayerViewV2'
+
 export { CcGestureOverlay } from './src/main/ets/widget/CcGestureOverlay'
 
 export { CcTitleBarOverlay } from './src/main/ets/widget/CcTitleBarOverlay'
