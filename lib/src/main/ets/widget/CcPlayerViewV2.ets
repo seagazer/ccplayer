@@ -82,6 +82,14 @@ export struct CcPlayerViewV2 {
      * The listener to handle the gesture actions.
      */
     @Param onGestureAction?: (type: GestureType, percent: number, isTouchUp: boolean) => void = undefined
+    /**
+     * Set the default brightness, the value is [0,1], default is 0.5.
+     */
+    @Param @Once defaultBrightness: number = 0.5
+    /**
+     * Set the default volume, the value is [0,1], default is 1.
+     */
+    @Param @Once defaultVolume: number = 1
     /*-----------------------------------------------------------------------------------------------*/
     private viewWidth: number = 0
     private viewHeight: number = 0
@@ -101,7 +109,8 @@ export struct CcPlayerViewV2 {
     private isDoingLayout: boolean = true
     @Local isShowSurface: boolean = false
     private isFrameReady: boolean = false
-    private currentBrightness: number = 0.5
+    private currentBrightness: number = this.defaultBrightness
+    private currentVolume = this.defaultVolume
     private preparedListener = () => {
         this.totalDuration = this.player!.getDuration()
     }
@@ -124,7 +133,6 @@ export struct CcPlayerViewV2 {
         this.isFrameReady = false
         this.isShowSurface = false
     }
-    private currentVolume = 1
 
     @Monitor("asRatio")
     onAspectRatioChanged() {
