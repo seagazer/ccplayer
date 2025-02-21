@@ -43,7 +43,7 @@ export class AvPlayerImpl implements IPlayer {
         this.context = context
         media.createAVPlayer((err, player) => {
             if (err) {
-                MediaLogger.e(TAG, "init video player error = " + JSON.stringify(err))
+                MediaLogger.attentionE(TAG, "init video player error = " + JSON.stringify(err))
                 this.changePlayerState(PlayerState.STATE_NOT_INIT)
                 return
             }
@@ -126,7 +126,7 @@ export class AvPlayerImpl implements IPlayer {
                     this.changePlayerState(PlayerState.STATE_NOT_INIT)
                     break
                 case "error":
-                    MediaLogger.e(TAG, ">> System callback: error")
+                    MediaLogger.attentionE(TAG, ">> System callback: error")
                     if (this.errorListeners.length > 0) {
                         this.errorListeners.forEach((callback) => {
                             callback(-1, "state error")
@@ -136,7 +136,7 @@ export class AvPlayerImpl implements IPlayer {
             }
         })
         this.player!.on("error", (err) => {
-            MediaLogger.e(TAG, ">> System callback: error = " + JSON.stringify(err))
+            MediaLogger.attentionE(TAG, ">> System callback: error = " + JSON.stringify(err))
             if (this.errorListeners.length > 0) {
                 this.errorListeners.forEach((callback) => {
                     if (err) {
@@ -190,6 +190,7 @@ export class AvPlayerImpl implements IPlayer {
             })
         })
         this.player!.on("audioInterrupt", (event: audio.InterruptEvent) => {
+            MediaLogger.d(TAG, ">> System callback: audioFocusChange: " + JSON.stringify(event))
             if (event.forceType == audio.InterruptForceType.INTERRUPT_FORCE) {
                 switch (event.hintType) {
                     case audio.InterruptHint.INTERRUPT_HINT_PAUSE:

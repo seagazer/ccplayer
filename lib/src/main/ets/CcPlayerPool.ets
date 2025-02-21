@@ -80,7 +80,7 @@ export class CcPlayerPool {
      */
     public recycle(player: CcPlayer): void {
         if (!(player instanceof ReuseCcPlayer)) {
-            MediaLogger.w(TAG, "The instance of player is not get from CcPlayerPool.")
+            MediaLogger.attentionW(TAG, "The instance of player is not get from CcPlayerPool.")
             return
         }
         let innerPlayer = player as ReuseCcPlayer

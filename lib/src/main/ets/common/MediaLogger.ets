@@ -20,6 +20,14 @@ export class MediaLogger {
         MediaLogger.FILTER_NAME = name
     }
 
+    static attentionW(tag: string, message: string) {
+        hilog.warn(domain, MediaLogger.FILTER_NAME, tag + " " + message)
+    }
+
+    static attentionE(tag: string, message: string) {
+        hilog.error(domain, MediaLogger.FILTER_NAME, tag + " " + message)
+    }
+
     static d(tag: string, message: string) {
         if (!MediaLogger.DEBUG) {
             return

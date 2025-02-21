@@ -42,6 +42,10 @@ export class CcPlayer implements IPlayer, IMediaExt {
         }
     }
     private defaultVideoSizeChangedListener = (w: number, h: number) => {
+        if (w <= 0 || h <= 0) {
+            MediaLogger.attentionE(TAG, 'The size of video is illegal value, not update the pip size!')
+            return
+        }
         this.pipController?.updateContentSize(w, h)
     }
     private defaultAudioFocusChangedListener: (event: AudioFocusEvent) => void = (event: AudioFocusEvent) => {
@@ -66,6 +70,10 @@ export class CcPlayer implements IPlayer, IMediaExt {
     }
 
     private init() {
+        if (this.avSessionManager) {
+            MediaLogger.attentionW(TAG, "The instance of the player is changed, release the av session and reInit again!")
+            this.avSessionManager.release()
+        }
         this.avSessionManager = new AvSessionManager(this.player)
         this.player.addOnStateChangedListener(this.defaultStateChangedListener)
         this.player.addOnVideoSizeChangedListener(this.defaultVideoSizeChangedListener)
@@ -84,7 +92,7 @@ export class CcPlayer implements IPlayer, IMediaExt {
     start() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_STARTED) {
-            MediaLogger.w(TAG, 'current is playing, not start!')
+            MediaLogger.attentionW(TAG, 'current is playing, not start!')
             return
         }
         this.player.start()
@@ -305,7 +313,7 @@ export class CcPlayer implements IPlayer, IMediaExt {
             await this.avSessionManager!.setLaunchInfo(agentInfo)
             await this.avSessionManager!.bind()
         } catch (e) {
-            MediaLogger.e(TAG, "bindAvSession error: " + JSON.stringify(e))
+            MediaLogger.attentionE(TAG, "bindAvSession error: " + JSON.stringify(e))
         }
     }
 
@@ -319,11 +327,11 @@ export class CcPlayer implements IPlayer, IMediaExt {
 
     setBackgroundPlayEnable(enable: boolean) {
         if (!this.context) {
-            MediaLogger.w(TAG, "The context is null.")
+            MediaLogger.attentionW(TAG, "The context is null.")
             return
         }
         if (!this.agentInfo) {
-            MediaLogger.w(TAG, "The agent is null, you should call {@Link bindAvSession} first.")
+            MediaLogger.attentionW(TAG, "The agent is null, you should call {@Link bindAvSession} first.")
             return
         }
         if (this.isBackgroundPlay == enable) {
@@ -364,15 +372,15 @@ export class CcPlayer implements IPlayer, IMediaExt {
 
     async enablePip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY): Promise<PiPWindow.PiPController | undefined> {
         if (!PiPWindow.isPiPEnabled()) {
-            MediaLogger.w(TAG, "The platform is not support pip mode.")
+            MediaLogger.attentionW(TAG, "The platform is not support pip mode.")
             return undefined
         }
         if (!this.xComponentController) {
-            MediaLogger.e(TAG, "The xComponentController is null, must call #setXComponentController first.")
+            MediaLogger.attentionE(TAG, "The xComponentController is null, must call #setXComponentController first.")
             return undefined
         }
         if (this.pipController) {
-            MediaLogger.w(TAG, "The pip is enabled, can not enable again!")
+            MediaLogger.attentionW(TAG, "The pip is enabled, can not enable again!")
             return this.pipController
         }
         this.pipType = pipType
@@ -426,11 +434,11 @@ export class CcPlayer implements IPlayer, IMediaExt {
 
     async stopPip() {
         if (!PiPWindow.isPiPEnabled()) {
-            MediaLogger.w(TAG, "The platform is not support pip mode.")
+            MediaLogger.attentionW(TAG, "The platform is not support pip mode.")
             return
         }
         if (!this.xComponentController) {
-            MediaLogger.e(TAG, "The xComponentController is null, must call #setXComponentController first.")
+            MediaLogger.attentionE(TAG, "The xComponentController is null, must call #setXComponentController first.")
             return
         }
         if (this.pipController) {
@@ -450,7 +458,7 @@ export class CcPlayer implements IPlayer, IMediaExt {
             fileIo.close(file.fd)
             return result
         } catch (e) {
-            MediaLogger.e(TAG, 'getSnapshotFromFile error= ' + JSON.stringify(e))
+            MediaLogger.attentionE(TAG, 'getSnapshotFromFile error= ' + JSON.stringify(e))
             return undefined
         }
     }
@@ -466,7 +474,7 @@ export class CcPlayer implements IPlayer, IMediaExt {
             this.context.resourceManager.closeRawFdSync(rawPath)
             return result
         } catch (e) {
-            MediaLogger.e(TAG, 'getSnapshotFromAssets error= ' + JSON.stringify(e))
+            MediaLogger.attentionE(TAG, 'getSnapshotFromAssets error= ' + JSON.stringify(e))
             return undefined
         }
     }

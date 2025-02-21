@@ -86,7 +86,7 @@ export interface IMediaExt {
 
     /**
      * Get the snapshot of the media, only support video.
-     * Attention: The function must be call and return result before setMediaSource because this will modify the file.
+     * Attention: The function must be call and return result before setMediaSource because this will modify the src file.
      *
      * @param filePath The path of media file.
      * @param width The width of snapshot image.
@@ -98,7 +98,7 @@ export interface IMediaExt {
 
     /**
      * Get the snapshot of the media, only support video.
-     * Attention: The function must be call and return result before setMediaSource because this will modify the file.
+     * Attention: The function must be call and return result before setMediaSource because this will modify the src file.
      *
      * @param rawPath The raw path of media file.
      * @param width The width of snapshot image.
