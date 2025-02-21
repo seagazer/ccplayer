@@ -4,12 +4,15 @@ import router from '@ohos.router'
 import { VideoSample } from './VideoSample'
 import { PagePlayerSample } from './PagePlayerSample'
 import { CustomOverlaySample } from './CustomOverlaySample'
+import { CcPlayerViewSampleV2 } from './CcPlayerViewSampleV2'
 
 @Entry
 @Component
 struct Home {
     private style = new HomeButtonStyle()
     private navRouter = new NavPathStack()
+    private pageData: string[] =
+        ['MusicSample', 'VideoSample', 'CcPlayerViewSample', 'CcPlayerViewSampleV2', 'CustomOverlaySample', 'PagePlayerSample']
 
     aboutToAppear(): void {
         router.clear()
@@ -18,35 +21,13 @@ struct Home {
     build() {
         Navigation(this.navRouter) {
             Column() {
-                Text('MusicSample')
-                    .attributeModifier(this.style)
-                    .onClick(() => {
-                        this.navRouter.pushPathByName("MusicSample", null)
-                    })
-
-                Text('VideoSample')
-                    .attributeModifier(this.style)
-                    .onClick(() => {
-                        this.navRouter.pushPathByName("VideoSample", null)
-                    })
-
-                Text('CcPlayerViewSample')
-                    .attributeModifier(this.style)
-                    .onClick(() => {
-                        this.navRouter.pushPathByName("CcPlayerViewSample", null)
-                    })
-
-                Text('CustomOverlaySample')
-                    .attributeModifier(this.style)
-                    .onClick(() => {
-                        this.navRouter.pushPathByName("CustomOverlaySample", null)
-                    })
-
-                Text('PagePlayerSample')
-                    .attributeModifier(this.style)
-                    .onClick(() => {
-                        this.navRouter.pushPathByName("PagePlayerSample", null)
-                    })
+                ForEach(this.pageData, (pageName: string) => {
+                    Text(pageName)
+                        .attributeModifier(this.style)
+                        .onClick(() => {
+                            this.navRouter.pushPathByName(pageName, null)
+                        })
+                })
             }
             .width("100%")
             .height("100%")
@@ -67,6 +48,8 @@ struct Home {
             VideoSample()
         } else if (name === "CcPlayerViewSample") {
             CcPlayerViewSample()
+        } else if (name === "CcPlayerViewSampleV2") {
+            CcPlayerViewSampleV2()
         } else if (name === "CustomOverlaySample") {
             CustomOverlaySample()
         } else if (name === "PagePlayerSample") {
