@@ -45,7 +45,7 @@ export class CcTitleBarOverlay extends BaseOverlayController<TitleBarOverlayConf
      * Set the size of text.
      * @param size The size of text with unit fp.
      */
-    setTextSize(size: number) {
+    setTextSize(size: Length) {
         if (this.config!.textSize != size) {
             this.config!.textSize = size
             this.invalidate()
@@ -59,6 +59,17 @@ export class CcTitleBarOverlay extends BaseOverlayController<TitleBarOverlayConf
     setTextColor(color: ResourceColor) {
         if (this.config!.textColor != color) {
             this.config!.textColor = color
+            this.invalidate()
+        }
+    }
+
+    /**
+     * Set the padding of title container.
+     * @param padding The padding of title container.
+     */
+    setPadding(padding: Length | Padding) {
+        if (this.config!.padding != padding) {
+            this.config!.padding = padding
             this.invalidate()
         }
     }
@@ -89,7 +100,7 @@ function overlay(config: TitleBarOverlayConfig) {
             .textOverflow({ overflow: TextOverflow.Ellipsis })
     }
     .width("100%")
-    .padding(16)
+    .padding(config.padding)
     .backgroundColor(config.bgColor)
     .justifyContent(FlexAlign.Center)
     .visibility(config.visible ? Visibility.Visible : Visibility.Hidden)
@@ -97,7 +108,8 @@ function overlay(config: TitleBarOverlayConfig) {
 
 class TitleBarOverlayConfig extends BaseOverlayConfig {
     title: string = ""
-    textSize: number = 14
+    textSize: Length = 14
+    padding: Length | Padding = 16
     textColor: ResourceColor = "#ffffffff"
     bgColor: ResourceColor = "#a6000000"
 }

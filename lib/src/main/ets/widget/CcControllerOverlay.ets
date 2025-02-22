@@ -113,7 +113,7 @@ export class CcControllerOverlay extends BaseOverlayController<ControllerOverlay
 
     /**
      * Set the horizontal margin of seekbar.
-     * @param color The horizontal margin of seekbar.
+     * @param margin The horizontal margin of seekbar.
      */
     setSliderMargin(margin: Margin) {
         if (this.config!.sliderMargin != margin) {
@@ -124,9 +124,9 @@ export class CcControllerOverlay extends BaseOverlayController<ControllerOverlay
 
     /**
      * Set the horizontal padding of overlay.
-     * @param color The horizontal padding of overlay.
+     * @param padding The horizontal padding of overlay.
      */
-    setPadding(padding: Padding) {
+    setPadding(padding: Length | Padding) {
         if (this.config!.padding != padding) {
             this.config!.padding = padding
             this.builderNode?.update(this.config!)
@@ -179,5 +179,5 @@ class ControllerOverlayConfig extends BaseOverlayConfig {
     blockColor: ResourceColor = "#ffffff"
     selectedColor: ResourceColor = $r('sys.color.ohos_id_color_emphasize')
     sliderMargin: Margin = { left: 8, right: 8 }
-    padding: Padding = { left: 16, right: 16 }
+    padding: Length | Padding = { left: 16, right: 16 }
 }

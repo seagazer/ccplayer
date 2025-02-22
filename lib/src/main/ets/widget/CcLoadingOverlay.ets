@@ -102,6 +102,17 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
     }
 
     /**
+     * Set the padding of loading container.
+     * @param padding The padding of loading container.
+     */
+    setPadding(padding: Length | Padding) {
+        if (this.config!.padding != padding) {
+            this.config!.padding = padding
+            this.invalidate()
+        }
+    }
+
+    /**
      * Set background color of overlay.
      * @param color The color of overlay background.
      */
@@ -143,7 +154,7 @@ class LoadingOverlayConfig extends BaseOverlayConfig {
     loadingSize: Length = 56
     loadingColor: ResourceColor = Color.White
     loadingMargin: Length = 16
-    padding: Padding = {
+    padding: Length | Padding = {
         left: 16,
         top: 16,
         right: 16,
