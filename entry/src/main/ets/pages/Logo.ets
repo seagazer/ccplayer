@@ -1,4 +1,5 @@
 import router from '@ohos.router';
+import { LOGO_COLOR } from '../Extentions';
 
 @Extend(Text)
 function logoStyle() {
@@ -10,7 +11,6 @@ function logoStyle() {
 @Component
 struct Logo {
     private logoName = ["c", "c", "p", "l", "a", "y", "e", "r",]
-    private logoColor = ["#ffc84747", "#ff5dd2c8", "#ff021fb2", "#ffb3d84f", "#ff6ac847", "#ffd29f5d", "#ff5d8cd7", "#ffd84f4f", "#ffdd77e8"]
     @State alphas: Array<number> = [0, 0, 0, 0, 0, 0, 0, 0,]
     private duration = 350
     private delay = 200
@@ -24,7 +24,7 @@ struct Logo {
                     .logoStyle()
                     .scale({ x: this.alphas[index], y: this.alphas[index] })
                     .opacity(this.alphas[index])
-                    .fontColor(this.logoColor[Math.floor(Math.random() * this.logoColor.length)])
+                    .fontColor(LOGO_COLOR[Math.floor(Math.random() * LOGO_COLOR.length)])
                     .padding(1)
             })
         }

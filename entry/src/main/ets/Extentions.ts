@@ -21,3 +21,5 @@ export function toast(message: string, duration: number = 2000) {
         duration: duration
     })
 }
+
+export const LOGO_COLOR = ["#ffc84747", "#ff5dd2c8", "#ff021fb2", "#ffb3d84f", "#ff6ac847", "#ffd29f5d", "#ff5d8cd7", "#ffd84f4f", "#ffdd77e8"]

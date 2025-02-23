@@ -5,6 +5,7 @@ import { VideoSample } from './VideoSample'
 import { PagePlayerSample } from './PagePlayerSample'
 import { CustomOverlaySample } from './CustomOverlaySample'
 import { CcPlayerViewSampleV2 } from './CcPlayerViewSampleV2'
+import { LOGO_COLOR } from '../Extentions'
 
 @Entry
 @Component
@@ -27,6 +28,7 @@ struct Home {
                         .onClick(() => {
                             this.navRouter.pushPathByName(pageName, null)
                         })
+                        .backgroundColor(LOGO_COLOR[Math.floor(Math.random() * LOGO_COLOR.length)])
                 })
             }
             .width("100%")
