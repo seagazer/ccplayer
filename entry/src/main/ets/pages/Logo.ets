@@ -2,7 +2,7 @@ import router from '@ohos.router';
 
 @Extend(Text)
 function logoStyle() {
-    .fontSize(56)
+    .fontSize(64)
     .fontWeight(FontWeight.Bold)
 }
 
@@ -10,17 +10,22 @@ function logoStyle() {
 @Component
 struct Logo {
     private logoName = ["c", "c", "p", "l", "a", "y", "e", "r",]
-    @State translations: Array<number> = [0, 0, 0, 0, 0, 0, 0, 0,]
+    private logoColor = ["#ffc84747", "#ff5dd2c8", "#ff021fb2", "#ffb3d84f", "#ff6ac847", "#ffd29f5d", "#ff5d8cd7", "#ffd84f4f", "#ffdd77e8"]
     @State alphas: Array<number> = [0, 0, 0, 0, 0, 0, 0, 0,]
-    private duration = 300
-    private delay = 150
+    private duration = 350
+    private delay = 200
     @State pageScale: number = 1
     @State pageAlpha: number = 1
 
     build() {
         Row() {
             ForEach(this.logoName, (name: string, index: number) => {
-                Text(name).logoStyle().translate({ y: this.translations[index] }).opacity(this.alphas[index])
+                Text(name)
+                    .logoStyle()
+                    .scale({ x: this.alphas[index], y: this.alphas[index] })
+                    .opacity(this.alphas[index])
+                    .fontColor(this.logoColor[Math.floor(Math.random() * this.logoColor.length)])
+                    .padding(1)
             })
         }
         .width("100%")
@@ -28,17 +33,8 @@ struct Logo {
         .scale({ x: this.pageScale, y: this.pageScale })
         .opacity(this.pageAlpha)
         .justifyContent(FlexAlign.Center)
-        .onAreaChange((_, newSize) => {
-            let w = newSize.width as number
-            let h = newSize.height as number
-            let translateValue = 0
-            if (w > h) {
-                translateValue = -(newSize.height as number) / 4
-            } else {
-                translateValue = -(newSize.height as number) / 8
-            }
-            for (let i = 0; i < this.translations.length; i++) {
-                this.translations[i] = translateValue
+        .onAreaChange(() => {
+            for (let i = 0; i < this.logoName.length; i++) {
                 animateTo(
                     {
                         duration: this.duration,
@@ -46,7 +42,6 @@ struct Logo {
                         curve: Curve.Friction
                     },
                     () => {
-                        this.translations[i] = 0
                         this.alphas[i] = 1
                     })
             }
@@ -54,7 +49,7 @@ struct Logo {
                 router.pushUrl({
                     url: "pages/Home"
                 })
-            }, 500 + this.duration + this.delay * this.translations.length)
+            }, 500 + this.duration + this.delay * this.logoName.length)
         })
     }
 }
