@@ -1,3 +1,11 @@
+# 1.1.6
+
+- 新增CcPlayerViewV2组件，提供给状态管理框架V2版本应用使用
+- CcPlayerView和CcPlayerViewV2组件，新增修改默认手势亮度和音量值接口
+- 修复使用同个CcPlayer实例进行视频和音乐混播场景，pip接口报错问题
+- 优化部分接口的尺寸参数，由number类型扩展为Length类型
+- 在MediaLogger关闭下，增加关键的告警和异常信息日志输出
+
 # 1.1.5
 
 - 新增获取本地文件视频缩略图接口

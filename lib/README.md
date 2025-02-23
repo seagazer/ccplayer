@@ -10,6 +10,7 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 支持画中画悬浮窗播放
 - 支持音频焦点监听及默认处理策略
 - 提供视频播放组件CcPlayerView，支持视频宽高比切换及手势操作
+- 提供视频播放组件CcPlayerViewV2，支持状态管理框架V2版本
 - 提供默认手势控制面板组件CcGestureOverlay
 - 提供默认媒体控制面板组件CcControllerOverlay
 - 提供默认标题面板组件CcTitleBarOverlay
@@ -19,8 +20,8 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 支持获取本地视频文件缩略图
 
 ## 示例效果
-| 视频组件                                                                                     | 音乐播放                                                                                     | 播控中心                                                                                     | PIP模式                                                                                      |
-| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| 视频组件                                                                          | 音乐播放                                                                          | 播控中心                                                                          | PIP模式                                                                           |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | <img src="https://s21.ax1x.com/2025/02/19/pEQPjj1.png" width="180" height="360"/> | <img src="https://s21.ax1x.com/2025/02/19/pEQPzB6.png" width="180" height="360"/> | <img src="https://s21.ax1x.com/2025/02/19/pEQPXcR.png" width="180" height="360"/> | <img src="https://s21.ax1x.com/2025/02/19/pEQPxnx.png" width="180" height="360"/> |
 
 ## 依赖方式
@@ -92,8 +93,8 @@ ohpm install @seagazer/ccplayer
   | disablePip                        | void                                                                                | void                    | 禁用pip画中画能力                                             |
   | startPip                          | void                                                                                | void                    | 开启pip画中画                                                 |
   | stopPip                           | void                                                                                | void                    | 关闭pip画中画                                                 |
-  | getSnapshotFromFile               | filePath: string, width: number, height: number, timestamp: number                  | Promise\<PixelMap>      | 获取视频文件缩略图                                                 |
-  | getSnapshotFromAssets             | rawPath: string, width: number, height: number, timestamp: number                   | Promise\<PixelMap>      | 获取视频文件缩略图                                                 |
+  | getSnapshotFromFile               | filePath: string, width: number, height: number, timestamp: number                  | Promise\<PixelMap>      | 获取视频文件缩略图                                            |
+  | getSnapshotFromAssets             | rawPath: string, width: number, height: number, timestamp: number                   | Promise\<PixelMap>      | 获取视频文件缩略图                                            |
 
 - MediaSourceFactory 媒体资源构建器  
   | 接口         | 参数                                                                                                                     | 返回值                | 说明                          |
@@ -117,7 +118,7 @@ ohpm install @seagazer/ccplayer
   | destroy     | void                                | void         | 清空缓存池中播放器实例,并且重置CcPlayerPool |
 
 
-- CcPlayerView 视频播放组件  
+- CcPlayerView 视频播放组件 / CcPlayerViewV2(适用于状态管理框架V2版本) 
   | 属性                               | 类型                                                             | 说明                                                            | 是否必填 |
   | ---------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------- | -------- |
   | player                             | CcPlayer                                                         | 媒体播放器                                                      | 是       |
@@ -134,51 +135,56 @@ ohpm install @seagazer/ccplayer
   | onGestureUIListener                | (visible: boolean) => void                                       | 手势 UI 显示/隐藏回调                                           | 否       |
   | onGestureAction                    | (type: GestureType, percent: number, isTouchUp: boolean) => void | 手势操作回调                                                    | 否       |
   | aspectRatioChangeAnimationDuration | number                                                           | 视频切换宽高比动效时长，默认150ms                               | 否       |
+  | defaultBrightness                  | number                                                           | 组件启用的默认手势亮度值，取值0-1，默认0.5                      | 否       |
+  | defaultVolume                      | number                                                           | 组件启用的默认手势音量值，取值0-1，默认1                        | 否       |
+
 
 - CcGestureOverlay 手势控制UI面板，需要结合NodeContainer使用，实时的UI状态值可以通过CcPlayerView的onGestureAction和onGestureUIListener回调中获取  
-  | 接口               | 参数                 | 返回值           | 说明                                   |
-  | ------------------ | -------------------- | ---------------- | -------------------------------------- |
-  | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例               |
-  | setTextSize        | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp  |
-  | setTextColor       | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff     |
-  | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000     |
-  | setGestureType     | size: number         | void             | 设置当前CcPlayerView的手势类型         |
-  | setGesturePercent  | percent: number      | void             | 设置当前CcPlayerView的手势进度值       |
-  | setVisible         | visible: boolean     | void             | 设置当前CcPlayerView的手势UI的显示状态 |
+  | 接口               | 参数                 | 返回值           | 说明                                  |
+  | ------------------ | -------------------- | ---------------- | ------------------------------------- |
+  | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例              |
+  | setTextSize        | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp |
+  | setTextColor       | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff    |
+  | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000    |
+  | setGestureType     | size: number         | void             | 设置当前CcPlayerView的手势类型        |
+  | setGesturePercent  | percent: number      | void             | 设置当前CcPlayerView的手势进度值      |
+  | setVisible         | visible: boolean     | void             | 设置当前Overlay的显示状态             |
 
 - CcControllerOverlay 媒体播放控制UI面板
-  | 接口                   | 参数                 | 返回值           | 说明                                                        |
-  | ---------------------- | -------------------- | ---------------- | ----------------------------------------------------------- |
-  | construct              | player: CcPlayer     | CcGestureOverlay | 创建CcControllerOverlay实例                                 |
-  | setTextSize            | size: number         | void             | 设置进度值字体大小，单位fp，默认14fp                        |
-  | setTextColor           | color: ResourceColor | void             | 设置进度值字体颜色，默认#ffffffff                           |
-  | setSliderTrackColor    | color: ResourceColor | void             | 设置进度条轨道颜色，默认#ccffffff                           |
-  | setSliderBlockColor    | color: ResourceColor | void             | 设置进度条滑块颜色，默认#ffffffff                           |
-  | setSliderSelectedColor | color: ResourceColor | void             | 设置进度条的进度颜色，默认sys.color.ohos_id_color_emphasize |
-  | setPadding             | padding: Padding     | void             | 设置overlay字体与左右边缘的水平边距                         |
-  | setSliderMargin        | margin: Margin       | void             | 设置seekbar与文本的水平间距                                 |
-  | setVisible             | visible: boolean     | void             | 设置当前CcPlayerView的控制UI的显示状态                      |
+  | 接口                   | 参数                       | 返回值           | 说明                                                        |
+  | ---------------------- | -------------------------- | ---------------- | ----------------------------------------------------------- |
+  | construct              | player: CcPlayer           | CcGestureOverlay | 创建CcControllerOverlay实例                                 |
+  | setTextSize            | size: Length               | void             | 设置进度值字体大小，单位fp，默认14fp                        |
+  | setTextColor           | color: ResourceColor       | void             | 设置进度值字体颜色，默认#ffffffff                           |
+  | setSliderTrackColor    | color: ResourceColor       | void             | 设置进度条轨道颜色，默认#ccffffff                           |
+  | setSliderBlockColor    | color: ResourceColor       | void             | 设置进度条滑块颜色，默认#ffffffff                           |
+  | setSliderSelectedColor | color: ResourceColor       | void             | 设置进度条的进度颜色，默认sys.color.ohos_id_color_emphasize |
+  | setPadding             | padding: Lenght \| Padding | void             | 设置overlay字体与左右边缘的水平边距                         |
+  | setSliderMargin        | margin: Margin             | void             | 设置seekbar与文本的水平间距                                 |
+  | setVisible             | visible: boolean           | void             | 设置当前Overlay的显示状态                                   |
 
 - CcTitleBarOverlay 媒体标题UI面板
-  | 接口               | 参数                 | 返回值           | 说明                                   |
-  | ------------------ | -------------------- | ---------------- | -------------------------------------- |
-  | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcTitleBarOverlay实例              |
-  | setTextSize        | size: number         | void             | 设置标题字体大小，单位fp，默认14fp     |
-  | setTextColor       | color: ResourceColor | void             | 设置标题字体颜色，默认#ffffffff        |
-  | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000     |
-  | setVisible         | visible: boolean     | void             | 设置当前CcPlayerView的标题UI的显示状态 |
+  | 接口               | 参数                       | 返回值           | 说明                                   |
+  | ------------------ | -------------------------- | ---------------- | -------------------------------------- |
+  | construct          | player: CcPlayer           | CcGestureOverlay | 创建CcTitleBarOverlay实例              |
+  | setTextSize        | size: Length               | void             | 设置标题字体大小，单位fp，默认14fp     |
+  | setTextColor       | color: ResourceColor       | void             | 设置标题字体颜色，默认#ffffffff        |
+  | setBackgroundColor | type: GestureType          | void             | 设置overlay背景颜色，默认#a6000000     |
+  | setPadding         | padding: Length \| Padding | void             | 设置当前CcPlayerView的标题组件的内边距 |
+  | setVisible         | visible: boolean           | void             | 设置当前Overlay的显示状态              |
 
 - CcLoadingOverlay 视频加载UI面板  
-  | 接口               | 参数                 | 返回值           | 说明                                      |
-  | ------------------ | -------------------- | ---------------- | ----------------------------------------- |
-  | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcLoadingOverlay实例                  |
-  | setLoadingText     | text: string         | void             | 设置loading提示文本                       |
-  | setLoadingSize     | size: number         | void             | 设置loading的大小，单位vp，默认56vp       |
-  | setLoadingMargin   | margin: number       | void             | 设置loading和文本的间距，单位vp，默认16vp |
-  | setPadding         | padding: Padding     | void             | 设置loading组件四周边距                   |
-  | setTextSize        | size: number         | void             | 设置loading字体大小，单位fp，默认14fp     |
-  | setTextColor       | color: ResourceColor | void             | 设置loading字体颜色，默认#ffffffff        |
-  | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000        |
+  | 接口               | 参数                       | 返回值           | 说明                                      |
+  | ------------------ | -------------------------- | ---------------- | ----------------------------------------- |
+  | construct          | player: CcPlayer           | CcGestureOverlay | 创建CcLoadingOverlay实例                  |
+  | setLoadingText     | text: string               | void             | 设置loading提示文本                       |
+  | setLoadingSize     | size: Length               | void             | 设置loading的大小，单位vp，默认56vp       |
+  | setLoadingMargin   | margin: Length             | void             | 设置loading和文本的间距，单位vp，默认16vp |
+  | setPadding         | padding: Lenght \| Padding | void             | 设置loading组件四周边距                   |
+  | setTextSize        | size: Length               | void             | 设置loading字体大小，单位fp，默认14fp     |
+  | setTextColor       | color: ResourceColor       | void             | 设置loading字体颜色，默认#ffffffff        |
+  | setBackgroundColor | type: GestureType          | void             | 设置overlay背景颜色，默认#a6000000        |
+  | setVisible         | visible: boolean           | void             | 设置当前Overlay的显示状态                 |
 
 
 - GestureType 视频播放组件手势类型  
@@ -231,7 +237,7 @@ ohpm install @seagazer/ccplayer
 
 ## 场景示例
 
-- 使用 CcPlayerView 播放视频，以及快速集成默认手势和加载Overlay的方式：
+- 使用 CcPlayerView 播放视频，以及快速集成默认手势和加载Overlay的方式(V2版本使用流程一致)：
 
 ```typescript
 @Entry
@@ -263,7 +269,7 @@ struct PlayerViewPage {
                         this.gestureOverlay.setGestureType(type)
                         this.gestureOverlay.setGesturePercent(percent)
                     },
-                    onGestureUIListener: (visible) => {
+                    onGestureUIListener: (visible: boolean) => {
                         // 刷新手势UI面板参数
                         this.gestureOverlay.setVisible(visible)
                     },                    
@@ -497,6 +503,40 @@ struct VideoItemPageView {
         }
         .width('100%')
         .height('100%')
+    }
+}
+```
+
+- 使用 CcPlayer 获取本地文件缩略图，仅支持视频文件，部分编码格式的视频文件可能获取失败：(注意：该方法不支持在开始播放流程之后调用(包括MediaSourceFactory创建资源)，因为获取缩略图会操作媒体文件，播放过程不允许和播放器同时操作同一个文件)
+
+```typescript
+@Entry
+@Component
+struct PlayerViewPage {
+    @State snapshot?: PixelMap = undefined
+     // 1.实例化CcPlayer
+    private player = new CcPlayer(getContext(this))
+
+    build() {
+        Column() {
+            Image(this.snapshot ? this.snapshot : $r('app.media.app_icon'))
+                .objectFit(ImageFit.Cover)
+                .width(200)
+                .height(150)
+            Button("getSnapshot")
+                .onClick(() => {
+                    // 注意：该方法不支持在开始播放流程之后调用，因为获取缩略图会操作媒体文件，播放过程不允许和播放器同时操作同一个文件
+                    // 2.从raw文件获取缩略图
+                    this.player.getSnapshotFromAssets('video1.mp4', 200, 150, 1500)
+                                .then((result: PixelMap) => {
+                                    this.snapshot = result
+                                })
+                    // 从file文件获取调用该接口：getSnapshotFromFile
+                })
+        }
+        .width("100%")
+        .height("100%")
+        .justifyContent(FlexAlign.Center)
     }
 }
 ```
