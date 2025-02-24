@@ -10,7 +10,7 @@ import { AvSessionManager } from './core/AvSessionManager';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { BackgroundPlayManager } from './core/BackgroundPlayManager';
 import { AvSessionCallback } from './core/AvSessionCallback';
-import { PiPWindow } from '@kit.ArkUI';
+import { PiPWindow, window } from '@kit.ArkUI';
 import { AudioFocusEvent } from './config/AudioFocusEvent';
 import { IMediaExt } from './interface/IMediaExt';
 import { fileIo } from '@kit.CoreFileKit';
@@ -476,6 +476,16 @@ export class CcPlayer implements IPlayer, IMediaExt {
         } catch (e) {
             MediaLogger.attentionE(TAG, 'getSnapshotFromAssets error= ' + JSON.stringify(e))
             return undefined
+        }
+    }
+
+    async setKeepScreenOn(uiContext: UIContext, keepScreenOn: boolean): Promise<boolean> {
+        try {
+            await window.findWindow(uiContext.getWindowName()).setWindowKeepScreenOn(keepScreenOn)
+            return true
+        } catch (e) {
+            MediaLogger.attentionE(TAG, 'setKeepScreenOn cause error= ' + JSON.stringify(e))
+            return false
         }
     }
 }

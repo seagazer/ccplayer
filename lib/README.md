@@ -95,6 +95,7 @@ ohpm install @seagazer/ccplayer
   | stopPip                           | void                                                                                | void                    | 关闭pip画中画                                                 |
   | getSnapshotFromFile               | filePath: string, width: number, height: number, timestamp: number                  | Promise\<PixelMap>      | 获取视频文件缩略图                                            |
   | getSnapshotFromAssets             | rawPath: string, width: number, height: number, timestamp: number                   | Promise\<PixelMap>      | 获取视频文件缩略图                                            |
+  | setKeepScreenOn                   | uiContext: UIContext, keepScreenOn: boolean                                         | Promise\<boolean>       | 设置屏幕是否常亮                                              |
 
 - MediaSourceFactory 媒体资源构建器  
   | 接口         | 参数                                                                                                                     | 返回值                | 说明                          |

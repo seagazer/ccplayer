@@ -107,4 +107,12 @@ export interface IMediaExt {
      * @returns The snapshot of video.
      */
     getSnapshotFromAssets(rawPath: string, width: number, height: number, timestamp: number): Promise<PixelMap | undefined>
+
+    /**
+     * Set keep screen on or not.
+     * @param uiContext The context of current ui.
+     * @param keepScreenOn Screen on or not.
+     * @returns Set result, return true success.
+     */
+    setKeepScreenOn(uiContext: UIContext, keepScreenOn: boolean): Promise<boolean>
 }

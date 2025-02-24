@@ -45,6 +45,7 @@ export struct CcPlayerViewSampleV2 {
     private controllerHideTimer = -1
 
     aboutToAppear(): void {
+        this.player.setKeepScreenOn(this.getUIContext(), true)
         this.playerWindow = window.findWindow(this.getUIContext().getWindowName())
         // set the gesture overlay ui config
         this.gestureOverlay.setTextSize(18)

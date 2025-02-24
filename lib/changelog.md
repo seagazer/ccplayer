@@ -2,10 +2,11 @@
 
 - 新增CcPlayerViewV2组件，提供给状态管理框架V2版本应用使用
 - CcPlayerView和CcPlayerViewV2组件，新增修改默认手势亮度和音量值接口
+- CcGestureOverlay组件新增handleGestureAction接口提供默认手势处理策略
+- 优化部分Overlay组件接口的尺寸参数，由number类型扩展为Length类型
+- CcPlayer新增setKeepScreenOn接口控制屏幕是否常亮
 - 修复使用同个CcPlayer实例进行视频和音乐混播场景，pip接口报错问题
-- 优化部分接口的尺寸参数，由number类型扩展为Length类型
 - 在MediaLogger关闭下，增加关键的告警和异常信息日志输出
-- CcGestureOverlay新增handleGestureAction接口提供默认手势处理策略
 
 # 1.1.5
 
