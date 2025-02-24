@@ -5,6 +5,7 @@
 - 修复使用同个CcPlayer实例进行视频和音乐混播场景，pip接口报错问题
 - 优化部分接口的尺寸参数，由number类型扩展为Length类型
 - 在MediaLogger关闭下，增加关键的告警和异常信息日志输出
+- CcGestureOverlay新增handleGestureAction接口提供默认手势处理策略
 
 # 1.1.5
 

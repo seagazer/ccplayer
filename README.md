@@ -256,6 +256,10 @@ struct PlayerViewPage {
         this.gestureOverlay.setTextColor('#ffead981')
     }
 
+    private handleGestureAction() {
+        // ...用户自己手动处理手势事件
+    }
+
     build() {
         Column() {
             // 注意：Overlay面板采用层叠的组合方式，需要使用Stack或者RelativeContainer作为根容器
@@ -265,9 +269,13 @@ struct PlayerViewPage {
                     player: this.player,
                     asRatio: this.videoRatio,
                     onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
-                        // 刷新手势UI面板参数
-                        this.gestureOverlay.setGestureType(type)
-                        this.gestureOverlay.setGesturePercent(percent)
+                        // 方式1：用户自己手动处理手势事件
+                        this.gestureOverlay.setGestureType(type) //刷新UI
+                        this.gestureOverlay.setGesturePercent(percent) //刷新UI
+                        this.handleGestureAction() //处理事件
+
+                        // 方式2：GestureOverlay自动处理手势事件
+                        this.gestureOverlay.handleGestureAction(type, percent, isTouchUp)
                     },
                     onGestureUIListener: (visible: boolean) => {
                         // 刷新手势UI面板参数
