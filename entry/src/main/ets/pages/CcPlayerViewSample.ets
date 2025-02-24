@@ -113,7 +113,7 @@ export struct CcPlayerViewSample {
                             // this.gestureOverlay.setGesturePercent(percent)
                             // this.handleGestureAction(type, percent, isTouchUp)
                             // Overlay自动处理手势事件
-                            this.gestureOverlay.handleGestureAction(type, percent, isTouchUp)
+                            this.gestureOverlay.handleGestureAction(this.getUIContext(), type, percent, isTouchUp)
                         },
                         onGestureUIListener: (visible) => {
                             this.gestureOverlay.setVisible(visible)

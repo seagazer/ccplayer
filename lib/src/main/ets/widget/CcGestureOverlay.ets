@@ -3,6 +3,7 @@ import { GestureType } from '../config/GestureType'
 import { BuilderNode, FrameNode, UIContext, window } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
 import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'
+import { MediaLogger } from '../common/MediaLogger'
 
 /**
  * The default overlay for gesture actions of CcPlayerView.
@@ -14,7 +15,6 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
     private overlayView: WrappedBuilder<[GestureOverlayConfig]> = wrapBuilder(overlay)
     private player: CcPlayer
     private playerWindow?: window.Window
-    private uiContext?: UIContext
 
     /**
      * The default constructor.
@@ -28,7 +28,6 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
 
     makeNode(uiContext: UIContext): FrameNode | null {
         if (!this.builderNode) {
-            this.uiContext = this.uiContext
             this.builderNode = new BuilderNode(uiContext)
             this.builderNode.build(this.overlayView, this.config!)
         }
@@ -92,11 +91,12 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
 
     /**
      * Handle the gesture action to control the player.
+     * @param uiContext The context of current ui page.
      * @param type The gesture type.{@link GestureType}.
      * @param percent The gesture percent value.
      * @param isTouchUp The touch state of touch event.
      */
-    handleGestureAction(type: GestureType, percent: number, isTouchUp: boolean) {
+    handleGestureAction(uiContext: UIContext, type: GestureType, percent: number, isTouchUp: boolean) {
         this.setGestureType(type)
         this.setGesturePercent(percent)
         switch (type) {
@@ -108,8 +108,9 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
                 break
             case GestureType.BRIGHTNESS:
                 if (this.playerWindow == undefined) {
-                    this.playerWindow = window.findWindow(this.uiContext!.getWindowName())
+                    this.playerWindow = window.findWindow(uiContext.getWindowName())
                 }
+                MediaLogger.attentionW('abc', '--------' + this.playerWindow + ", " + uiContext)
                 this.playerWindow?.setWindowBrightness(percent)
                 break
             case GestureType.VOLUME:
