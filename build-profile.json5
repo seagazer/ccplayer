@@ -1,6 +1,20 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:\\Users\\seagazer\\.ohos\\config\\default_ccplayer_XrjOtiRybIxTuJY5wPuaSBPBK3eaxBFuD8mbJTfMcX4=.cer",
+          "storePassword": "0000001B6A8B88175107815521128BCE81A48B962B1FD2AA339FDD05E94C03CC39F4970E9DFC18CE39D89E",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BA6747243A907DD56E4A27445C8FDE3CDEB973E71586CAF041B8DBC9A531A279FF8E9F84361A21C",
+          "profile": "C:\\Users\\seagazer\\.ohos\\config\\default_ccplayer_XrjOtiRybIxTuJY5wPuaSBPBK3eaxBFuD8mbJTfMcX4=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:\\Users\\seagazer\\.ohos\\config\\default_ccplayer_XrjOtiRybIxTuJY5wPuaSBPBK3eaxBFuD8mbJTfMcX4=.p12"
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",

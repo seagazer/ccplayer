@@ -140,15 +140,16 @@ ohpm install @seagazer/ccplayer
 
 
 - CcGestureOverlay 手势控制UI面板，需要结合NodeContainer使用，实时的UI状态值可以通过CcPlayerView的onGestureAction和onGestureUIListener回调中获取  
-  | 接口               | 参数                 | 返回值           | 说明                                  |
-  | ------------------ | -------------------- | ---------------- | ------------------------------------- |
-  | construct          | player: CcPlayer     | CcGestureOverlay | 创建CcGestureOverlay实例              |
-  | setTextSize        | size: number         | void             | 设置overlay字体大小，单位fp，默认14fp |
-  | setTextColor       | color: ResourceColor | void             | 设置overlay字体颜色，默认#ffffffff    |
-  | setBackgroundColor | type: GestureType    | void             | 设置overlay背景颜色，默认#a6000000    |
-  | setGestureType     | size: number         | void             | 设置当前CcPlayerView的手势类型        |
-  | setGesturePercent  | percent: number      | void             | 设置当前CcPlayerView的手势进度值      |
-  | setVisible         | visible: boolean     | void             | 设置当前Overlay的显示状态             |
+  | 接口                | 参数                                                                         | 返回值           | 说明                                  |
+  | ------------------- | ---------------------------------------------------------------------------- | ---------------- | ------------------------------------- |
+  | construct           | player: CcPlayer                                                             | CcGestureOverlay | 创建CcGestureOverlay实例              |
+  | setTextSize         | size: number                                                                 | void             | 设置overlay字体大小，单位fp，默认14fp |
+  | setTextColor        | color: ResourceColor                                                         | void             | 设置overlay字体颜色，默认#ffffffff    |
+  | setBackgroundColor  | type: GestureType                                                            | void             | 设置overlay背景颜色，默认#a6000000    |
+  | setGestureType      | size: number                                                                 | void             | 设置当前CcPlayerView的手势类型        |
+  | setGesturePercent   | percent: number                                                              | void             | 设置当前CcPlayerView的手势进度值      |
+  | handleGestureAction | uiContext: UIContext, type: GestureType, percent: number, isTouchUp: boolean | void             | 手势默认处理                          |
+  | setVisible          | visible: boolean                                                             | void             | 设置当前Overlay的显示状态             |
 
 - CcControllerOverlay 媒体播放控制UI面板
   | 接口                   | 参数                       | 返回值           | 说明                                                        |
