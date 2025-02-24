@@ -1,6 +1,6 @@
 import { timeToString } from '../common/Extentions'
 import { GestureType } from '../config/GestureType'
-import { BuilderNode, FrameNode, UIContext } from '@kit.ArkUI'
+import { BuilderNode, FrameNode, UIContext, window } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
 import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'
 
@@ -12,6 +12,9 @@ import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'
  */
 export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig> {
     private overlayView: WrappedBuilder<[GestureOverlayConfig]> = wrapBuilder(overlay)
+    private player: CcPlayer
+    private playerWindow?: window.Window
+    private uiContext?: UIContext
 
     /**
      * The default constructor.
@@ -19,11 +22,13 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
      */
     constructor(player: CcPlayer) {
         super()
+        this.player = player
         this.config = new GestureOverlayConfig(player)
     }
 
     makeNode(uiContext: UIContext): FrameNode | null {
         if (!this.builderNode) {
+            this.uiContext = this.uiContext
             this.builderNode = new BuilderNode(uiContext)
             this.builderNode.build(this.overlayView, this.config!)
         }
@@ -82,6 +87,34 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
         if (this.config!.gesturePercent != percent) {
             this.config!.gesturePercent = percent
             this.builderNode?.update(this.config!)
+        }
+    }
+
+    /**
+     * Handle the gesture action to control the player.
+     * @param type The gesture type.{@link GestureType}.
+     * @param percent The gesture percent value.
+     * @param isTouchUp The touch state of touch event.
+     */
+    handleGestureAction(type: GestureType, percent: number, isTouchUp: boolean) {
+        this.setGestureType(type)
+        this.setGesturePercent(percent)
+        switch (type) {
+            case GestureType.PROGRESS:
+                const seekPosition = this.player.getDuration() * percent
+                if (isTouchUp) {
+                    this.player.seekTo(seekPosition)
+                }
+                break
+            case GestureType.BRIGHTNESS:
+                if (this.playerWindow == undefined) {
+                    this.playerWindow = window.findWindow(this.uiContext!.getWindowName())
+                }
+                this.playerWindow?.setWindowBrightness(percent)
+                break
+            case GestureType.VOLUME:
+                this.player.setVolume(percent)
+                break
         }
     }
 }

@@ -25,7 +25,6 @@ export struct CcPlayerViewSample {
     @State ratio: AspectRatio = AspectRatio.AUTO
     @State ratioText: string = "AUTO"
     @State totalDuration: number = 0
-    @State seekPosition: number = 0
     private playIndex: number = 0
     private preparedListener = () => {
         this.totalDuration = this.player.getDuration()
@@ -81,12 +80,13 @@ export struct CcPlayerViewSample {
         this.player.release()
     }
 
+    // 用户自己手动处理手势事件
     private handleGestureAction(type: GestureType, percent: number, isTouchUp: boolean) {
         switch (type) {
             case GestureType.PROGRESS:
-                this.seekPosition = this.totalDuration * percent
+                let seekPosition = this.totalDuration * percent
                 if (isTouchUp) {
-                    this.player.seekTo(this.seekPosition)
+                    this.player.seekTo(seekPosition)
                 }
                 break
             case GestureType.BRIGHTNESS:
@@ -108,10 +108,12 @@ export struct CcPlayerViewSample {
                         asRatio: this.ratio,
                         renderType: XComponentType.SURFACE,
                         onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
-                            this.gestureOverlay.setGestureType(type)
-                            this.gestureOverlay.setGesturePercent(percent)
-                            // handle the gesture actions
-                            this.handleGestureAction(type, percent, isTouchUp)
+                            // 用户自己手动处理手势事件
+                            // this.gestureOverlay.setGestureType(type)
+                            // this.gestureOverlay.setGesturePercent(percent)
+                            // this.handleGestureAction(type, percent, isTouchUp)
+                            // Overlay自动处理手势事件
+                            this.gestureOverlay.handleGestureAction(type, percent, isTouchUp)
                         },
                         onGestureUIListener: (visible) => {
                             this.gestureOverlay.setVisible(visible)
