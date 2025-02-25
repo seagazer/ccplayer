@@ -277,7 +277,7 @@ struct PlayerViewPage {
                         this.handleGestureAction() //处理事件
 
                         // 方式2：GestureOverlay自动处理手势事件
-                        this.gestureOverlay.handleGestureAction(type, percent, isTouchUp)
+                        this.gestureOverlay.handleGestureAction(this.getUIContext(), type, percent, isTouchUp)
                     },
                     onGestureUIListener: (visible: boolean) => {
                         // 刷新手势UI面板参数
