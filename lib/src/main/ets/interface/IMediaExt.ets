@@ -35,8 +35,9 @@ export interface IMediaExt {
     /**
      * Set background play or not.
      * @param enable True to start background play, false to stop background play.
+     * @returns True set success, false set failed.
      */
-    setBackgroundPlayEnable(enable: boolean): void
+    setBackgroundPlayEnable(enable: boolean): Promise<boolean>
 
     /**
      * Add a listener to observe the media source changed.

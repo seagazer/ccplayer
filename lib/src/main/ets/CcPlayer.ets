@@ -325,26 +325,28 @@ export class CcPlayer implements IPlayer, IMediaExt {
         this.avSessionManager!.removeAvSessionCallback(callback)
     }
 
-    setBackgroundPlayEnable(enable: boolean) {
+    async setBackgroundPlayEnable(enable: boolean) {
         if (!this.context) {
             MediaLogger.attentionW(TAG, "The context is null.")
-            return
+            return false
         }
         if (!this.agentInfo) {
             MediaLogger.attentionW(TAG, "The agent is null, you should call {@Link bindAvSession} first.")
-            return
+            return false
         }
         if (this.isBackgroundPlay == enable) {
-            return
+            return false
         }
+        let result = false
         if (enable) {
             MediaLogger.d(TAG, "start background play")
-            BackgroundPlayManager.startBackground(this.context, this.agentInfo)
+            result = await BackgroundPlayManager.startBackground(this.context, this.agentInfo)
         } else {
             MediaLogger.d(TAG, "stop background play")
-            BackgroundPlayManager.stopBackground(this.context)
+            result = await BackgroundPlayManager.stopBackground(this.context)
         }
         this.isBackgroundPlay = enable
+        return result
     }
 
     addOnMediaChangedListener(listener: (source: MediaSource) => void) {

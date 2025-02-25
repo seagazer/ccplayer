@@ -39,15 +39,22 @@
         "name": "ohos.permission.READ_MEDIA",
         "reason": "$string:MainAbility_desc",
         "usedScene": {
-          "abilities": ["MainAbility"]
+          "abilities": [
+            "MainAbility"
+          ]
         }
       },
       {
         "name": "ohos.permission.WRITE_MEDIA",
         "reason": "$string:MainAbility_desc",
         "usedScene": {
-          "abilities": ["MainAbility"]
+          "abilities": [
+            "MainAbility"
+          ]
         }
+      },
+      {
+        "name": "ohos.permission.KEEP_BACKGROUND_RUNNING"
       },
       {
         "name": "ohos.permission.INTERNET"

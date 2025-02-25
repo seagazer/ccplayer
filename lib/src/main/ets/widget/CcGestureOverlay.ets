@@ -3,7 +3,6 @@ import { GestureType } from '../config/GestureType'
 import { BuilderNode, FrameNode, UIContext, window } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
 import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'
-import { MediaLogger } from '../common/MediaLogger'
 
 /**
  * The default overlay for gesture actions of CcPlayerView.
@@ -110,7 +109,6 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
                 if (this.playerWindow == undefined) {
                     this.playerWindow = window.findWindow(uiContext.getWindowName())
                 }
-                MediaLogger.attentionW('abc', '--------' + this.playerWindow + ", " + uiContext)
                 this.playerWindow?.setWindowBrightness(percent)
                 break
             case GestureType.VOLUME:

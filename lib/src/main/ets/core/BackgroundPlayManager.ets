@@ -1,6 +1,9 @@
 import wantAgent from '@ohos.app.ability.wantAgent';
 import backgroundTaskManager from '@ohos.resourceschedule.backgroundTaskManager';
 import common from '@ohos.app.ability.common';
+import { MediaLogger } from '../common/MediaLogger';
+
+const TAG = '[BackgroundPlayManager]'
 
 /**
  * The manager to handle background play.
@@ -10,11 +13,23 @@ import common from '@ohos.app.ability.common';
  */
 export class BackgroundPlayManager {
     static async startBackground(context: common.BaseContext, agentInfo: wantAgent.WantAgentInfo) {
-        const agent = await wantAgent.getWantAgent(agentInfo)
-        backgroundTaskManager.startBackgroundRunning(context, backgroundTaskManager.BackgroundMode.AUDIO_PLAYBACK, agent)
+        if (canIUse('SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask')) {
+            const agent = await wantAgent.getWantAgent(agentInfo)
+            await backgroundTaskManager.startBackgroundRunning(context, backgroundTaskManager.BackgroundMode.AUDIO_PLAYBACK, agent)
+            return true
+        } else {
+            MediaLogger.w(TAG, 'current device not support backgroundTaskManager')
+            return false
+        }
     }
 
     static async stopBackground(context: common.BaseContext) {
-        backgroundTaskManager.stopBackgroundRunning(context)
+        if (canIUse('SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask')) {
+            await backgroundTaskManager.stopBackgroundRunning(context)
+            return true
+        } else {
+            MediaLogger.w(TAG, 'current device not support backgroundTaskManager')
+            return false
+        }
     }
 }

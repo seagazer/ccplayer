@@ -86,7 +86,7 @@ ohpm install @seagazer/ccplayer
   | bindAvSession                     | context:BaseContext, sessioName:string, type:AVSessionType, agentInfo:WantAgentInfo | void                    | 绑定播控中心                                                  |
   | addAvSessionCallback              | callback: AvSessionCallback                                                         | void                    | 添加播控中心操作事件监听                                      |
   | removeAvSessionCallback           | callback: AvSessionCallback                                                         | void                    | 移除播控中心操作事件监听                                      |
-  | setBackgroundPlayEnable           | backgroundPlay: boolean                                                             | void                    | 设置是否开启后台长时播放                                      |
+  | setBackgroundPlayEnable           | backgroundPlay: boolean                                                             | Promise\<boolean>                    | 设置是否开启后台长时播放                                      |
   | setXComponentController           | controller: XComponentController                                                    | void                    | 设置xComponent的controller，pip必须设置                       |
   | getXComponentController           | void                                                                                | XComponentController    | 返回xComponent的controller                                    |
   | enablePip                         | pipType: PiPWindow.PiPTemplateType                                                  | PiPWindow.PiPController | 启用pip画中画能力                                             |
