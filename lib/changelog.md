@@ -1,3 +1,9 @@
+# 1.1.7
+
+- 项目结构重构优化
+- CcPlayer新增addOnPipStateChangedListener(/remove)监听pip状态接口
+- UI组件性能优化
+
 # 1.1.6
 
 - 新增CcPlayerViewV2组件，提供给状态管理框架V2版本应用使用

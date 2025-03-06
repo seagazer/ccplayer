@@ -16,7 +16,7 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 提供默认标题面板组件CcTitleBarOverlay
 - 提供默认加载面板组件CcLoadingOverlay
 - 提供播放器实例缓存池，提供资源管理及复用能力
-- 支持接入自定义播放业务(自定义类需要实现IPlayer接口)
+- 支持接入自定义播放业务(切换播放内核，自定义类需要实现IPlayer接口)
 - 支持获取本地视频文件缩略图
 
 ## 示例效果
@@ -86,13 +86,15 @@ ohpm install @seagazer/ccplayer
   | bindAvSession                     | context:BaseContext, sessioName:string, type:AVSessionType, agentInfo:WantAgentInfo | void                    | 绑定播控中心                                                  |
   | addAvSessionCallback              | callback: AvSessionCallback                                                         | void                    | 添加播控中心操作事件监听                                      |
   | removeAvSessionCallback           | callback: AvSessionCallback                                                         | void                    | 移除播控中心操作事件监听                                      |
-  | setBackgroundPlayEnable           | backgroundPlay: boolean                                                             | Promise\<boolean>                    | 设置是否开启后台长时播放                                      |
+  | setBackgroundPlayEnable           | backgroundPlay: boolean                                                             | Promise\<boolean>       | 设置是否开启后台长时播放                                      |
   | setXComponentController           | controller: XComponentController                                                    | void                    | 设置xComponent的controller，pip必须设置                       |
   | getXComponentController           | void                                                                                | XComponentController    | 返回xComponent的controller                                    |
   | enablePip                         | pipType: PiPWindow.PiPTemplateType                                                  | PiPWindow.PiPController | 启用pip画中画能力                                             |
   | disablePip                        | void                                                                                | void                    | 禁用pip画中画能力                                             |
   | startPip                          | void                                                                                | void                    | 开启pip画中画                                                 |
   | stopPip                           | void                                                                                | void                    | 关闭pip画中画                                                 |
+  | addOnPipStateChangedListener      | listener: (state: PiPWindow.PiPState, reason: string) => void                       | void                    | 添加pip状态监听                                               |
+  | removeOnPipStateChangedListener   | listener: (state: PiPWindow.PiPState, reason: string) => void                       | void                    | 移除pip状态监听                                               |
   | getSnapshotFromFile               | filePath: string, width: number, height: number, timestamp: number                  | Promise\<PixelMap>      | 获取视频文件缩略图                                            |
   | getSnapshotFromAssets             | rawPath: string, width: number, height: number, timestamp: number                   | Promise\<PixelMap>      | 获取视频文件缩略图                                            |
   | setKeepScreenOn                   | uiContext: UIContext, keepScreenOn: boolean                                         | Promise\<boolean>       | 设置屏幕是否常亮                                              |
