@@ -15,7 +15,7 @@ import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { CButton } from './CButton';
-import { window } from '@kit.ArkUI';
+import { PiPWindow, window } from '@kit.ArkUI';
 
 const TAG = '[CcPlayerViewSampleV2]'
 
@@ -37,6 +37,9 @@ export struct CcPlayerViewSampleV2 {
         Logger.e(TAG, "play error= " + code + ", " + message)
         toast("Play error= " + message)
     }
+    private pipStateChangedListener = (state: PiPWindow.PiPState, reason: string) => {
+        Logger.d(TAG, "pip state= " + state + ', reason= ' + reason)
+    }
     private loadingOverlay: CcLoadingOverlay = new CcLoadingOverlay(this.player)
     private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
     private controllerOverlay: CcControllerOverlay = new CcControllerOverlay(this.player)
@@ -46,6 +49,7 @@ export struct CcPlayerViewSampleV2 {
 
     aboutToAppear(): void {
         this.player.setKeepScreenOn(this.getUIContext(), true)
+        this.player.addOnPipStateChangedListener(this.pipStateChangedListener)
         this.playerWindow = window.findWindow(this.getUIContext().getWindowName())
         // set the gesture overlay ui config
         this.gestureOverlay.setTextSize(18)
@@ -73,11 +77,13 @@ export struct CcPlayerViewSampleV2 {
     }
 
     aboutToDisappear(): void {
+        this.player.setKeepScreenOn(this.getUIContext(), false)
         clearTimeout(this.controllerHideTimer)
         this.player
             .removeOnPreparedListener(this.preparedListener)
             .removeOnStateChangedListener(this.stateChangedListener)
             .removeOnErrorListener(this.errorListener)
+        this.player.removeOnPipStateChangedListener(this.pipStateChangedListener)
         this.player.release()
     }
 
