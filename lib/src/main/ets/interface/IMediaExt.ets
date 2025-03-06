@@ -1,8 +1,4 @@
-import { avSession } from '@kit.AVSessionKit';
-import { common, wantAgent } from '@kit.AbilityKit';
-import { AvSessionCallback } from '../core/AvSessionCallback';
 import { MediaSource } from '../data/MediaSource';
-import { PiPWindow } from '@kit.ArkUI';
 
 /**
  *
@@ -10,27 +6,6 @@ import { PiPWindow } from '@kit.ArkUI';
  * Date: 2025/2/19
  */
 export interface IMediaExt {
-
-    /**
-     * Bind av session.
-     * @param context The context of app.
-     * @param sessionName The name of av session.
-     * @param type The type of av session.{@link avSession.AVSessionType}
-     * @param agentInfo The agent info of av session.{@link wantAgent.WantAgentInfo}
-     */
-    bindAvSession(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType, agentInfo: wantAgent.WantAgentInfo): Promise<void>
-
-    /**
-     * Add a callback {@link AvSessionCallback} to observe the play action like play next and play previous.
-     * @param callback The callback to observe the play action.
-     */
-    addAvSessionCallback(callback: AvSessionCallback): void
-
-    /**
-     * Remove a callback {@link AvSessionCallback} to observe the play action like play next and play previous.
-     * @param callback The callback to observe the play action.
-     */
-    removeAvSessionCallback(callback: AvSessionCallback): void
 
     /**
      * Set background play or not.
@@ -62,28 +37,6 @@ export interface IMediaExt {
      * @returns The controller of XComponent, return undefined if not set.
      */
     getXComponentController(): XComponentController | undefined
-
-    /**
-     * Set the pip enable, must call #setXComponentController first.
-     * @param pipType The type{@link PiPWindow.PiPTemplateType} of pip window, default is VIDEO_PLAY.
-     * @returns The pipController {@link PiPWindow.PiPController} if enable success, return undefined if enable failed or not support pip.
-     */
-    enablePip(pipType: PiPWindow.PiPTemplateType): Promise<PiPWindow.PiPController | undefined>
-
-    /**
-     * Set the pip disable.
-     */
-    disablePip(): Promise<void>
-
-    /**
-     * Start the pip.
-     */
-    startPip(): Promise<void>
-
-    /**
-     * Stop the pip.
-     */
-    stopPip(): Promise<void>
 
     /**
      * Get the snapshot of the media, only support video.

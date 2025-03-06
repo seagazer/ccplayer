@@ -1,5 +1,5 @@
 import { timeToString } from '../common/Extentions'
-import { GestureType } from '../config/GestureType'
+import { GestureType } from '../view/config/GestureType'
 import { BuilderNode, FrameNode, UIContext, window } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
 import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'

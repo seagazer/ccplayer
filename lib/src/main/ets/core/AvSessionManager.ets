@@ -2,11 +2,12 @@ import avSession from '@ohos.multimedia.avsession';
 import common from '@ohos.app.ability.common';
 import { IPlayer } from '../interface/IPlayer';
 import { wantAgent } from '@kit.AbilityKit';
-import { PlayerState } from '../config/PlayerState';
+import { PlayerState } from './config/PlayerState';
 import { MediaSource } from '../data/MediaSource';
 import { MediaLogger } from '../common/MediaLogger';
 import json from '@ohos.util.json';
-import { AvSessionCallback } from './AvSessionCallback';
+import { AvSessionCallback } from './config/AvSessionCallback';
+import { IAvSession } from '../interface/IAvSession';
 
 const TAG = "[AvSessionManager]"
 
@@ -16,7 +17,7 @@ const TAG = "[AvSessionManager]"
  * Author: Seagazer
  * Date: 2024/10/14
  */
-export class AvSessionManager {
+export class AvSessionManager implements IAvSession {
     private avSession?: avSession.AVSession = undefined
     private player: IPlayer
     private mediaSource?: MediaSource = undefined
@@ -26,6 +27,17 @@ export class AvSessionManager {
         this.player = player
         this.player.addOnStateChangedListener(this.stateChangedListener)
         this.player.addOnSeekChangedListener(this.seekChangedListener)
+    }
+
+    async bindAvSession(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType,
+        agentInfo: wantAgent.WantAgentInfo) {
+        try {
+            await this.create(context, sessionName, type)
+            await this.setLaunchInfo(agentInfo)
+            await this.bind()
+        } catch (e) {
+            MediaLogger.attentionE(TAG, "bindAvSession error: " + JSON.stringify(e))
+        }
     }
 
     private stateChangedListener = (state: PlayerState) => {

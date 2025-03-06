@@ -1,8 +1,8 @@
 import { MediaLogger } from '../common/MediaLogger';
 import { CcPlayer } from '../CcPlayer';
-import { AspectRatio } from '../config/AspectRatio';
-import { GestureType } from '../config/GestureType';
-import { GestureAreaConfig } from '../config/GestureAreaConfig';
+import { AspectRatio } from './config/AspectRatio';
+import { GestureType } from './config/GestureType';
+import { GestureAreaConfig } from './config/GestureAreaConfig';
 
 const TAG = "[CcPlayerViewV2]"
 

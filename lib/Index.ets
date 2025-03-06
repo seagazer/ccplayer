@@ -2,29 +2,29 @@ export { CcPlayer } from './src/main/ets/CcPlayer'
 
 export { CcPlayerPool } from './src/main/ets/CcPlayerPool'
 
-export { CcPlayerView } from './src/main/ets/widget/CcPlayerView'
+export { CcPlayerView } from './src/main/ets/view/CcPlayerView'
 
-export { CcPlayerViewV2 } from './src/main/ets/widget/CcPlayerViewV2'
+export { CcPlayerViewV2 } from './src/main/ets/view/CcPlayerViewV2'
 
-export { CcGestureOverlay } from './src/main/ets/widget/CcGestureOverlay'
+export { CcGestureOverlay } from './src/main/ets/overlay/CcGestureOverlay'
 
-export { CcTitleBarOverlay } from './src/main/ets/widget/CcTitleBarOverlay'
+export { CcTitleBarOverlay } from './src/main/ets/overlay/CcTitleBarOverlay'
 
-export { CcControllerOverlay } from './src/main/ets/widget/CcControllerOverlay'
+export { CcControllerOverlay } from './src/main/ets/overlay/CcControllerOverlay'
 
-export { CcLoadingOverlay } from './src/main/ets/widget/CcLoadingOverlay'
+export { CcLoadingOverlay } from './src/main/ets/overlay/CcLoadingOverlay'
 
-export { GestureType } from './src/main/ets/config/GestureType'
+export { GestureType } from './src/main/ets/view/config/GestureType'
 
-export { AudioFocusEvent } from './src/main/ets/config/AudioFocusEvent'
+export { AudioFocusEvent } from './src/main/ets/core/config/AudioFocusEvent'
 
-export { AvSessionCallback } from './src/main/ets/core/AvSessionCallback'
+export { AvSessionCallback } from './src/main/ets/core/config/AvSessionCallback'
 
-export { PlayerState } from './src/main/ets/config/PlayerState'
+export { PlayerState } from './src/main/ets/core/config/PlayerState'
 
-export { GestureAreaConfig } from './src/main/ets/config/GestureAreaConfig'
+export { GestureAreaConfig } from './src/main/ets/view/config/GestureAreaConfig'
 
-export { AspectRatio } from './src/main/ets/config/AspectRatio'
+export { AspectRatio } from './src/main/ets/view/config/AspectRatio'
 
 export { MediaSourceFactory } from './src/main/ets/data/MediaSourceFactory'
 

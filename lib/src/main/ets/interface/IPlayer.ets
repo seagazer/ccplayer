@@ -1,7 +1,7 @@
 import media from '@ohos.multimedia.media';
 import { MediaSource } from '../data/MediaSource';
-import { PlayerState } from '../config/PlayerState';
-import { AudioFocusEvent } from '../config/AudioFocusEvent';
+import { PlayerState } from '../core/config/PlayerState';
+import { AudioFocusEvent } from '../core/config/AudioFocusEvent';
 
 
 /**

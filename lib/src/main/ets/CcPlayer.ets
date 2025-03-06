@@ -3,17 +3,20 @@ import media from '@ohos.multimedia.media';
 import { IPlayer } from './interface/IPlayer';
 import { AvPlayerImpl } from './core/AvPlayerImpl';
 import { MediaSource } from './data/MediaSource';
-import { PlayerState } from './config/PlayerState';
+import { PlayerState } from './core/config/PlayerState';
 import { MediaLogger } from './common/MediaLogger';
 import common from '@ohos.app.ability.common';
 import { AvSessionManager } from './core/AvSessionManager';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { BackgroundPlayManager } from './core/BackgroundPlayManager';
-import { AvSessionCallback } from './core/AvSessionCallback';
+import { AvSessionCallback } from './core/config/AvSessionCallback';
 import { PiPWindow, window } from '@kit.ArkUI';
-import { AudioFocusEvent } from './config/AudioFocusEvent';
+import { AudioFocusEvent } from './core/config/AudioFocusEvent';
 import { IMediaExt } from './interface/IMediaExt';
 import { fileIo } from '@kit.CoreFileKit';
+import { IAvSession } from './interface/IAvSession';
+import { IPip } from './interface/IPip';
+import { PipManager } from './core/PipManager';
 
 const TAG = '[CcPlayer]'
 
@@ -23,7 +26,7 @@ const TAG = '[CcPlayer]'
  * Author: Seagazer
  * Date: 2022/8/17
  */
-export class CcPlayer implements IPlayer, IMediaExt {
+export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
     private player: IPlayer
     private context: Context
     private isBackgroundPlay = false
@@ -31,23 +34,7 @@ export class CcPlayer implements IPlayer, IMediaExt {
     private agentInfo?: wantAgent.WantAgentInfo = undefined
     private onMediaChangedListeners: Array<(source: MediaSource) => void> = new Array()
     private xComponentController?: XComponentController = undefined
-    private isControllerChanged: boolean = false
-    private pipController?: PiPWindow.PiPController = undefined
-    private pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY
-    private defaultStateChangedListener = (state: PlayerState) => {
-        if (state == PlayerState.STATE_STARTED) {
-            this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PLAY)
-        } else {
-            this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PAUSE)
-        }
-    }
-    private defaultVideoSizeChangedListener = (w: number, h: number) => {
-        if (w <= 0 || h <= 0) {
-            MediaLogger.attentionE(TAG, 'The size of video is illegal value, not update the pip size!')
-            return
-        }
-        this.pipController?.updateContentSize(w, h)
-    }
+    private pipManager?: PipManager = undefined
     private defaultAudioFocusChangedListener: (event: AudioFocusEvent) => void = (event: AudioFocusEvent) => {
         switch (event) {
             case AudioFocusEvent.AUDIO_FOCUS_LOST:
@@ -75,8 +62,6 @@ export class CcPlayer implements IPlayer, IMediaExt {
             this.avSessionManager.release()
         }
         this.avSessionManager = new AvSessionManager(this.player)
-        this.player.addOnStateChangedListener(this.defaultStateChangedListener)
-        this.player.addOnVideoSizeChangedListener(this.defaultVideoSizeChangedListener)
         this.player.addOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
     }
 
@@ -142,8 +127,6 @@ export class CcPlayer implements IPlayer, IMediaExt {
         if (state == PlayerState.STATE_NOT_INIT) {
             return
         }
-        this.player.removeOnStateChangedListener(this.defaultStateChangedListener)
-        this.player.removeOnVideoSizeChangedListener(this.defaultVideoSizeChangedListener)
         this.player.removeOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
         this.player.release()
     }
@@ -308,13 +291,7 @@ export class CcPlayer implements IPlayer, IMediaExt {
     async bindAvSession(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType,
         agentInfo: wantAgent.WantAgentInfo) {
         this.agentInfo = agentInfo
-        try {
-            await this.avSessionManager!.create(context, sessionName, type)
-            await this.avSessionManager!.setLaunchInfo(agentInfo)
-            await this.avSessionManager!.bind()
-        } catch (e) {
-            MediaLogger.attentionE(TAG, "bindAvSession error: " + JSON.stringify(e))
-        }
+        this.avSessionManager!.bindAvSession(context, sessionName, type, agentInfo)
     }
 
     addAvSessionCallback(callback: AvSessionCallback) {
@@ -364,7 +341,7 @@ export class CcPlayer implements IPlayer, IMediaExt {
         if (this.xComponentController != controller) {
             MediaLogger.d(TAG, "set xComponent controller= " + controller)
             this.xComponentController = controller
-            this.isControllerChanged = true
+            this.pipManager?.notifyControllerChanged()
         }
     }
 
@@ -372,81 +349,40 @@ export class CcPlayer implements IPlayer, IMediaExt {
         return this.xComponentController
     }
 
-    async enablePip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY): Promise<PiPWindow.PiPController | undefined> {
-        if (!PiPWindow.isPiPEnabled()) {
-            MediaLogger.attentionW(TAG, "The platform is not support pip mode.")
-            return undefined
+    private checkPipManagerNotNull() {
+        if (!this.pipManager) {
+            this.pipManager = new PipManager(this, this.context)
         }
-        if (!this.xComponentController) {
-            MediaLogger.attentionE(TAG, "The xComponentController is null, must call #setXComponentController first.")
-            return undefined
-        }
-        if (this.pipController) {
-            MediaLogger.attentionW(TAG, "The pip is enabled, can not enable again!")
-            return this.pipController
-        }
-        this.pipType = pipType
-        this.pipController = await this.createPipController()
-        MediaLogger.d(TAG, "enable pip")
-        return this.pipController
+    }
+
+    async enablePip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY) {
+        this.checkPipManagerNotNull()
+        await this.pipManager!.enablePip(pipType)
     }
 
     async disablePip() {
-        if (this.pipController) {
-            MediaLogger.d(TAG, "disable pip")
-            await this.stopPip()
-            this.pipController.off("controlPanelActionEvent")
-        }
+        this.checkPipManagerNotNull()
+        await this.pipManager!.disablePip()
     }
 
     async startPip() {
-        if (!this.pipController) {
-            return
-        }
-        if (this.isControllerChanged) {
-            this.pipController = await this.createPipController();
-        }
-        MediaLogger.d(TAG, "start pip")
-        await this.pipController.startPiP()
-    }
-
-    private readonly pipActionEventListener = (event: PiPWindow.PiPActionEventType, status?: number) => {
-        switch (event) {
-            case "playbackStateChanged":
-                if (status == 0) {
-                    this.player.pause();
-                } else {
-                    this.player.start();
-                }
-                break;
-        }
-    }
-
-    private async createPipController(): Promise<PiPWindow.PiPController> {
-        const pipController = await PiPWindow.create({
-            context: this.context,
-            componentController: this.xComponentController,
-            templateType: this.pipType
-        });
-        this.isControllerChanged = false;
-        pipController.on("controlPanelActionEvent", this.pipActionEventListener)
-        MediaLogger.d(TAG, "create pip controller success")
-        return pipController
+        this.checkPipManagerNotNull()
+        await this.pipManager!.startPip()
     }
 
     async stopPip() {
-        if (!PiPWindow.isPiPEnabled()) {
-            MediaLogger.attentionW(TAG, "The platform is not support pip mode.")
-            return
-        }
-        if (!this.xComponentController) {
-            MediaLogger.attentionE(TAG, "The xComponentController is null, must call #setXComponentController first.")
-            return
-        }
-        if (this.pipController) {
-            MediaLogger.d(TAG, "stop pip")
-            await this.pipController.stopPiP()
-        }
+        this.checkPipManagerNotNull()
+        await this.pipManager!.stopPip()
+    }
+
+    addOnPipStateChangedListener(listener: (state: PiPWindow.PiPState, reason: string) => void): void {
+        this.checkPipManagerNotNull()
+        this.pipManager!.addOnPipStateChangedListener(listener)
+    }
+
+    removeOnPipStateChangedListener(listener: (state: PiPWindow.PiPState, reason: string) => void): void {
+        this.checkPipManagerNotNull()
+        this.pipManager!.removeOnPipStateChangedListener(listener)
     }
 
     async getSnapshotFromFile(filePath: string, width: number, height: number, timestamp: number): Promise<PixelMap | undefined> {
