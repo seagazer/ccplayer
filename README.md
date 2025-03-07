@@ -59,7 +59,7 @@ ohpm install @seagazer/ccplayer
   | getDuration                       | void                                                                                | number                  | 获取媒体资源的总时长                                          |
   | getCurrentPosition                | void                                                                                | number                  | 获取当前播放时长                                              |
   | getPlayerState                    | void                                                                                | PlayerState             | 获取当前播放状态                                              |
-  | getSystemPlayer                   | void                                                                                | AVPlayer                | 获取当前系统播放器实例                                        |
+  | getSystemPlayer                   | void                                                                                | AVPlayer \| IPlayer               | 获取当前系统播放器实例                                        |
   | setSurface                        | surfaceId: string                                                                   | void                    | 绑定 surafce(仅媒体类型为视频时有效)                          |
   | addOnPreparedListener             | listener: () => void                                                                | IPlayer                 | 添加媒体资源 prepare 状态监听                                 |
   | removeOnPreparedListener          | listener: () => void                                                                | IPlayer                 | 移除媒体资源 preapare 状态监听                                |

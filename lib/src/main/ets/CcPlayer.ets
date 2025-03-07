@@ -183,7 +183,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
         return this.player.getMediaSource()
     }
 
-    getSystemPlayer(): media.AVPlayer {
+    getSystemPlayer(): media.AVPlayer | IPlayer {
         return this.player.getSystemPlayer()
     }
 
