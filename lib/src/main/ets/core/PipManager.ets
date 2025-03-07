@@ -5,6 +5,7 @@ import { CcPlayer } from '../CcPlayer';
 import { PlayerState } from './config/PlayerState';
 
 /**
+ * The manager to handle pip mode.
  *
  * Author: Seagazer
  * Date: 2025/3/6
@@ -43,6 +44,7 @@ export class PipManager implements IPip {
                 break;
         }
     }
+    private pipStateChangedListeners: Array<(state: PiPWindow.PiPState, reason: string) => void> = []
 
     constructor(player: CcPlayer, context: Context) {
         this.player = player
@@ -54,21 +56,6 @@ export class PipManager implements IPip {
      */
     notifyControllerChanged() {
         this.isControllerChanged = true
-    }
-
-    private pipStateChangedListeners: Array<(state: PiPWindow.PiPState, reason: string) => void> = []
-
-    addOnPipStateChangedListener(listener: (state: PiPWindow.PiPState, reason: string) => void) {
-        if (this.pipStateChangedListeners.indexOf(listener) < 0) {
-            this.pipStateChangedListeners.push(listener)
-        }
-    }
-
-    removeOnPipStateChangedListener(listener: (state: PiPWindow.PiPState, reason: string) => void) {
-        const index = this.pipStateChangedListeners.indexOf(listener)
-        if (index >= 0) {
-            this.pipStateChangedListeners.splice(index, 1)
-        }
     }
 
     async enablePip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY): Promise<void> {
@@ -142,6 +129,19 @@ export class PipManager implements IPip {
             this.player.removeOnStateChangedListener(this.defaultStateChangedListener)
             this.player.removeOnVideoSizeChangedListener(this.defaultVideoSizeChangedListener)
             await this.pipController.stopPiP()
+        }
+    }
+
+    addOnPipStateChangedListener(listener: (state: PiPWindow.PiPState, reason: string) => void) {
+        if (this.pipStateChangedListeners.indexOf(listener) < 0) {
+            this.pipStateChangedListeners.push(listener)
+        }
+    }
+
+    removeOnPipStateChangedListener(listener: (state: PiPWindow.PiPState, reason: string) => void) {
+        const index = this.pipStateChangedListeners.indexOf(listener)
+        if (index >= 0) {
+            this.pipStateChangedListeners.splice(index, 1)
         }
     }
 }

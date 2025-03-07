@@ -29,17 +29,6 @@ export class AvSessionManager implements IAvSession {
         this.player.addOnSeekChangedListener(this.seekChangedListener)
     }
 
-    async bindAvSession(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType,
-        agentInfo: wantAgent.WantAgentInfo) {
-        try {
-            await this.create(context, sessionName, type)
-            await this.setLaunchInfo(agentInfo)
-            await this.bind()
-        } catch (e) {
-            MediaLogger.attentionE(TAG, "bindAvSession error: " + JSON.stringify(e))
-        }
-    }
-
     private stateChangedListener = (state: PlayerState) => {
         if (this.avSession) {
             const avPlaybackState = this.createAvPlaybackState(state)
@@ -59,17 +48,28 @@ export class AvSessionManager implements IAvSession {
         }
     }
 
-    async create(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType) {
+    private async create(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType) {
         MediaLogger.i(TAG, "create session name= " + sessionName + ", type= " + type)
         this.avSession = await avSession.createAVSession(context, sessionName, type)
         MediaLogger.i(TAG, "create sessionId= " + this.avSession.sessionId)
     }
 
-    async setLaunchInfo(agentInfo: wantAgent.WantAgentInfo) {
+    private async setLaunchInfo(agentInfo: wantAgent.WantAgentInfo) {
         if (this.avSession) {
             MediaLogger.i(TAG, "setup launch app= " + json.stringify(agentInfo))
             let agent = await wantAgent.getWantAgent(agentInfo)
             await this.avSession.setLaunchAbility(agent)
+        }
+    }
+
+    async bindAvSession(context: common.BaseContext, sessionName: string, type: avSession.AVSessionType,
+        agentInfo: wantAgent.WantAgentInfo) {
+        try {
+            await this.create(context, sessionName, type)
+            await this.setLaunchInfo(agentInfo)
+            await this.bind()
+        } catch (e) {
+            MediaLogger.attentionE(TAG, "bindAvSession error: " + JSON.stringify(e))
         }
     }
 
@@ -86,27 +86,6 @@ export class AvSessionManager implements IAvSession {
         this.mediaSource = mediaSource
     }
 
-    private setupMediaInfo() {
-        if (this.avSession && this.mediaSource) {
-            const data: avSession.AVMetadata = {
-                assetId: this.mediaSource.title.toString(),
-                title: this.mediaSource.title,
-                mediaImage: this.mediaSource.cover,
-                duration: this.player.getDuration()
-            }
-            MediaLogger.d(TAG, "set meta data= " + json.stringify(data))
-            this.avSession.setAVMetadata(data)
-        }
-    }
-
-    async bind() {
-        if (this.avSession) {
-            MediaLogger.i(TAG, "bind session")
-            this.setupActionListener()
-            await this.avSession.activate()
-        }
-    }
-
     release() {
         this.callbacks.clear()
         if (this.avSession) {
@@ -121,6 +100,27 @@ export class AvSessionManager implements IAvSession {
         }
         this.player.removeOnStateChangedListener(this.stateChangedListener)
         this.player.removeOnSeekChangedListener(this.seekChangedListener)
+    }
+
+    private setupMediaInfo() {
+        if (this.avSession && this.mediaSource) {
+            const data: avSession.AVMetadata = {
+                assetId: this.mediaSource.title.toString(),
+                title: this.mediaSource.title,
+                mediaImage: this.mediaSource.cover,
+                duration: this.player.getDuration()
+            }
+            MediaLogger.d(TAG, "set meta data= " + json.stringify(data))
+            this.avSession.setAVMetadata(data)
+        }
+    }
+
+    private async bind() {
+        if (this.avSession) {
+            MediaLogger.i(TAG, "bind session")
+            this.setupActionListener()
+            await this.avSession.activate()
+        }
     }
 
     private createAvPlaybackState(state: PlayerState): avSession.AVPlaybackState {

@@ -1,6 +1,7 @@
 import { MediaSource } from '../data/MediaSource';
 
 /**
+ * Define the extensions action of media player.
  *
  * Author: Seagazer
  * Date: 2025/2/19

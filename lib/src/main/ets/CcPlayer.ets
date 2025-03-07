@@ -1,7 +1,7 @@
 import avSession from '@ohos.multimedia.avsession';
 import media from '@ohos.multimedia.media';
 import { IPlayer } from './interface/IPlayer';
-import { AvPlayerImpl } from './core/AvPlayerImpl';
+import { AvPlayerImpl } from './core/impl/AvPlayerImpl';
 import { MediaSource } from './data/MediaSource';
 import { PlayerState } from './core/config/PlayerState';
 import { MediaLogger } from './common/MediaLogger';

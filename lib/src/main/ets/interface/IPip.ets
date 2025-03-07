@@ -1,6 +1,7 @@
 import { PiPWindow } from '@kit.ArkUI'
 
 /**
+ * Define the action of pip mode.
  *
  * Author: Seagazer
  * Date: 2025/3/6

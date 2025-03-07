@@ -223,7 +223,7 @@ export interface IPlayer {
      * Get the instance of system player.
      * @return The instance of system player.
      */
-    getSystemPlayer(): media.AVPlayer
+    getSystemPlayer(): media.AVPlayer | IPlayer
 
     /**
      * Set a surface to render picture for video player.

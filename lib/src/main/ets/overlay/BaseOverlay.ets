@@ -2,6 +2,7 @@ import { CcPlayer } from '../CcPlayer';
 import { BuilderNode, NodeController } from '@kit.ArkUI';
 
 /**
+ * The base class of overlay.
  *
  * Author: Seagazer
  * Date: 2025/2/19

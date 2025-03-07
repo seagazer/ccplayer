@@ -3,6 +3,7 @@ import { common, wantAgent } from "@kit.AbilityKit"
 import { avSession } from "@kit.AVSessionKit"
 
 /**
+ * Define the action of av session.
  *
  * Author: Seagazer
  * Date: 2025/3/6
