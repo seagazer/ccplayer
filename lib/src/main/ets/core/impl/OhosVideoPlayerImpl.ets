@@ -267,8 +267,4 @@ export class OhosVideoPlayerImpl extends BasePlayer {
         }
         return true
     }
-
-    getSystemPlayer(): IPlayer {
-        throw new Error(`The function is not support anyway!`)
-    }
 }

@@ -180,16 +180,5 @@ export class OhosAudioPlayerImpl extends BasePlayer {
         throw new Error(`The audio player not support to bind this surface: ${surfaceId}!`)
     }
 
-    addOnVideoSizeChangedListener(_: (newWidth: number, newHeight: number) => void): IPlayer {
-        throw new Error(`The audio player not support to observe the video size!`)
-    }
-
-    removeOnVideoSizeChangedListener(_: (newWidth: number, newHeight: number) => void): IPlayer {
-        throw new Error(`The audio player not support to observe the video size!`)
-    }
-
-    getSystemPlayer(): IPlayer {
-        throw new Error(`The function is not support anyway!`)
-    }
 }
 

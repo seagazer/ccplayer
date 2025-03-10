@@ -382,7 +382,7 @@ export class AvPlayerImpl implements IPlayer {
         this.curSurfaceId = surfaceId
     }
 
-    getSystemPlayer(): media.AVPlayer {
+    getSystemPlayer(): media.AVPlayer | IPlayer {
         return this.player!
     }
 
