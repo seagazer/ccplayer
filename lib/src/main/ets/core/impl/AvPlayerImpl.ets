@@ -210,6 +210,22 @@ export class AvPlayerImpl implements IPlayer {
                 }
             }
         })
+        this.player!.on("bufferingUpdate", (type: media.BufferingInfoType, value: number) => {
+            switch (type) {
+                case media.BufferingInfoType.BUFFERING_START:
+                    this.changePlayerState(PlayerState.STATE_BUFFER_START)
+                    break
+                case media.BufferingInfoType.BUFFERING_PERCENT:
+                    this.changePlayerState(PlayerState.STATE_BUFFER_UPDATE)
+                    break
+                case media.BufferingInfoType.BUFFERING_END:
+                    this.changePlayerState(PlayerState.STATE_BUFFER_END)
+                    break
+                case media.BufferingInfoType.CACHED_DURATION:
+                    // todo buffer duration
+                    break
+            }
+        })
     }
 
     isPlaying(): boolean {
@@ -333,6 +349,7 @@ export class AvPlayerImpl implements IPlayer {
             this.player.off("volumeChange")
             this.player.off("timeUpdate")
             this.player.off("audioInterrupt")
+            this.player.off("bufferingUpdate")
             this.preparedListeners = []
             this.completedListeners = []
             this.progressChangedListeners = []
