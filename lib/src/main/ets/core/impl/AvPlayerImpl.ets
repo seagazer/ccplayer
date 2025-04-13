@@ -211,6 +211,7 @@ export class AvPlayerImpl implements IPlayer {
             }
         })
         this.player!.on("bufferingUpdate", (type: media.BufferingInfoType, value: number) => {
+            MediaLogger.d(TAG, ">> System callback: bufferingUpdate: " + type + "-" + value)
             switch (type) {
                 case media.BufferingInfoType.BUFFERING_START:
                     this.changePlayerState(PlayerState.STATE_BUFFER_START)

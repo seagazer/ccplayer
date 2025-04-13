@@ -14,6 +14,13 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
     private overlayView: WrappedBuilder<[GestureOverlayConfig]> = wrapBuilder(overlay)
     private player: CcPlayer
     private playerWindow?: window.Window
+    private totalDuration: number = 0
+    private prepareListener = () => {
+        this.totalDuration = this.player.getDuration()
+        if (this.config) {
+            this.config.totalDuration = this.totalDuration
+        }
+    }
 
     /**
      * The default constructor.
@@ -23,6 +30,14 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
         super()
         this.player = player
         this.config = new GestureOverlayConfig(player)
+    }
+
+    aboutToAppear(): void {
+        this.player.addOnPreparedListener(this.prepareListener)
+    }
+
+    aboutToDisappear(): void {
+        this.player.removeOnPreparedListener(this.prepareListener)
     }
 
     makeNode(uiContext: UIContext): FrameNode | null {
@@ -100,7 +115,7 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
         this.setGesturePercent(percent)
         switch (type) {
             case GestureType.PROGRESS:
-                const seekPosition = this.player.getDuration() * percent
+                const seekPosition = this.totalDuration * percent
                 if (isTouchUp) {
                     this.player.seekTo(seekPosition)
                 }
@@ -126,7 +141,7 @@ function overlay(config: GestureOverlayConfig) {
                 SymbolGlyph($r('sys.symbol.fast_forward'))
                     .fontColor([config.textColor])
                     .fontSize(config.textSize + 2)
-                Text(timeToString(config.player.getDuration() * config.gesturePercent) + " / " + timeToString(config.player.getDuration()))
+                Text(timeToString(config.totalDuration * config.gesturePercent) + " / " + timeToString(config.totalDuration))
                     .fontSize(config.textSize)
                     .fontColor(config.textColor)
                     .margin({ left: 8 })
@@ -185,4 +200,5 @@ class GestureOverlayConfig extends BaseOverlayConfig {
     textSize: number = 14
     textColor: ResourceColor = "#ffffffff"
     bgColor: ResourceColor = "#a6000000"
+    totalDuration: number = 0
 }
