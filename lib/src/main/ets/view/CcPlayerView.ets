@@ -264,12 +264,11 @@ export struct CcPlayerView {
         })
         .width('100%')
         .height('100%')
-        .onSizeChange((_, newSize) => {
+        .onAreaChange((_, newSize) => {
             this.viewWidth = newSize.width as number
             this.viewHeight = newSize.height as number
             if (this.viewWidth == 0 || this.viewHeight == 0) {
-                MediaLogger.attentionW(TAG, "The view size is 0.")
-                MediaLogger.attentionE(TAG, "You must set the width and height when create a instance of CcPlayerView!")
+                throw new Error("You must set the width and height when create a instance of CcPlayerView!")
             }
             this.surfaceWidth = this.viewWidth
             this.surfaceHeight = this.viewHeight
