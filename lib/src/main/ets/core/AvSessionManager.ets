@@ -1,6 +1,5 @@
 import avSession from '@ohos.multimedia.avsession';
 import common from '@ohos.app.ability.common';
-import { IPlayer } from '../interface/IPlayer';
 import { wantAgent } from '@kit.AbilityKit';
 import { PlayerState } from './config/PlayerState';
 import { MediaSource } from '../data/MediaSource';
@@ -8,6 +7,7 @@ import { MediaLogger } from '../common/MediaLogger';
 import json from '@ohos.util.json';
 import { AvSessionCallback } from './config/AvSessionCallback';
 import { IAvSession } from '../interface/IAvSession';
+import { CcPlayer } from '../CcPlayer';
 
 const TAG = "[AvSessionManager]"
 
@@ -19,11 +19,11 @@ const TAG = "[AvSessionManager]"
  */
 export class AvSessionManager implements IAvSession {
     private avSession?: avSession.AVSession = undefined
-    private player: IPlayer
+    private player: CcPlayer
     private mediaSource?: MediaSource = undefined
     private callbacks: Set<AvSessionCallback> = new Set()
 
-    constructor(player: IPlayer) {
+    constructor(player: CcPlayer) {
         this.player = player
         this.player.addOnStateChangedListener(this.stateChangedListener)
         this.player.addOnSeekChangedListener(this.seekChangedListener)

@@ -61,7 +61,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
             MediaLogger.attentionW(TAG, "The instance of the player is changed, release the av session and reInit again!")
             this.avSessionManager.release()
         }
-        this.avSessionManager = new AvSessionManager(this.player)
+        this.avSessionManager = new AvSessionManager(this)
         this.player.addOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
     }
 
@@ -70,6 +70,10 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
      * @param player
      */
     public setPlayer(player: IPlayer) {
+        if (this.player) {
+            MediaLogger.attentionW(TAG, "The playImpl is changed, release last instance!")
+            this.player.release()
+        }
         this.player = player
         this.init()
     }

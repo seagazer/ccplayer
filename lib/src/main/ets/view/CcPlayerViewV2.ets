@@ -202,8 +202,8 @@ export struct CcPlayerViewV2 {
     aboutToAppear() {
         MediaLogger.d(TAG, "init, add the listeners")
         this.player!.addOnPreparedListener(this.preparedListener)
-        this.player!.addOnVideoSizeChangedListener(this.videoSizeChangedListener)
-        this.player!.addOnRenderFirstFrameListener(this.renderFirstFrameListener)
+            .addOnVideoSizeChangedListener(this.videoSizeChangedListener)
+            .addOnRenderFirstFrameListener(this.renderFirstFrameListener)
         this.player!.addOnMediaChangedListener(this.mediaChangedListener)
     }
 
@@ -211,8 +211,8 @@ export struct CcPlayerViewV2 {
         MediaLogger.d(TAG, "release, remove the listeners")
         clearTimeout(this.hideControllerTimer)
         this.player!.removeOnPreparedListener(this.preparedListener)
-        this.player!.removeOnVideoSizeChangedListener(this.videoSizeChangedListener)
-        this.player!.removeOnRenderFirstFrameListener(this.renderFirstFrameListener)
+            .removeOnVideoSizeChangedListener(this.videoSizeChangedListener)
+            .removeOnRenderFirstFrameListener(this.renderFirstFrameListener)
         this.player!.removeOnMediaChangedListener(this.mediaChangedListener)
     }
 
@@ -269,8 +269,9 @@ export struct CcPlayerViewV2 {
             this.viewWidth = newSize.width as number
             this.viewHeight = newSize.height as number
             if (this.viewWidth == 0 || this.viewHeight == 0) {
-                MediaLogger.attentionW(TAG, "The view size is 0.")
+                MediaLogger.attentionW(TAG, "The view size is " + JSON.stringify(newSize))
                 MediaLogger.attentionE(TAG, "You must set the width and height when create a instance of CcPlayerView!")
+                return
             }
             this.surfaceWidth = this.viewWidth
             this.surfaceHeight = this.viewHeight
