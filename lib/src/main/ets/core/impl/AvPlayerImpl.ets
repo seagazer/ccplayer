@@ -336,11 +336,17 @@ export class AvPlayerImpl implements IPlayer {
         MediaLogger.d(TAG, ">> start to: " + position)
         this.startPosition = position
         await this.start()
+        if (this.currentState == PlayerState.STATE_BUFFER_UPDATE || this.currentState == PlayerState.STATE_BUFFER_START) {
+            this.isPlayingBeforeBufferState = true
+        }
     }
 
     async pause() {
         MediaLogger.d(TAG, ">> pause")
         await this.player!.pause()
+        if (this.currentState == PlayerState.STATE_BUFFER_UPDATE || this.currentState == PlayerState.STATE_BUFFER_START) {
+            this.isPlayingBeforeBufferState = false
+        }
     }
 
     async stop() {
