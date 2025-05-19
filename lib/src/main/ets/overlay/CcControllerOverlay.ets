@@ -147,6 +147,7 @@ function overlay(config: ControllerOverlayConfig) {
             step: 1000,
         })
             .layoutWeight(1)
+            .enabled(config.totalDuration > 0)
             .trackColor(config.trackColor)
             .selectedColor(config.selectedColor)
             .blockColor(config.blockColor)

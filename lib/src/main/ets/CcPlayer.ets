@@ -79,8 +79,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
     }
 
     start() {
-        let state = this.getPlayerState()
-        if (state == PlayerState.STATE_STARTED) {
+        if (this.isPlaying()) {
             MediaLogger.attentionW(TAG, 'current is playing, not start!')
             return
         }
@@ -88,16 +87,16 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
     }
 
     startTo(position: number) {
-        let state = this.getPlayerState()
-        if (state == PlayerState.STATE_STARTED) {
+        if (this.isPlaying()) {
+            MediaLogger.attentionW(TAG, 'current state is playing, not start!')
             return
         }
         this.player.startTo(position)
     }
 
     pause() {
-        let state = this.getPlayerState()
-        if (state != PlayerState.STATE_STARTED) {
+        if (!this.isPlaying()) {
+            MediaLogger.attentionW(TAG, 'current state is no playing, not pause!')
             return
         }
         this.player.pause()
@@ -137,8 +136,8 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
 
     seekTo(position: number) {
         let state = this.getPlayerState()
-        if (state == PlayerState.STATE_PREPARED || state == PlayerState.STATE_STARTED ||
-            state == PlayerState.STATE_PAUSED || state == PlayerState.STATE_COMPLETED) {
+        if (state != PlayerState.STATE_NOT_INIT && state != PlayerState.STATE_IDLE &&
+            state != PlayerState.STATE_STOPPED && state != PlayerState.STATE_ERROR) {
             this.player.seekTo(position)
         }
     }

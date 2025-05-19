@@ -123,6 +123,7 @@ export struct MusicSample {
                         min: 0,
                         step: 1000,
                     }).layoutWeight(1)
+                        .enabled(this.totalDuration > 0)
                         .onChange((value, mode) => {
                             if (mode == SliderChangeMode.Begin) {
                                 this.isSeeking = true

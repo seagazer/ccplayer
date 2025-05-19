@@ -121,6 +121,7 @@ export struct VideoSample {
                         min: 0,
                         step: 1000,
                     }).layoutWeight(1)
+                        .enabled(this.totalDuration > 0)
                         .onChange((value, mode) => {
                             if (mode == SliderChangeMode.Begin) {
                                 this.isSeeking = true
@@ -150,6 +151,8 @@ export struct VideoSample {
                             this.isLoading = true
                             let src = MediaSourceFactory.createAssets("TestVideo", "video1.mp4",
                                 "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                            src = MediaSourceFactory.createUrl("",
+                                "https://m3u8.girigirilove.com/zijian/oldanime/2025/01/cht/DrStoneScienceFutureCHT/01/playlist.m3u8")
                             this.player.setMediaSource(src, () => {
                                 this.player.start()
                             })

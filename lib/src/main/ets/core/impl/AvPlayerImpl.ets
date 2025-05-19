@@ -211,16 +211,24 @@ export class AvPlayerImpl implements IPlayer {
             }
         })
         this.player!.on("bufferingUpdate", (type: media.BufferingInfoType, value: number) => {
-            MediaLogger.d(TAG, ">> System callback: bufferingUpdate: " + type + "-" + value)
             switch (type) {
                 case media.BufferingInfoType.BUFFERING_START:
+                    this.isPlayingBeforeBufferState = this.isPlaying()
+                    MediaLogger.d(TAG, ">> System callback: BUFFERING_START")
                     this.changePlayerState(PlayerState.STATE_BUFFER_START)
                     break
                 case media.BufferingInfoType.BUFFERING_PERCENT:
+                    MediaLogger.d(TAG, ">> System callback: BUFFERING_PERCENT, value= " + value)
                     this.changePlayerState(PlayerState.STATE_BUFFER_UPDATE)
                     break
                 case media.BufferingInfoType.BUFFERING_END:
+                    MediaLogger.d(TAG, ">> System callback: BUFFERING_END")
                     this.changePlayerState(PlayerState.STATE_BUFFER_END)
+                    if (this.isPlayingBeforeBufferState) {
+                        this.changePlayerState(PlayerState.STATE_STARTED)
+                    } else {
+                        this.changePlayerState(PlayerState.STATE_PAUSED)
+                    }
                     break
                 case media.BufferingInfoType.CACHED_DURATION:
                     // todo buffer duration
@@ -229,8 +237,11 @@ export class AvPlayerImpl implements IPlayer {
         })
     }
 
+    private isPlayingBeforeBufferState: boolean = false
+
     isPlaying(): boolean {
-        return this.currentState == PlayerState.STATE_STARTED
+        return this.currentState == PlayerState.STATE_STARTED || this.currentState == PlayerState.STATE_BUFFER_START
+            || this.currentState == PlayerState.STATE_BUFFER_UPDATE || this.currentState == PlayerState.STATE_BUFFER_END
     }
 
     getPlayerState(): PlayerState {
@@ -239,6 +250,9 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     private changePlayerState(state: PlayerState) {
+        if (this.currentState == state) {
+            return
+        }
         this.currentState = state
         this.stateChangedListeners.forEach((callback) => {
             callback(state)
