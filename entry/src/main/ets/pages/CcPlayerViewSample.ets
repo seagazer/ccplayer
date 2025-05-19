@@ -210,6 +210,8 @@ export struct CcPlayerViewSample {
                                 this.playIndex = 1
                                 let src = MediaSourceFactory.createAssets("TestVideo2", "video2.mp4",
                                     "https://img1.baidu.com/it/u=4039557469,3031542597&fm=253&fmt=auto&app=138&f=JPEG?w=200&h=200")
+                                src = MediaSourceFactory.createUrl("",
+                                    "https://m3u8.girigirilove.com/zijian/oldanime/2025/01/cht/DrStoneScienceFutureCHT/01/playlist.m3u8")
                                 this.player.setMediaSource(src, () => {
                                     // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                     setTimeout(() => {

@@ -1,5 +1,6 @@
 import { BuilderNode } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
+import { PlayerState } from '../core/config/PlayerState'
 import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'
 
 /**
@@ -18,6 +19,15 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
         this.config!.visible = false
         this.invalidate()
     }
+    private stateChangedListener = (state: PlayerState) => {
+        if (state == PlayerState.STATE_BUFFER_START) {
+            this.config!.visible = true
+            this.invalidate()
+        } else if (state == PlayerState.STATE_BUFFER_END) {
+            this.config!.visible = false
+            this.invalidate()
+        }
+    }
 
     /**
      * The default constructor.
@@ -31,11 +41,13 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
     aboutToAppear(): void {
         this.config!.player.addOnPreparedListener(this.preparedListener)
         this.config!.player.addOnRenderFirstFrameListener(this.firstFrameListener)
+        this.config!.player.addOnStateChangedListener(this.stateChangedListener)
     }
 
     aboutToDisappear(): void {
         this.config!.player.removeOnPreparedListener(this.preparedListener)
         this.config!.player.removeOnRenderFirstFrameListener(this.firstFrameListener)
+        this.config!.player.removeOnStateChangedListener(this.stateChangedListener)
     }
 
     makeNode(uiContext: UIContext): FrameNode | null {
@@ -143,6 +155,7 @@ function overlay(config: LoadingOverlayConfig) {
         }
         .backgroundColor(config.bgColor)
         .padding(config.padding)
+        .borderRadius(4)
     }
 }
 
@@ -153,11 +166,11 @@ class LoadingOverlayConfig extends BaseOverlayConfig {
     bgColor: ResourceColor = "#a6000000"
     loadingSize: Length = 56
     loadingColor: ResourceColor = Color.White
-    loadingMargin: Length = 16
+    loadingMargin: Length = 4
     padding: Length | Padding = {
-        left: 16,
-        top: 16,
-        right: 16,
-        bottom: 16
+        left: 32,
+        top: 8,
+        right: 32,
+        bottom: 8
     }
 }

@@ -2,6 +2,7 @@
 
 - 修复视频进入缓冲状态后无法执行seek操作问题
 - 修复CcControllerOverlay视频时长为0仍然可以拖动进度条问题
+- CcLoadingOverlay增加自动监听缓冲状态显隐，优化默认UI界面
 - 优化内部状态机
 
 # 1.2.0
