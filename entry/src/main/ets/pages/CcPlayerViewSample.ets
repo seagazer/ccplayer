@@ -114,17 +114,12 @@ export struct CcPlayerViewSample {
                         player: this.player,
                         asRatio: this.ratio,
                         renderType: XComponentType.SURFACE,
-                        onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
-                            // 用户自己手动处理手势事件
-                            // this.gestureOverlay.setGestureType(type)
-                            // this.gestureOverlay.setGesturePercent(percent)
-                            // this.handleGestureAction(type, percent, isTouchUp)
-                            // Overlay自动处理手势事件
-                            this.gestureOverlay.handleGestureAction(this.getUIContext(), type, percent, isTouchUp)
-                        },
-                        onGestureUIListener: (visible) => {
-                            this.gestureOverlay.setVisible(visible)
-                        },
+                        // onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
+                        //     // 用户可以参考下面代码自己手动处理手势事件
+                        //     // this.gestureOverlay.setGestureType(type)
+                        //     // this.gestureOverlay.setGesturePercent(percent)
+                        //     // this.handleGestureAction(type, percent, isTouchUp)
+                        // },
                         onSurfaceCreated: () => {
                             this.playIndex = 0
                             let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",

@@ -3,6 +3,8 @@ import { CcPlayer } from '../CcPlayer';
 import { AspectRatio } from './config/AspectRatio';
 import { GestureType } from './config/GestureType';
 import { GestureAreaConfig } from './config/GestureAreaConfig';
+import { GestureLiveData } from '../overlay/sync/GestureLiveData';
+import { GestureEvent } from '../overlay/CcGestureOverlay';
 
 const TAG = "[CcPlayerView]"
 
@@ -77,11 +79,25 @@ export struct CcPlayerView {
     /**
      * Set a listener to handle the gesture ui visible.
      */
-    onGestureUIListener?: ((visible: boolean) => void) = undefined
+    onGestureUIListener?: ((visible: boolean) => void) = (visible: boolean) => {
+        GestureLiveData.getInstance().setVisibleState(visible)
+    }
     /**
      * The listener to handle the gesture actions.
      */
-    onGestureAction?: (type: GestureType, percent: number, isTouchUp: boolean) => void
+    onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => void =
+        (type: GestureType, percent: number, isTouchUp: boolean) => {
+            if (this.gestureEvent == null) {
+                this.gestureEvent = new GestureEvent(this.getUIContext(), type, percent, isTouchUp)
+            } else {
+                this.gestureEvent.uiContext = this.getUIContext()
+                this.gestureEvent.type = type
+                this.gestureEvent.percent = percent
+                this.gestureEvent.isTouchUp = isTouchUp
+            }
+            GestureLiveData.getInstance().setGestureState(this.gestureEvent)
+        }
+    private gestureEvent: GestureEvent | null = null
     /**
      * Set the default brightness, the value is [0,1], default is 0.5.
      */
