@@ -3,7 +3,7 @@ import { GestureType } from '../view/config/GestureType'
 import { BuilderNode, FrameNode, UIContext, window } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
 import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'
-import { GestureLiveData } from './sync/GestureLiveData'
+import { GestureLiveData } from './livedata/GestureLiveData'
 
 /**
  * The default overlay for gesture actions of CcPlayerView.

@@ -3,7 +3,7 @@ import { CcPlayer } from '../CcPlayer';
 import { AspectRatio } from './config/AspectRatio';
 import { GestureType } from './config/GestureType';
 import { GestureAreaConfig } from './config/GestureAreaConfig';
-import { GestureLiveData } from '../overlay/sync/GestureLiveData';
+import { GestureLiveData } from '../overlay/livedata/GestureLiveData';
 import { GestureEvent } from '../overlay/CcGestureOverlay';
 
 const TAG = "[CcPlayerView]"
