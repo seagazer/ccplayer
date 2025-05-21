@@ -5,9 +5,9 @@
 CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒体的轻量级播放器应用框架。
 
 - 支持音频/视频播放
-- 支持绑定播控中心
+- 支持绑定播控中心(**HarmonyOS**)
 - 支持长时后台播放
-- 支持画中画悬浮窗播放
+- 支持画中画悬浮窗播放(**HarmonyOS**)
 - 支持音频焦点监听及默认处理策略
 - 提供视频播放组件CcPlayerView，支持视频宽高比切换及手势操作
 - 提供视频播放组件CcPlayerViewV2，支持状态管理框架V2版本
@@ -16,8 +16,9 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 提供默认标题面板组件CcTitleBarOverlay
 - 提供默认加载面板组件CcLoadingOverlay
 - 提供播放器实例缓存池，提供资源管理及复用能力
-- 支持接入自定义播放业务(切换播放内核，自定义类需要实现IPlayer接口)
 - 支持获取本地视频文件缩略图
+- 支持接入自定义播放业务(切换播放内核，自定义类需要实现IPlayer接口)
+- TODO:新增适配IjkPlayer内核（Doing...）
 
 ## 示例效果
 | 视频组件                                                                          | 音乐播放                                                                          | 播控中心                                                                          | PIP模式                                                                           |
@@ -34,6 +35,7 @@ ohpm install @seagazer/ccplayer
 
 - 从1.0.6版本开始基于API 12进行重构，仅支持OpenHarmony-5.0+ Release和HarmonyOS 5.0.0+。
 - 如果需要在5.0-Release之前的系统版本中使用，请采用1.0.5及以下版本。各个版本详情可以参照之前版本的ChangeLog说明。
+- 因为OpenHarmony缺失部分能力，某些能力仅支持HarmonyOS，上述简介中已标注。
 
 
 ## 接口能力
@@ -59,7 +61,7 @@ ohpm install @seagazer/ccplayer
   | getDuration                       | void                                                                                | number                  | 获取媒体资源的总时长                                          |
   | getCurrentPosition                | void                                                                                | number                  | 获取当前播放时长                                              |
   | getPlayerState                    | void                                                                                | PlayerState             | 获取当前播放状态                                              |
-  | getSystemPlayer                   | void                                                                                | AVPlayer \| IPlayer               | 获取当前系统播放器实例                                        |
+  | getSystemPlayer                   | void                                                                                | AVPlayer \| IPlayer     | 获取当前系统播放器实例                                        |
   | setSurface                        | surfaceId: string                                                                   | void                    | 绑定 surafce(仅媒体类型为视频时有效)                          |
   | addOnPreparedListener             | listener: () => void                                                                | IPlayer                 | 添加媒体资源 prepare 状态监听                                 |
   | removeOnPreparedListener          | listener: () => void                                                                | IPlayer                 | 移除媒体资源 preapare 状态监听                                |
@@ -272,19 +274,17 @@ struct PlayerViewPage {
                 CcPlayerView({
                     player: this.player,
                     asRatio: this.videoRatio,
-                    onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
-                        // 方式1：用户自己手动处理手势事件
-                        this.gestureOverlay.setGestureType(type) //刷新UI
-                        this.gestureOverlay.setGesturePercent(percent) //刷新UI
-                        this.handleGestureAction() //处理事件
-
-                        // 方式2：GestureOverlay自动处理手势事件
-                        this.gestureOverlay.handleGestureAction(this.getUIContext(), type, percent, isTouchUp)
-                    },
-                    onGestureUIListener: (visible: boolean) => {
-                        // 刷新手势UI面板参数
-                        this.gestureOverlay.setVisible(visible)
-                    },                    
+                    // onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
+                    //     // 方式1：用户自己手动处理手势事件
+                    //     this.gestureOverlay.setGestureType(type) //刷新UI
+                    //     this.gestureOverlay.setGesturePercent(percent) //刷新UI
+                    //     this.handleGestureAction() //处理事件
+                    // },
+                    // onGestureUIListener: (visible: boolean) => {
+                    //     // 方式1：刷新手势UI面板参数
+                    //     this.gestureOverlay.setVisible(visible)
+                    // },      
+                    // 方式2：推荐，不使用方式1组件内部即自动管理所有状态              
                 })
                 // 5.使用NodeContainer结合CcGestureOverlay默认手势面板
                 NodeContainer(this.gestureOverlay)            
