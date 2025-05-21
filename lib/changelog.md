@@ -1,6 +1,6 @@
 # 1.2.2
 
-- 优化CcGestureOverlay，状态管理自动化，用户无需关注，只需要自定义UI样式
+- CcGestureOverlay组件优化，状态管理自动化，用户无需再关注CcPlayerView状态回调，专注设置自定义UI样式即可
 
 # 1.2.1
 
