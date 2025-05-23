@@ -234,7 +234,10 @@ export class AvPlayerImpl implements IPlayer {
                     break
                 case media.BufferingInfoType.CACHED_DURATION:
                     const current = this.getCurrentPosition();
-                    this.bufferPosition = current + value > 0 ? value : 0;
+                    const buffer = current + value > 0 ? value : 0;
+                    if (buffer > this.bufferPosition) { // 防止回跳
+                        this.bufferPosition = buffer;
+                    }
                     this.bufferProgressChangedListeners.forEach((callback) => callback(this.bufferPosition))
                     break
             }
