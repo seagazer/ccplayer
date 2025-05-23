@@ -7,12 +7,16 @@ import { PiPWindow } from '@kit.ArkUI'
  * Date: 2025/3/6
  */
 export interface IPip {
+    /**
+     * get pip whether can use
+     */
+    canUsePip(): boolean
 
     /**
      * Set the pip enable, must call #setXComponentController first.
      * @param pipType The type{@link PiPWindow.PiPTemplateType} of pip window, default is VIDEO_PLAY.
      */
-    enablePip(pipType: PiPWindow.PiPTemplateType): Promise<void>
+    enablePip(navigationId: string, pipType: PiPWindow.PiPTemplateType): Promise<void>
 
     /**
      * Set the pip disable.

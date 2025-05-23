@@ -30,6 +30,7 @@ export class AvPlayerImpl implements IPlayer {
     private preparedListeners: Array<() => void> = []
     private completedListeners: Array<() => void> = []
     private progressChangedListeners: Array<(position: number) => void> = []
+    private bufferProgressChangedListeners: Array<(position: number) => void> = []
     private errorListeners: Array<(code: number, message: string) => void> = []
     private seekChangedListeners: Array<(position: number) => void> = []
     private volumeChangedListeners: Array<(volume: number) => void> = []
@@ -38,6 +39,7 @@ export class AvPlayerImpl implements IPlayer {
     private renderFirstFrameListeners: Array<() => void> = []
     private audioFocusChangeListener: Array<(event: AudioFocusEvent) => void> = []
     private context: Context
+    private bufferPosition: number = 0
 
     private constructor(context: Context) {
         this.context = context
@@ -231,7 +233,12 @@ export class AvPlayerImpl implements IPlayer {
                     }
                     break
                 case media.BufferingInfoType.CACHED_DURATION:
-                    // todo buffer duration
+                    const current = this.getCurrentPosition();
+                    const buffer = current + value > 0 ? value : 0;
+                    if (buffer > this.bufferPosition) { // 防止回跳
+                        this.bufferPosition = buffer;
+                    }
+                    this.bufferProgressChangedListeners.forEach((callback) => callback(this.bufferPosition))
                     break
             }
         })
@@ -416,6 +423,10 @@ export class AvPlayerImpl implements IPlayer {
         return Math.round(this.player!.currentTime)
     }
 
+    getBufferPosition(): number {
+        return Math.round(this.bufferPosition)
+    }
+
     setSurface(surfaceId: string) {
         this.curSurfaceId = surfaceId
     }
@@ -472,6 +483,19 @@ export class AvPlayerImpl implements IPlayer {
         let index = this.progressChangedListeners.indexOf(listener)
         if (index >= 0) {
             this.progressChangedListeners.splice(index, 1)
+        }
+        return this
+    }
+
+    addOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
+        this.bufferProgressChangedListeners.push(listener)
+        return this
+    }
+
+    removeOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
+        let index = this.bufferProgressChangedListeners.indexOf(listener)
+        if (index >= 0) {
+            this.bufferProgressChangedListeners.splice(index, 1)
         }
         return this
     }

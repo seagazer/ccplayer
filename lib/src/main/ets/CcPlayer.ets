@@ -174,6 +174,10 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
         return this.player.getCurrentPosition()
     }
 
+    getBufferPosition(): number {
+        return this.player.getBufferPosition()
+    }
+
     getPlayerState(): PlayerState {
         return this.player.getPlayerState()
     }
@@ -197,6 +201,16 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
 
     removeOnPreparedListener(listener: () => void): IPlayer {
         this.player.removeOnPreparedListener(listener)
+        return this
+    }
+
+    addOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
+        this.player.addOnBufferProgressChangedListener(listener)
+        return this
+    }
+
+    removeOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
+        this.player.removeOnBufferProgressChangedListener(listener)
         return this
     }
 
@@ -358,9 +372,14 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
         }
     }
 
-    async enablePip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY) {
+    canUsePip(): boolean {
         this.checkPipManagerNotNull()
-        await this.pipManager!.enablePip(pipType)
+        return this.pipManager!.canUsePip()
+    }
+
+    async enablePip(navigationId: string, pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY): Promise<void> {
+        this.checkPipManagerNotNull()
+        await this.pipManager!.enablePip(navigationId, pipType)
     }
 
     async disablePip() {

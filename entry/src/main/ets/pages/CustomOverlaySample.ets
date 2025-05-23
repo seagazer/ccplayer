@@ -1,6 +1,7 @@
 import { AspectRatio, CcPlayer, CcPlayerView, GestureType, MediaSourceFactory } from '@seagazer/ccplayer';
 import { timeToString } from '../Extentions';
 import { window } from '@kit.ArkUI';
+import { CustomControlOverlay } from './CustomControlOverlay';
 
 const TAG = '[CustomOverlaySample]'
 
@@ -14,6 +15,8 @@ export struct CustomOverlaySample {
     @State seekPercent: number = 0
     @State volumePercent: number = 0
     @State brightnessPercent: number = 0
+    @State controlOverlay?: CustomControlOverlay = undefined;
+
     private firstFrameListener = () => {
         this.isLoading = false
     }
@@ -22,6 +25,7 @@ export struct CustomOverlaySample {
     aboutToAppear(): void {
         this.playerWindow = window.findWindow(this.getUIContext().getWindowName())
         this.player.addOnRenderFirstFrameListener(this.firstFrameListener)
+        this.controlOverlay = new CustomControlOverlay(this.player);
     }
 
     aboutToDisappear(): void {
@@ -116,8 +120,9 @@ export struct CustomOverlaySample {
                     },
                     onSurfaceCreated: () => {
                         this.isLoading = true
-                        let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
-                            "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                        // let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
+                            // "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                        let src = MediaSourceFactory.createUrl('', 'http://vd3.bdstatic.com/mda-re23rzrhznhfjp9a/cae_h264/1746240582840699857/mda-re23rzrhznhfjp9a.mp4')
                         this.player.setMediaSource(src, () => {
                             this.player.start()
                         })
@@ -125,6 +130,11 @@ export struct CustomOverlaySample {
                 })
                 this.GestureOverlay()
                 this.LoadingOverlay()
+
+                NodeContainer(this.controlOverlay)
+                    .width('100%')
+                    .height(60)
+                    .position({ y: '90%' })
             }
             .width("100%")
             .height("100%")

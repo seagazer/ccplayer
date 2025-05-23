@@ -3,6 +3,7 @@ import { CcPlayer } from '../CcPlayer';
 import { AspectRatio } from './config/AspectRatio';
 import { GestureType } from './config/GestureType';
 import { GestureAreaConfig } from './config/GestureAreaConfig';
+import { PiPWindow } from '@kit.ArkUI';
 import { GestureLiveData } from '../overlay/livedata/GestureLiveData';
 import { GestureEvent } from '../overlay/CcGestureOverlay';
 
@@ -149,6 +150,10 @@ export struct CcPlayerViewV2 {
         this.isFrameReady = false
         this.isShowSurface = false
     }
+    @Local pipState: string = ''
+    private pipStateChangedListener = (state: PiPWindow.PiPState) => {
+        this.pipState = state.toString()
+    }
 
     @Monitor("asRatio")
     onAspectRatioChanged() {
@@ -221,6 +226,9 @@ export struct CcPlayerViewV2 {
             .addOnVideoSizeChangedListener(this.videoSizeChangedListener)
             .addOnRenderFirstFrameListener(this.renderFirstFrameListener)
         this.player!.addOnMediaChangedListener(this.mediaChangedListener)
+        if (this.player?.canUsePip()) {
+            this.player!.addOnPipStateChangedListener(this.pipStateChangedListener)
+        }
     }
 
     aboutToDisappear() {
@@ -230,6 +238,9 @@ export struct CcPlayerViewV2 {
             .removeOnVideoSizeChangedListener(this.videoSizeChangedListener)
             .removeOnRenderFirstFrameListener(this.renderFirstFrameListener)
         this.player!.removeOnMediaChangedListener(this.mediaChangedListener)
+        if (this.player?.canUsePip()) {
+            this.player!.removeOnPipStateChangedListener(this.pipStateChangedListener)
+        }
     }
 
     build() {
@@ -260,6 +271,8 @@ export struct CcPlayerViewV2 {
                     }
                 })
                 .visibility(this.isShowSurface ? Visibility.Visible : Visibility.Hidden)
+            // 添加这个是保证在前一个页面关闭画中画时，播放页能够正常销毁
+            Text(this.pipState).visibility(Visibility.None)
         }
         .gesture(TapGesture({ count: 2 }).onAction(() => {
             if (this.isSupportGesture) {

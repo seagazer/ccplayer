@@ -25,6 +25,7 @@ export struct CcPlayerViewSampleV2 {
     @Local ratio: AspectRatio = AspectRatio.AUTO
     @Local ratioText: string = "AUTO"
     @Local totalDuration: number = 0
+    @Param navigationId: string = ''
     private playIndex: number = 0
     private preparedListener = () => {
         this.totalDuration = this.player.getDuration()
@@ -39,6 +40,9 @@ export struct CcPlayerViewSampleV2 {
     }
     private pipStateChangedListener = (state: PiPWindow.PiPState, reason: string) => {
         Logger.d(TAG, "pip state= " + state + ', reason= ' + reason)
+        if (state === PiPWindow.PiPState.STOPPED) {
+            this.player.stopPip()
+        }
     }
     private loadingOverlay: CcLoadingOverlay = new CcLoadingOverlay(this.player)
     private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
@@ -85,6 +89,7 @@ export struct CcPlayerViewSampleV2 {
             .removeOnErrorListener(this.errorListener)
         this.player.removeOnPipStateChangedListener(this.pipStateChangedListener)
         this.player.release()
+        console.log(`${TAG}页面销毁`)
     }
 
     // 用户自己手动处理手势事件
@@ -188,7 +193,7 @@ export struct CcPlayerViewSampleV2 {
                     CButton({
                         text: "StartPip",
                         onAction: async () => {
-                            await this.player.enablePip()
+                            await this.player.enablePip(this.navigationId)
                             this.player.startPip()
                         }
                     })
