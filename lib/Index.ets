@@ -1,5 +1,7 @@
 export { CcPlayer } from './src/main/ets/CcPlayer'
 
+export { IPlayer } from './src/main/ets/interface/IPlayer'
+
 export { CcPlayerPool } from './src/main/ets/CcPlayerPool'
 
 export { CcPlayerView } from './src/main/ets/view/CcPlayerView'

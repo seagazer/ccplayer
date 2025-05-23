@@ -3,6 +3,7 @@ import { GestureType } from '../view/config/GestureType'
 import { BuilderNode, FrameNode, UIContext, window } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
 import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'
+import { GestureLiveData } from './livedata/GestureLiveData'
 
 /**
  * The default overlay for gesture actions of CcPlayerView.
@@ -21,6 +22,12 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
             this.config.totalDuration = this.totalDuration
         }
     }
+    private gestureChangedListener = (value: GestureEvent) => {
+        this.handleGestureAction(value.uiContext, value.type, value.percent, value.isTouchUp)
+    }
+    private visibleChangedListener = (value: boolean) => {
+        this.setVisible(value)
+    }
 
     /**
      * The default constructor.
@@ -33,10 +40,14 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
     }
 
     aboutToAppear(): void {
+        GestureLiveData.getInstance().addOnGestureStateChangedListener(this.gestureChangedListener)
+        GestureLiveData.getInstance().addOnVisibleStateChangedListener(this.visibleChangedListener)
         this.player.addOnPreparedListener(this.prepareListener)
     }
 
     aboutToDisappear(): void {
+        GestureLiveData.getInstance().removeOnGestureStateChangedListener(this.gestureChangedListener)
+        GestureLiveData.getInstance().removeOnVisibleStateChangedListener(this.visibleChangedListener)
         this.player.removeOnPreparedListener(this.prepareListener)
     }
 
@@ -109,6 +120,8 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
      * @param type The gesture type.{@link GestureType}.
      * @param percent The gesture percent value.
      * @param isTouchUp The touch state of touch event.
+     *
+     * @deprecated since V1.2.2
      */
     handleGestureAction(uiContext: UIContext, type: GestureType, percent: number, isTouchUp: boolean) {
         this.setGestureType(type)
@@ -201,4 +214,18 @@ class GestureOverlayConfig extends BaseOverlayConfig {
     textColor: ResourceColor = "#ffffffff"
     bgColor: ResourceColor = "#a6000000"
     totalDuration: number = 0
+}
+
+export class GestureEvent {
+    uiContext: UIContext
+    type: GestureType
+    percent: number
+    isTouchUp: boolean
+
+    constructor(uiContext: UIContext, type: GestureType, percent: number, isTouchUp: boolean) {
+        this.uiContext = uiContext
+        this.type = type
+        this.percent = percent
+        this.isTouchUp = isTouchUp
+    }
 }

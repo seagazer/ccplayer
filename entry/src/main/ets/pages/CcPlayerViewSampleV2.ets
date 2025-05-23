@@ -119,17 +119,12 @@ export struct CcPlayerViewSampleV2 {
                         player: this.player,
                         asRatio: this.ratio,
                         renderType: XComponentType.SURFACE,
-                        onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
-                            // 用户自己手动处理手势事件
-                            // this.gestureOverlay.setGestureType(type)
-                            // this.gestureOverlay.setGesturePercent(percent)
-                            // this.handleGestureAction(type, percent, isTouchUp)
-                            // Overlay自动处理手势事件
-                            this.gestureOverlay.handleGestureAction(this.getUIContext(), type, percent, isTouchUp)
-                        },
-                        onGestureUIListener: (visible) => {
-                            this.gestureOverlay.setVisible(visible)
-                        },
+                        // onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
+                        //     // 用户可以参考下面代码自己手动处理手势事件
+                        //     // this.gestureOverlay.setGestureType(type)
+                        //     // this.gestureOverlay.setGesturePercent(percent)
+                        //     // this.handleGestureAction(type, percent, isTouchUp)
+                        // },
                         onSurfaceCreated: () => {
                             this.playIndex = 0
                             let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
@@ -225,6 +220,8 @@ export struct CcPlayerViewSampleV2 {
                                 this.playIndex = 0
                                 let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
                                     "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                                src = MediaSourceFactory.createUrl("",
+                                    "https://m3u8.girigirilove.com/zijian/oldanime/2025/01/cht/DrStoneScienceFutureCHT/01/playlist.m3u8")
                                 this.player.setMediaSource(src, () => {
                                     // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                     setTimeout(() => {
