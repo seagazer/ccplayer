@@ -136,6 +136,20 @@ export interface IPlayer {
     removeOnProgressChangedListener(listener: (duration: number) => void): IPlayer
 
     /**
+     * Add a listener to observe the player buffer progress.
+     * @param listener The listener to observe the player buffer progress.
+     * @return The player instance.
+     */
+    addOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer
+
+    /**
+     * Remove a listener to observe the player buffer progress.
+     * @param listener The listener to observe the player buffer progress.
+     * @return The player instance.
+     */
+    removeOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer;
+
+    /**
      * Add a listener to observe the seeking state.
      * @param listener The listener to observe the seeking state.
      * @return The player instance.
@@ -212,6 +226,12 @@ export interface IPlayer {
      * @return The current duration of the media source.
      */
     getCurrentPosition(): number
+
+    /**
+     * Get buffer duration of the playing media source.
+     * @return The buffer duration of the media source.
+     */
+    getBufferPosition(): number
 
     /**
      * Get the state of player.

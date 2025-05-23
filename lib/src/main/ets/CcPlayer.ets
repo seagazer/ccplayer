@@ -174,6 +174,10 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
         return this.player.getCurrentPosition()
     }
 
+    getBufferPosition(): number {
+        return this.player.getBufferPosition()
+    }
+
     getPlayerState(): PlayerState {
         return this.player.getPlayerState()
     }
@@ -197,6 +201,16 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
 
     removeOnPreparedListener(listener: () => void): IPlayer {
         this.player.removeOnPreparedListener(listener)
+        return this
+    }
+
+    addOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
+        this.player.addOnBufferProgressChangedListener(listener)
+        return this
+    }
+
+    removeOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
+        this.player.removeOnBufferProgressChangedListener(listener)
         return this
     }
 

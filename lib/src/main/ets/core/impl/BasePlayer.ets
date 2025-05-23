@@ -20,6 +20,7 @@ export abstract class BasePlayer implements IPlayer {
     protected preparedListeners: Array<() => void> = []
     protected completedListeners: Array<() => void> = []
     protected progressChangedListeners: Array<(position: number) => void> = []
+    protected bufferProgressChangedListeners: Array<(position: number) => void> = []
     protected errorListeners: Array<(code: number, message: string) => void> = []
     protected seekChangedListeners: Array<(position: number) => void> = []
     protected volumeChangedListeners: Array<(volume: number) => void> = []
@@ -82,6 +83,16 @@ export abstract class BasePlayer implements IPlayer {
         return this
     }
 
+    addOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
+        this.bufferProgressChangedListeners.push(listener)
+        return this
+    }
+
+    removeOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
+        this.bufferProgressChangedListeners.splice(this.bufferProgressChangedListeners.indexOf(listener), 1)
+        return this
+    }
+
     addOnSeekChangedListener(listener: (duration: number) => void): IPlayer {
         this.seekChangedListeners.push(listener)
         return this
@@ -129,6 +140,10 @@ export abstract class BasePlayer implements IPlayer {
     }
 
     getCurrentPosition(): number {
+        return 0
+    }
+
+    getBufferPosition(): number {
         return 0
     }
 
