@@ -15,6 +15,8 @@ struct Home {
     private pageData: string[] =
         ['MusicSample', 'VideoSample', 'CcPlayerViewSample', 'CcPlayerViewSampleV2', 'CustomOverlaySample', 'PagePlayerSample']
 
+    private navigationId: string = 'navId'
+
     aboutToAppear(): void {
         router.clear()
     }
@@ -40,6 +42,7 @@ struct Home {
         .height("100%")
         .mode(NavigationMode.Stack)
         .navDestination(this.RouterMap)
+        .id(this.navigationId)
     }
 
     @Builder
@@ -49,9 +52,9 @@ struct Home {
         } else if (name === "VideoSample") {
             VideoSample()
         } else if (name === "CcPlayerViewSample") {
-            CcPlayerViewSample()
+            CcPlayerViewSample({ navigationId: this.navigationId })
         } else if (name === "CcPlayerViewSampleV2") {
-            CcPlayerViewSampleV2()
+            CcPlayerViewSampleV2({ navigationId: this.navigationId })
         } else if (name === "CustomOverlaySample") {
             CustomOverlaySample()
         } else if (name === "PagePlayerSample") {

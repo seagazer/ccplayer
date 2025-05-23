@@ -19,6 +19,7 @@ export class PipManager implements IPip {
     private player: CcPlayer
     private context: Context
     private pipController?: PiPWindow.PiPController = undefined
+    private navigationId: string = ''
     private defaultStateChangedListener = (state: PlayerState) => {
         if (state == PlayerState.STATE_STARTED) {
             this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PLAY)
@@ -58,7 +59,16 @@ export class PipManager implements IPip {
         this.isControllerChanged = true
     }
 
-    async enablePip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY): Promise<void> {
+    canUsePip(): boolean {
+        if (canIUse('SystemCapability.Window.SessionManager')) {
+            if (PiPWindow.isPiPEnabled()) {
+                return true
+            }
+        }
+        return false
+    }
+
+    async enablePip(navigationId: string, pipType: PiPWindow.PiPTemplateType): Promise<void> {
         if (!PiPWindow.isPiPEnabled()) {
             MediaLogger.attentionW(TAG, "The platform is not support pip mode.")
             return undefined
@@ -72,6 +82,7 @@ export class PipManager implements IPip {
             return
         }
         MediaLogger.d(TAG, "enable pip")
+        this.navigationId = navigationId
         this.pipType = pipType
         this.pipController = await this.createPipController()
         this.pipController.on("stateChange", (state: PiPWindow.PiPState, reason: string) => {
@@ -107,6 +118,7 @@ export class PipManager implements IPip {
         const pipController = await PiPWindow.create({
             context: this.context,
             componentController: this.player.getXComponentController(),
+            navigationId: this.navigationId,
             templateType: this.pipType
         });
         this.isControllerChanged = false;

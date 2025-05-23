@@ -372,9 +372,14 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
         }
     }
 
-    async enablePip(pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY) {
+    canUsePip(): boolean {
         this.checkPipManagerNotNull()
-        await this.pipManager!.enablePip(pipType)
+        return this.pipManager!.canUsePip()
+    }
+
+    async enablePip(navigationId: string, pipType: PiPWindow.PiPTemplateType = PiPWindow.PiPTemplateType.VIDEO_PLAY): Promise<void> {
+        this.checkPipManagerNotNull()
+        await this.pipManager!.enablePip(navigationId, pipType)
     }
 
     async disablePip() {

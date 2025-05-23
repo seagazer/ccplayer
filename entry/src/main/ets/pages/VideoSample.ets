@@ -97,7 +97,7 @@ export struct VideoSample {
                         this.player.setSurface(this.controller.getXComponentSurfaceId())
                         // set controller to support pip and enable pip.
                         this.player.setXComponentController(this.controller)
-                        this.player.enablePip()
+                        this.player.enablePip('')
                     })
                     this.LoadingOverlay()
                 }
