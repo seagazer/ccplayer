@@ -559,6 +559,6 @@ struct PlayerViewPage {
 
 更多使用场景和示例，例如自定义手势操作 UI，播放器状态事件监听，绑定播控中心等，类似抖音的列表预加载播放，可以参考本库代码仓的 entry 示例工程：
 https://github.com/seagazer/ccplayer，  使用过程中存在任何相关问题欢迎各位开发者提Issue和PR，欢迎大家一起共建完善该库。
-同时最近组件的鸿蒙应用开发技术讨论群，也欢迎各位开发者加入，申请加入时请备注信息即可：
-<img src="./img/qr_code.jpg" style="width: 40%; height: auto;">
+同时最近组建的鸿蒙应用开发技术讨论群，也欢迎各位开发者加入一起技术讨论，申请加入时请备注信息即可：  
+<img src="./img/qr_code.jpg" width="200" >
 
