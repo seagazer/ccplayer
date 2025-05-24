@@ -91,7 +91,7 @@ ohpm install @seagazer/ccplayer
   | setBackgroundPlayEnable               | backgroundPlay: boolean                                                             | Promise\<boolean>       | 设置是否开启后台长时播放                                      |
   | setXComponentController               | controller: XComponentController                                                    | void                    | 设置xComponent的controller，pip必须设置                       |
   | getXComponentController               | void                                                                                | XComponentController    | 返回xComponent的controller                                    |
-  | enablePip                             | pipType: PiPWindow.PiPTemplateType                                                  | PiPWindow.PiPController | 启用pip画中画能力                                             |
+  | enablePip                             | navigationId: string, pipType: PiPWindow.PiPTemplateType                            | PiPWindow.PiPController | 启用pip画中画能力                                             |
   | disablePip                            | void                                                                                | void                    | 禁用pip画中画能力                                             |
   | startPip                              | void                                                                                | void                    | 开启pip画中画                                                 |
   | stopPip                               | void                                                                                | void                    | 关闭pip画中画                                                 |
@@ -559,3 +559,4 @@ struct PlayerViewPage {
 
 更多使用场景和示例，例如自定义手势操作 UI，播放器状态事件监听，绑定播控中心等，类似抖音的列表预加载播放，可以参考本库代码仓的 entry 示例工程：
 https://github.com/seagazer/ccplayer
+使用过程中存在任何相关问题欢迎各位开发者提Issue和PR，欢迎大家一起共建完善该库。
