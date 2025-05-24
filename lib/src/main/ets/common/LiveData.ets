@@ -9,7 +9,7 @@ export class LiveData<T> {
     private value: T | null = null
 
     setValue(value: T) {
-        this.value = this.value
+        this.value = value
         this.onValueChangedListener.forEach((callback) => {
             callback(value)
         })

@@ -14,6 +14,8 @@ export interface IPip {
 
     /**
      * Set the pip enable, must call #setXComponentController first.
+     *
+     * navigationId If the UIAbility use Navigation api to handle page router, should set this id, so can restore from pip to the page with this id.
      * @param pipType The type{@link PiPWindow.PiPTemplateType} of pip window, default is VIDEO_PLAY.
      */
     enablePip(navigationId: string, pipType: PiPWindow.PiPTemplateType): Promise<void>

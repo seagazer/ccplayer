@@ -1,6 +1,8 @@
 # 1.2.2
 
 - CcGestureOverlay组件优化，状态管理自动化，用户无需再关注CcPlayerView状态回调，专注设置自定义UI样式即可
+- 增加缓冲相关接口:addOnBufferProgressChangedListener/removeOnBufferProgressChangedListener/getBufferPosition
+- enablePip增加navigationId参数，退出页面保持pip状态
 
 # 1.2.1
 
