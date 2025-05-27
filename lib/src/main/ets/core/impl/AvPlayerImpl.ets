@@ -40,6 +40,7 @@ export class AvPlayerImpl implements IPlayer {
     private audioFocusChangeListener: Array<(event: AudioFocusEvent) => void> = []
     private context: Context
     private bufferPosition: number = 0
+    private seekMode: media.SeekMode = media.SeekMode.SEEK_CLOSEST
 
     private constructor(context: Context) {
         this.context = context
@@ -396,7 +397,12 @@ export class AvPlayerImpl implements IPlayer {
 
     seekTo(position: number) {
         MediaLogger.d(TAG, ">> seek to: " + position)
-        this.player!.seek(position)
+        this.player!.seek(position, this.seekMode)
+    }
+
+    setSeekMode(mode: media.SeekMode) {
+        MediaLogger.d(TAG, ">> set seek mode: " + mode)
+        this.seekMode = mode
     }
 
     setVolume(vol: number) {

@@ -49,6 +49,12 @@ export interface IPlayer {
     seekTo(position: number): void
 
     /**
+     * Set the seek mode.
+     * @param mode The seek mode{@link media.SeekMode}, default is SEEK_CLOSEST(Api 12+).
+     */
+    setSeekMode(mode: media.SeekMode): void
+
+    /**
      * Set the mediaSource.
      * @param mediaSource The mediaSource {@link MediaSource}, use MediaSourceFactory to create a mediaSource.
      * @param onReady The callback when video is bind surface and set src success, undefined for audio player.

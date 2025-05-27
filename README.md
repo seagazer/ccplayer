@@ -52,6 +52,7 @@ ohpm install @seagazer/ccplayer
   | reset                                 | void                                                                                | void                    | 重置播放器                                                    |
   | release                               | void                                                                                | void                    | 释放播放器                                                    |
   | seekTo                                | position: number                                                                    | void                    | 跳转至指定进度                                                |
+  | setSeekMode                           | mode: media.SeekMode                                                                | void                    | 设置seek模式，默认SEEK_CLOSEST                                |
   | setMediaSource                        | mediaSource: MediaSource , onReady?: ()=>void                                       | void                    | 设置媒体资源，在onReady回调中可以调用start开启播放            |
   | getMediaSource                        | void                                                                                | MediaSource             | 获取当前播放的媒体资源                                        |
   | setLooper                             | isLoop: boolean                                                                     | void                    | 设置循环播放                                                  |
@@ -558,7 +559,7 @@ struct PlayerViewPage {
 
 
 更多使用场景和示例，例如自定义手势操作 UI，播放器状态事件监听，绑定播控中心等，类似抖音的列表预加载播放，可以参考本库代码仓的 entry 示例工程：
-https://github.com/seagazer/ccplayer，  使用过程中存在任何相关问题欢迎各位开发者提Issue和PR，欢迎大家一起共建完善该库。
-同时最近组建的鸿蒙应用开发技术讨论群，也欢迎各位开发者加入一起技术讨论，申请加入时请备注信息即可：  
+https://github.com/seagazer/ccplayer
+使用过程中存在任何相关问题欢迎各位开发者提Issue和PR，或者加群反馈（Q群:1051643574），欢迎大家一起共建完善该库。
 <img src="./img/qr_code.jpg" width="200" >
 

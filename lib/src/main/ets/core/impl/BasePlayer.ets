@@ -213,6 +213,10 @@ export abstract class BasePlayer implements IPlayer {
         // do action in sub class
     }
 
+    setSeekMode(mode: media.SeekMode) {
+        // do action in sub class
+    }
+
     setVolume(vol: number) {
         // do action in sub class
     }

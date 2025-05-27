@@ -142,6 +142,10 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
         }
     }
 
+    setSeekMode(mode: media.SeekMode) {
+        this.player.setSeekMode(mode)
+    }
+
     setMediaSource(mediaSource: MediaSource, onReady?: () => void) {
         this.onMediaChangedListeners.forEach((onMediaChanged) => {
             onMediaChanged(mediaSource)

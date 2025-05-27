@@ -1,3 +1,7 @@
+# 1.2.3
+
+- 新增setSeekMode接口，seek默认模式由SEEK_PREV_SYNC变更为SEEK_CLOSEST(Api 12+)
+
 # 1.2.2
 
 - CcGestureOverlay组件优化，状态管理自动化，用户无需再关注CcPlayerView状态回调，专注设置自定义UI样式即可
