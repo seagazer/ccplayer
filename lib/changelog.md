@@ -1,6 +1,7 @@
 # 1.2.3
 
 - 新增setSeekMode接口，seek默认模式由SEEK_PREV_SYNC变更为SEEK_CLOSEST(Api 12+)
+- 修复CcControllerOverlay时长显示异常问题
 
 # 1.2.2
 
