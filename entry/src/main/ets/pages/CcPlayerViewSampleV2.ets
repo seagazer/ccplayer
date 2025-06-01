@@ -129,6 +129,7 @@ export struct CcPlayerViewSampleV2 {
                             this.playIndex = 0
                             let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
                                 "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                            src = MediaSourceFactory.createUrl("xx", "https://cdn.wlcdn99.com:777/20220414/kz7F4MBV/index.m3u8")
                             this.player.setMediaSource(src, () => {
                                 // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                 setTimeout(() => {

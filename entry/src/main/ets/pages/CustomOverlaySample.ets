@@ -15,8 +15,7 @@ export struct CustomOverlaySample {
     @State seekPercent: number = 0
     @State volumePercent: number = 0
     @State brightnessPercent: number = 0
-    @State controlOverlay?: CustomControlOverlay = undefined;
-
+    private controlOverlay?: CustomControlOverlay = undefined;
     private firstFrameListener = () => {
         this.isLoading = false
     }
@@ -121,8 +120,9 @@ export struct CustomOverlaySample {
                     onSurfaceCreated: () => {
                         this.isLoading = true
                         // let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
-                            // "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
-                        let src = MediaSourceFactory.createUrl('', 'http://vd3.bdstatic.com/mda-re23rzrhznhfjp9a/cae_h264/1746240582840699857/mda-re23rzrhznhfjp9a.mp4')
+                        // "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                        let src = MediaSourceFactory.createUrl('',
+                            'http://vd3.bdstatic.com/mda-re23rzrhznhfjp9a/cae_h264/1746240582840699857/mda-re23rzrhznhfjp9a.mp4')
                         this.player.setMediaSource(src, () => {
                             this.player.start()
                         })
