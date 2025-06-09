@@ -32,11 +32,13 @@ export class AvSessionManager implements IAvSession {
     private stateChangedListener = (state: PlayerState) => {
         if (this.avSession) {
             const avPlaybackState = this.createAvPlaybackState(state)
+            MediaLogger.d(TAG, "state changed refresh av state " + JSON.stringify(avPlaybackState))
             this.avSession.setAVPlaybackState(avPlaybackState)
         }
     }
     private seekChangedListener = (position: number) => {
         if (this.avSession) {
+            MediaLogger.d(TAG, "seek changed refresh av state")
             this.avSession.setAVPlaybackState({
                 state: avSession.PlaybackState.PLAYBACK_STATE_PLAY,
                 position: {
@@ -68,6 +70,7 @@ export class AvSessionManager implements IAvSession {
             await this.create(context, sessionName, type)
             await this.setLaunchInfo(agentInfo)
             await this.bind()
+            MediaLogger.d(TAG, "bindAvSession success")
         } catch (e) {
             MediaLogger.attentionE(TAG, "bindAvSession error: " + JSON.stringify(e))
         }
