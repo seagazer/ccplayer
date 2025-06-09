@@ -97,6 +97,7 @@ export class AvSessionManager implements IAvSession {
             this.avSession.off("rewind")
             this.avSession.deactivate()
             this.avSession.destroy()
+            this.avSession = undefined
         }
         this.player.removeOnStateChangedListener(this.stateChangedListener)
         this.player.removeOnSeekChangedListener(this.seekChangedListener)
@@ -131,6 +132,7 @@ export class AvSessionManager implements IAvSession {
                 avState = avSession.PlaybackState.PLAYBACK_STATE_PREPARE
                 break
             case PlayerState.STATE_STARTED:
+            case PlayerState.STATE_BUFFER_END:
                 avState = avSession.PlaybackState.PLAYBACK_STATE_PLAY
                 break
             case PlayerState.STATE_PAUSED:
@@ -147,6 +149,9 @@ export class AvSessionManager implements IAvSession {
                 break
             case PlayerState.STATE_ERROR:
                 avState = avSession.PlaybackState.PLAYBACK_STATE_ERROR
+                break
+            case PlayerState.STATE_BUFFER_START:
+                avState = avSession.PlaybackState.PLAYBACK_STATE_BUFFERING
                 break
         }
         const result: avSession.AVPlaybackState = {
