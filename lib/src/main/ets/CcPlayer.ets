@@ -105,6 +105,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
     stop() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_STOPPED) {
+            MediaLogger.attentionW(TAG, 'current state is already stopped!')
             return
         }
         this.player.stop()
@@ -113,6 +114,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
     reset() {
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_IDLE) {
+            MediaLogger.attentionW(TAG, 'current state is already idle!')
             return
         }
         this.player.reset()
@@ -126,20 +128,17 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
             BackgroundPlayManager.stopBackground(this.context)
         }
         this.disablePip()
+        this.player.removeOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
         let state = this.getPlayerState()
         if (state == PlayerState.STATE_NOT_INIT) {
+            MediaLogger.attentionW(TAG, 'current state is already released!')
             return
         }
-        this.player.removeOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
         this.player.release()
     }
 
     seekTo(position: number) {
-        let state = this.getPlayerState()
-        if (state != PlayerState.STATE_NOT_INIT && state != PlayerState.STATE_IDLE &&
-            state != PlayerState.STATE_STOPPED && state != PlayerState.STATE_ERROR) {
-            this.player.seekTo(position)
-        }
+        this.player.seekTo(position)
     }
 
     setSeekMode(mode: media.SeekMode) {
@@ -417,7 +416,8 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
             let file = await fileIo.open(filePath, fileIo.OpenMode.READ_ONLY)
             imageG.fdSrc = { fd: file.fd }
             const result =
-                await imageG.fetchFrameByTime(timestamp, media.AVImageQueryOptions.AV_IMAGE_QUERY_NEXT_SYNC, { width: width, height: height })
+                await imageG.fetchFrameByTime(timestamp, media.AVImageQueryOptions.AV_IMAGE_QUERY_NEXT_SYNC,
+                    { width: width, height: height })
             await imageG.release()
             fileIo.close(file.fd)
             return result
@@ -433,7 +433,8 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
             const afd = this.context.resourceManager.getRawFdSync(rawPath)
             imageG.fdSrc = afd
             const result =
-                await imageG.fetchFrameByTime(timestamp, media.AVImageQueryOptions.AV_IMAGE_QUERY_NEXT_SYNC, { width: width, height: height })
+                await imageG.fetchFrameByTime(timestamp, media.AVImageQueryOptions.AV_IMAGE_QUERY_NEXT_SYNC,
+                    { width: width, height: height })
             await imageG.release()
             this.context.resourceManager.closeRawFdSync(rawPath)
             return result

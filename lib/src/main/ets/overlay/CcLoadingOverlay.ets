@@ -23,7 +23,7 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
         if (state == PlayerState.STATE_BUFFER_START) {
             this.config!.visible = true
             this.invalidate()
-        } else if (state == PlayerState.STATE_BUFFER_END) {
+        } else if (state == PlayerState.STATE_BUFFER_END || state == PlayerState.STATE_ERROR) {
             this.config!.visible = false
             this.invalidate()
         }

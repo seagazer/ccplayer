@@ -130,6 +130,7 @@ export class AvPlayerImpl implements IPlayer {
                     break
                 case "error":
                     MediaLogger.attentionE(TAG, ">> System callback: error")
+                    this.changePlayerState(PlayerState.STATE_ERROR)
                     if (this.errorListeners.length > 0) {
                         this.errorListeners.forEach((callback) => {
                             callback(-1, "state error")
@@ -140,6 +141,7 @@ export class AvPlayerImpl implements IPlayer {
         })
         this.player!.on("error", (err) => {
             MediaLogger.attentionE(TAG, ">> System callback: error = " + JSON.stringify(err))
+            this.changePlayerState(PlayerState.STATE_ERROR)
             if (this.errorListeners.length > 0) {
                 this.errorListeners.forEach((callback) => {
                     if (err) {
@@ -359,7 +361,11 @@ export class AvPlayerImpl implements IPlayer {
 
     async stop() {
         MediaLogger.d(TAG, ">> stop")
-        await this.player!.stop()
+        if (this.isInPlayReadyState()) {
+            await this.player!.stop()
+        } else {
+            MediaLogger.attentionW(TAG, "stop failed, because current state is not prepared/playing/paused/completed")
+        }
     }
 
     async reset() {
@@ -397,7 +403,11 @@ export class AvPlayerImpl implements IPlayer {
 
     seekTo(position: number) {
         MediaLogger.d(TAG, ">> seek to: " + position)
-        this.player!.seek(position, this.seekMode)
+        if (this.isInPlayReadyState()) {
+            this.player!.seek(position, this.seekMode)
+        } else {
+            MediaLogger.attentionW(TAG, "seek failed, because current state is not prepared/playing/paused/completed")
+        }
     }
 
     setSeekMode(mode: media.SeekMode) {
@@ -407,12 +417,25 @@ export class AvPlayerImpl implements IPlayer {
 
     setVolume(vol: number) {
         MediaLogger.d(TAG, ">> set volume: " + vol)
-        this.player!.setVolume(vol)
+        if (this.isInPlayReadyState()) {
+            this.player!.setVolume(vol)
+        } else {
+            MediaLogger.attentionW(TAG, "set volume failed, because current state is not prepared/playing/paused/completed")
+        }
     }
 
     setPlaySpeed(speed: number | media.PlaybackSpeed): void {
         MediaLogger.d(TAG, ">> set play speed: " + speed)
-        this.player!.setSpeed(speed)
+        // only set success at state prepared/playing/paused/completed
+        if (this.isInPlayReadyState()) {
+            this.player!.setSpeed(speed)
+        } else {
+            MediaLogger.attentionW(TAG, "set speed failed, because current state is not prepared/playing/paused/completed")
+        }
+    }
+
+    private isInPlayReadyState(): boolean {
+        return this.isPlaying() || this.currentState == PlayerState.STATE_PAUSED || this.currentState == PlayerState.STATE_COMPLETED
     }
 
     setLooper(isLoop: boolean) {
