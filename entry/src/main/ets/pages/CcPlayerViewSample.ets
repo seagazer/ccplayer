@@ -60,6 +60,7 @@ export struct CcPlayerViewSample {
         this.controllerOverlay = new CcControllerOverlay(this.player)
         this.titleOverlay = new CcTitleBarOverlay(this.player)
         this.gestureOverlay.setTextSize(18)
+        this.gestureOverlay.setIconSize(20)
         this.gestureOverlay.setTextColor('#ffead981')
         this.loadingOverlay.setLoadingText("loading...")
         // bind av session
