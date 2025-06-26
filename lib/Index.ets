@@ -32,6 +32,8 @@ export { MediaSourceFactory } from './src/main/ets/data/MediaSourceFactory'
 
 export { MediaSource } from './src/main/ets/data/MediaSource'
 
+export { MediaSourceType } from './src/main/ets/data/MediaSourceType'
+
 export { MediaLogger } from './src/main/ets/common/MediaLogger'
 
 

@@ -63,9 +63,20 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
      * Set the size of text.
      * @param size The size of text with unit fp.
      */
-    setTextSize(size: number) {
+    setTextSize(size: Length) {
         if (this.config!.textSize != size) {
             this.config!.textSize = size
+            this.builderNode?.update(this.config!)
+        }
+    }
+
+    /**
+     * Set the size of icon.
+     * @param size The size of icon with unit vp.
+     */
+    setIconSize(size: Length) {
+        if (this.config!.symbolSize != size) {
+            this.config!.symbolSize = size
             this.builderNode?.update(this.config!)
         }
     }
@@ -153,7 +164,7 @@ function overlay(config: GestureOverlayConfig) {
             Row() {
                 SymbolGlyph($r('sys.symbol.fast_forward'))
                     .fontColor([config.textColor])
-                    .fontSize(config.textSize + 2)
+                    .fontSize(config.symbolSize)
                 Text(timeToString(config.totalDuration * config.gesturePercent) + " / " + timeToString(config.totalDuration))
                     .fontSize(config.textSize)
                     .fontColor(config.textColor)
@@ -171,7 +182,7 @@ function overlay(config: GestureOverlayConfig) {
             Row() {
                 SymbolGlyph(config.gesturePercent == 0 ? $r('sys.symbol.speaker') : $r('sys.symbol.speaker_wave_1'))
                     .fontColor([config.textColor])
-                    .fontSize(config.textSize + 2)
+                    .fontSize(config.symbolSize)
                 Text(Math.round(config.gesturePercent * 100) + "%")
                     .fontSize(config.textSize)
                     .fontColor(config.textColor)
@@ -189,7 +200,7 @@ function overlay(config: GestureOverlayConfig) {
             Row() {
                 SymbolGlyph($r('sys.symbol.sun_max'))
                     .fontColor([config.textColor])
-                    .fontSize(config.textSize + 2)
+                    .fontSize(config.symbolSize)
                 Text(Math.round(config.gesturePercent * 100) + "%")
                     .fontSize(config.textSize)
                     .fontColor(config.textColor)
@@ -210,7 +221,8 @@ function overlay(config: GestureOverlayConfig) {
 class GestureOverlayConfig extends BaseOverlayConfig {
     gestureType: GestureType = GestureType.PROGRESS
     gesturePercent: number = 0
-    textSize: number = 14
+    textSize: Length = 14
+    symbolSize: Length = 16
     textColor: ResourceColor = "#ffffffff"
     bgColor: ResourceColor = "#a6000000"
     totalDuration: number = 0

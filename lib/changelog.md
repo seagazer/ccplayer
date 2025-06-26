@@ -1,3 +1,9 @@
+# 1.2.4
+- 完善播放动作，新增状态机判定及执行失效告警提示
+- 修复CcLoadingOverlay在Error状态下不隐藏的问题
+- 开放MediaSourceType接口，用户可继承MediaSource实现自定义资源
+- 优化各个Overlay样式设置接口
+
 # 1.2.3
 
 - 新增setSeekMode接口，seek默认模式由SEEK_PREV_SYNC变更为SEEK_CLOSEST(Api 12+)

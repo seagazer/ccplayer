@@ -62,7 +62,7 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
      * Set the loading text.
      * @param text The text if loading view.
      */
-    setLoadingText(text: string) {
+    setLoadingText(text: ResourceStr) {
         if (this.config!.loadingText != text) {
             this.config!.loadingText = text
             this.invalidate()
@@ -160,7 +160,7 @@ function overlay(config: LoadingOverlayConfig) {
 }
 
 class LoadingOverlayConfig extends BaseOverlayConfig {
-    loadingText: string = ""
+    loadingText: ResourceStr = ""
     textSize: Length = 14
     textColor: ResourceColor = "#ffffffff"
     bgColor: ResourceColor = "#a6000000"

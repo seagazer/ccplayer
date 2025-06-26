@@ -152,7 +152,8 @@ ohpm install @seagazer/ccplayer
   | 接口                | 参数                                                                         | 返回值           | 说明                                  |
   | ------------------- | ---------------------------------------------------------------------------- | ---------------- | ------------------------------------- |
   | construct           | player: CcPlayer                                                             | CcGestureOverlay | 创建CcGestureOverlay实例              |
-  | setTextSize         | size: number                                                                 | void             | 设置overlay字体大小，单位fp，默认14fp |
+  | setTextSize         | size: Length                                                                 | void             | 设置overlay字体大小，单位fp，默认14fp |
+  | setIconSize         | size: Length                                                                 | void             | 设置overlay图标大小，单位vp，默认16vp |
   | setTextColor        | color: ResourceColor                                                         | void             | 设置overlay字体颜色，默认#ffffffff    |
   | setBackgroundColor  | type: GestureType                                                            | void             | 设置overlay背景颜色，默认#a6000000    |
   | setGestureType      | size: number                                                                 | void             | 设置当前CcPlayerView的手势类型        |
@@ -169,7 +170,7 @@ ohpm install @seagazer/ccplayer
   | setSliderTrackColor    | color: ResourceColor       | void             | 设置进度条轨道颜色，默认#ccffffff                           |
   | setSliderBlockColor    | color: ResourceColor       | void             | 设置进度条滑块颜色，默认#ffffffff                           |
   | setSliderSelectedColor | color: ResourceColor       | void             | 设置进度条的进度颜色，默认sys.color.ohos_id_color_emphasize |
-  | setPadding             | padding: Lenght \| Padding | void             | 设置overlay字体与左右边缘的水平边距                         |
+  | setPadding             | padding: Length \| Padding | void             | 设置overlay字体与左右边缘的水平边距                         |
   | setSliderMargin        | margin: Margin             | void             | 设置seekbar与文本的水平间距                                 |
   | setVisible             | visible: boolean           | void             | 设置当前Overlay的显示状态                                   |
 
@@ -190,7 +191,7 @@ ohpm install @seagazer/ccplayer
   | setLoadingText     | text: string               | void             | 设置loading提示文本                       |
   | setLoadingSize     | size: Length               | void             | 设置loading的大小，单位vp，默认56vp       |
   | setLoadingMargin   | margin: Length             | void             | 设置loading和文本的间距，单位vp，默认16vp |
-  | setPadding         | padding: Lenght \| Padding | void             | 设置loading组件四周边距                   |
+  | setPadding         | padding: Length \| Padding | void             | 设置loading组件四周边距                   |
   | setTextSize        | size: Length               | void             | 设置loading字体大小，单位fp，默认14fp     |
   | setTextColor       | color: ResourceColor       | void             | 设置loading字体颜色，默认#ffffffff        |
   | setBackgroundColor | type: GestureType          | void             | 设置overlay背景颜色，默认#a6000000        |
@@ -266,10 +267,6 @@ struct PlayerViewPage {
         this.gestureOverlay.setTextColor('#ffead981')
     }
 
-    private handleGestureAction() {
-        // ...用户自己手动处理手势事件
-    }
-
     build() {
         Column() {
             // 注意：Overlay面板采用层叠的组合方式，需要使用Stack或者RelativeContainer作为根容器
@@ -278,17 +275,6 @@ struct PlayerViewPage {
                 CcPlayerView({
                     player: this.player,
                     asRatio: this.videoRatio,
-                    // onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
-                    //     // 方式1：用户自己手动处理手势事件
-                    //     this.gestureOverlay.setGestureType(type) //刷新UI
-                    //     this.gestureOverlay.setGesturePercent(percent) //刷新UI
-                    //     this.handleGestureAction() //处理事件
-                    // },
-                    // onGestureUIListener: (visible: boolean) => {
-                    //     // 方式1：刷新手势UI面板参数
-                    //     this.gestureOverlay.setVisible(visible)
-                    // },      
-                    // 方式2：推荐，不使用方式1组件内部即自动管理所有状态              
                 })
                 // 5.使用NodeContainer结合CcGestureOverlay默认手势面板
                 NodeContainer(this.gestureOverlay)            
