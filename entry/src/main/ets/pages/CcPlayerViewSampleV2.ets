@@ -10,7 +10,7 @@ import {
     MediaSourceFactory,
     PlayerState
 } from '@seagazer/ccplayer';
-import { toast } from '../Extentions';
+import { MOCK_SOURCE, toast } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
@@ -90,7 +90,6 @@ export struct CcPlayerViewSampleV2 {
             .removeOnErrorListener(this.errorListener)
         this.player.removeOnPipStateChangedListener(this.pipStateChangedListener)
         this.player.release()
-        console.log(`${TAG}页面销毁`)
     }
 
     // 用户自己手动处理手势事件
@@ -119,7 +118,7 @@ export struct CcPlayerViewSampleV2 {
                     CcPlayerViewV2({
                         player: this.player,
                         asRatio: this.ratio,
-                        renderType: XComponentType.TEXTURE,
+                        renderType: XComponentType.SURFACE,
                         // onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
                         //     // 用户可以参考下面代码自己手动处理手势事件
                         //     // this.gestureOverlay.setGestureType(type)
@@ -128,8 +127,7 @@ export struct CcPlayerViewSampleV2 {
                         // },
                         onSurfaceCreated: () => {
                             this.playIndex = 0
-                            let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
-                                "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                            let src = MediaSourceFactory.createAssets(MOCK_SOURCE[0][0], MOCK_SOURCE[0][1], MOCK_SOURCE[0][2])
                             this.player.setMediaSource(src, () => {
                                 // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                 setTimeout(() => {
@@ -209,8 +207,7 @@ export struct CcPlayerViewSampleV2 {
                         onAction: () => {
                             if (this.playIndex == 0) {
                                 this.playIndex = 1
-                                let src = MediaSourceFactory.createAssets("TestVideo2", "video2.mp4",
-                                    "https://img1.baidu.com/it/u=4039557469,3031542597&fm=253&fmt=auto&app=138&f=JPEG?w=200&h=200")
+                                let src = MediaSourceFactory.createAssets(MOCK_SOURCE[1][0], MOCK_SOURCE[1][1], MOCK_SOURCE[1][2])
                                 this.player.setMediaSource(src, () => {
                                     // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                     setTimeout(() => {
@@ -219,8 +216,7 @@ export struct CcPlayerViewSampleV2 {
                                 })
                             } else {
                                 this.playIndex = 0
-                                let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
-                                    "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
+                                let src = MediaSourceFactory.createAssets(MOCK_SOURCE[0][0], MOCK_SOURCE[0][1], MOCK_SOURCE[0][2])
                                 this.player.setMediaSource(src, () => {
                                     // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                     setTimeout(() => {

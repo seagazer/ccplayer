@@ -1,0 +1,23 @@
+{
+  "license": "Apache License 2.0",
+  "devDependencies": {},
+  "keywords": [
+    "播放器",
+    "音视频",
+    "Video",
+    "Music",
+    "Player",
+    "ijk"
+  ],
+  "author": {
+    "name": "seagazer",
+    "email": "seagazer@qq.com"
+  },
+  "name": "@seagazer/ccplayer_ijk",
+  "description": "An extensions of ijkplayer for ccplayer.",
+  "main": "Index.ets",
+  "repository": "https://github.com/seagazer/ccplayer",
+  "version": "1.0.0",
+  "homepage": "https://github.com/seagazer",
+  "dependencies": {}
+}

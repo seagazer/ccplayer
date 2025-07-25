@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "lib_base",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+      "2in1"
+    ]
+  }
+}

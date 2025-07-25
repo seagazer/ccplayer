@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "lib_ijk",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+      "2in1"
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 import { CcPlayer, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer';
-import { timeToString } from '../Extentions';
+import { MOCK_SOURCE, timeToString } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
@@ -149,10 +149,7 @@ export struct VideoSample {
                         text: "setSrc",
                         onAction: () => {
                             this.isLoading = true
-                            let src = MediaSourceFactory.createAssets("TestVideo", "video1.mp4",
-                                "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
-                            src = MediaSourceFactory.createUrl("",
-                                "https://m3u8.girigirilove.com/zijian/oldanime/2025/01/cht/DrStoneScienceFutureCHT/01/playlist.m3u8")
+                            let src = MediaSourceFactory.createAssets(MOCK_SOURCE[0][0], MOCK_SOURCE[0][1], MOCK_SOURCE[0][2])
                             this.player.setMediaSource(src, () => {
                                 this.player.start()
                             })

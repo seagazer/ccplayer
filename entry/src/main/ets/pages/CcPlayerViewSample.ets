@@ -10,7 +10,7 @@ import {
     MediaSourceFactory,
     PlayerState
 } from '@seagazer/ccplayer';
-import { toast } from '../Extentions';
+import { MOCK_SOURCE, toast } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
@@ -21,15 +21,14 @@ const TAG = '[CcPlayerViewSample]'
 
 @Component
 export struct CcPlayerViewSample {
-    // private player = new CcPlayer(getContext(this))
-    @State player?: CcPlayer = undefined;
+    private player = new CcPlayer(getContext(this))
     @State ratio: AspectRatio = AspectRatio.AUTO
     @State ratioText: string = "AUTO"
     @State totalDuration: number = 0
     @State navigationId: string = ''
     private playIndex: number = 0
     private preparedListener = () => {
-        this.totalDuration = this.player!.getDuration()
+        this.totalDuration = this.player.getDuration()
         Logger.d(TAG, "prepared= " + this.totalDuration)
     }
     private stateChangedListener = (state: PlayerState) => {
@@ -41,24 +40,22 @@ export struct CcPlayerViewSample {
     }
     private pipStateChangedListener = (state: PiPWindow.PiPState, reason: string) => {
         Logger.d(TAG, "pip state= " + state + ', reason= ' + reason)
+        if (state === PiPWindow.PiPState.STOPPED) {
+            this.player.stopPip()
+        }
     }
-    private loadingOverlay?: CcLoadingOverlay
-    private gestureOverlay?: CcGestureOverlay
-    private controllerOverlay?: CcControllerOverlay
-    private titleOverlay?: CcTitleBarOverlay
+    private loadingOverlay: CcLoadingOverlay = new CcLoadingOverlay(this.player)
+    private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
+    private controllerOverlay: CcControllerOverlay = new CcControllerOverlay(this.player)
+    private titleOverlay: CcTitleBarOverlay = new CcTitleBarOverlay(this.player)
     private playerWindow?: window.Window = undefined
     private controllerHideTimer = -1
 
     aboutToAppear(): void {
-        this.player = new CcPlayer(getContext(this))
         this.player.setKeepScreenOn(this.getUIContext(), true)
         this.player.addOnPipStateChangedListener(this.pipStateChangedListener)
         this.playerWindow = window.findWindow(this.getUIContext().getWindowName())
         // set the gesture overlay ui config
-        this.loadingOverlay = new CcLoadingOverlay(this.player)
-        this.gestureOverlay = new CcGestureOverlay(this.player)
-        this.controllerOverlay = new CcControllerOverlay(this.player)
-        this.titleOverlay = new CcTitleBarOverlay(this.player)
         this.gestureOverlay.setTextSize(18)
         this.gestureOverlay.setIconSize(20)
         this.gestureOverlay.setTextColor('#ffead981')
@@ -75,7 +72,7 @@ export struct CcPlayerViewSample {
             wantAgentFlags: [wantAgent.WantAgentFlags.UPDATE_PRESENT_FLAG]
         }).then(() => {
             // set background play
-            this.player!.setBackgroundPlayEnable(true)
+            this.player.setBackgroundPlayEnable(true)
         })
         // set the listeners of player
         this.player
@@ -85,15 +82,14 @@ export struct CcPlayerViewSample {
     }
 
     aboutToDisappear(): void {
-        this.player!.setKeepScreenOn(this.getUIContext(), false)
+        this.player.setKeepScreenOn(this.getUIContext(), false)
         clearTimeout(this.controllerHideTimer)
-        this.player!
+        this.player
             .removeOnPreparedListener(this.preparedListener)
             .removeOnStateChangedListener(this.stateChangedListener)
             .removeOnErrorListener(this.errorListener)
-        this.player!.removeOnPipStateChangedListener(this.pipStateChangedListener)
-        this.player!.release()
-        console.log(`${TAG}页面销毁`)
+        this.player.removeOnPipStateChangedListener(this.pipStateChangedListener)
+        this.player.release()
     }
 
     // 用户自己手动处理手势事件
@@ -102,14 +98,14 @@ export struct CcPlayerViewSample {
             case GestureType.PROGRESS:
                 let seekPosition = this.totalDuration * percent
                 if (isTouchUp) {
-                    this.player!.seekTo(seekPosition)
+                    this.player.seekTo(seekPosition)
                 }
                 break
             case GestureType.BRIGHTNESS:
                 this.playerWindow?.setWindowBrightness(percent)
                 break
             case GestureType.VOLUME:
-                this.player!.setVolume(percent)
+                this.player.setVolume(percent)
                 break
         }
     }
@@ -123,25 +119,19 @@ export struct CcPlayerViewSample {
                         player: this.player,
                         asRatio: this.ratio,
                         renderType: XComponentType.SURFACE,
-                        onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
-                            // 用户自己手动处理手势事件
-                            // this.gestureOverlay.setGestureType(type)
-                            // this.gestureOverlay.setGesturePercent(percent)
-                            // this.handleGestureAction(type, percent, isTouchUp)
-                            // Overlay自动处理手势事件
-                            this.gestureOverlay!.handleGestureAction(this.getUIContext(), type, percent, isTouchUp)
-                        },
-                        onGestureUIListener: (visible) => {
-                            this.gestureOverlay!.setVisible(visible)
-                        },
+                        // onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
+                        //     // 用户可以参考下面代码自己手动处理手势事件
+                        //     // this.gestureOverlay.setGestureType(type)
+                        //     // this.gestureOverlay.setGesturePercent(percent)
+                        //     // this.handleGestureAction(type, percent, isTouchUp)
+                        // },
                         onSurfaceCreated: () => {
                             this.playIndex = 0
-                            let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
-                                "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
-                            this.player!.setMediaSource(src, () => {
+                            let src = MediaSourceFactory.createAssets(MOCK_SOURCE[0][0], MOCK_SOURCE[0][1], MOCK_SOURCE[0][2])
+                            this.player.setMediaSource(src, () => {
                                 // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                 setTimeout(() => {
-                                    this.player!.start()
+                                    this.player.start()
                                 }, 1500)
                             })
                         }
@@ -174,13 +164,13 @@ export struct CcPlayerViewSample {
                 .onTouch((ev) => {
                     if (ev.type == TouchType.Down) {
                         clearTimeout(this.controllerHideTimer)
-                        this.titleOverlay!.setVisible(true)
-                        this.controllerOverlay!.setVisible(true)
+                        this.titleOverlay.setVisible(true)
+                        this.controllerOverlay.setVisible(true)
                     }
                     if (ev.type == TouchType.Up) {
                         this.controllerHideTimer = setTimeout(() => {
-                            this.titleOverlay!.setVisible(false)
-                            this.controllerOverlay!.setVisible(false)
+                            this.titleOverlay.setVisible(false)
+                            this.controllerOverlay.setVisible(false)
                         }, 2000)
                     }
                 })
@@ -190,26 +180,26 @@ export struct CcPlayerViewSample {
                     CButton({
                         text: "start",
                         onAction: () => {
-                            this.player!.start()
+                            this.player.start()
                         }
                     })
                     CButton({
                         text: "pause",
                         onAction: () => {
-                            this.player!.pause()
+                            this.player.pause()
                         }
                     })
                     CButton({
                         text: "StartPip",
                         onAction: async () => {
-                            await this.player!.enablePip(this.navigationId)
-                            this.player!.startPip()
+                            await this.player.enablePip(this.navigationId)
+                            this.player.startPip()
                         }
                     })
                     CButton({
                         text: "StopPip",
                         onAction: () => {
-                            this.player!.stopPip()
+                            this.player.stopPip()
                         }
                     })
                     CButton({
@@ -217,22 +207,20 @@ export struct CcPlayerViewSample {
                         onAction: () => {
                             if (this.playIndex == 0) {
                                 this.playIndex = 1
-                                let src = MediaSourceFactory.createAssets("TestVideo2", "video2.mp4",
-                                    "https://img1.baidu.com/it/u=4039557469,3031542597&fm=253&fmt=auto&app=138&f=JPEG?w=200&h=200")
-                                this.player!.setMediaSource(src, () => {
+                                let src = MediaSourceFactory.createAssets(MOCK_SOURCE[1][0], MOCK_SOURCE[1][1], MOCK_SOURCE[1][2])
+                                this.player.setMediaSource(src, () => {
                                     // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                     setTimeout(() => {
-                                        this.player!.start()
+                                        this.player.start()
                                     }, 1500)
                                 })
                             } else {
                                 this.playIndex = 0
-                                let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
-                                    "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
-                                this.player!.setMediaSource(src, () => {
+                                let src = MediaSourceFactory.createAssets(MOCK_SOURCE[0][0], MOCK_SOURCE[0][1], MOCK_SOURCE[0][2])
+                                this.player.setMediaSource(src, () => {
                                     // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                     setTimeout(() => {
-                                        this.player!.start()
+                                        this.player.start()
                                     }, 1500)
                                 })
                             }

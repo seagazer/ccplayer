@@ -1,10 +1,11 @@
 {
   "module": {
-    "name": "lib",
+    "name": "lib_core",
     "type": "har",
     "deviceTypes": [
       "default",
-      "tablet"
+      "tablet",
+      "2in1"
     ],
     "requestPermissions": [
       {

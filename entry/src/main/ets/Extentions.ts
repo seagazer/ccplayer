@@ -22,4 +22,10 @@ export function toast(message: string, duration: number = 2000) {
     })
 }
 
-export const LOGO_COLOR = ["#ffc84747", "#ff5dd2c8", "#ff021fb2", "#ffb3d84f", "#ff6ac847", "#ffd29f5d", "#ff5d8cd7", "#ffd84f4f", "#ffdd77e8"]
+export const LOGO_COLOR =
+    ["#ffc84747", "#ff5dd2c8", "#ff021fb2", "#ffb3d84f", "#ff6ac847", "#ffd29f5d", "#ff5d8cd7", "#ffd84f4f", "#ffdd77e8"]
+
+export const MOCK_SOURCE = [
+    ["TestVideo1", "video1.mp4", "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg"],
+    ["TestVideo2", "video2.mp4", "https://img1.baidu.com/it/u=4039557469,3031542597&fm=253&fmt=auto&app=138&f=JPEG?w=200&h=200"],
+]

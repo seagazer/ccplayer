@@ -14,7 +14,6 @@ struct Home {
     private navRouter = new NavPathStack()
     private pageData: string[] =
         ['MusicSample', 'VideoSample', 'CcPlayerViewSample', 'CcPlayerViewSampleV2', 'CustomOverlaySample', 'PagePlayerSample']
-
     private navigationId: string = 'navId'
 
     aboutToAppear(): void {
@@ -23,20 +22,22 @@ struct Home {
 
     build() {
         Navigation(this.navRouter) {
-            Column() {
-                ForEach(this.pageData, (pageName: string) => {
-                    Text(pageName)
-                        .attributeModifier(this.style)
-                        .onClick(() => {
-                            this.navRouter.pushPathByName(pageName, null)
-                        })
-                        .backgroundColor(LOGO_COLOR[Math.floor(Math.random() * LOGO_COLOR.length)])
-                })
+            Scroll() {
+                Column() {
+                    ForEach(this.pageData, (pageName: string) => {
+                        Text(pageName)
+                            .attributeModifier(this.style)
+                            .onClick(() => {
+                                this.navRouter.pushPathByName(pageName, null)
+                            })
+                            .backgroundColor(LOGO_COLOR[Math.floor(Math.random() * LOGO_COLOR.length)])
+                    })
+                }
+                .padding(16)
+                .justifyContent(FlexAlign.Center)
             }
             .width("100%")
             .height("100%")
-            .padding(16)
-            .justifyContent(FlexAlign.Center)
         }
         .width("100%")
         .height("100%")

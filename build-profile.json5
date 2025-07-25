@@ -39,8 +39,16 @@
       ]
     },
     {
-      "name": "lib",
-      "srcPath": "./lib"
+      "name": "lib_core",
+      "srcPath": "./lib_core"
+    },
+    {
+      "name": "lib_base",
+      "srcPath": "./lib_base",
+    },
+    {
+      "name": "lib_ijk",
+      "srcPath": "./lib_ijk",
     }
   ]
 }

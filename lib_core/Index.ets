@@ -8,6 +8,10 @@ export { CcPlayerView } from './src/main/ets/view/CcPlayerView'
 
 export { CcPlayerViewV2 } from './src/main/ets/view/CcPlayerViewV2'
 
+export { BaseOverlayConfig } from './src/main/ets/overlay/BaseOverlay'
+
+export { BaseOverlayController } from './src/main/ets/overlay/BaseOverlay'
+
 export { CcGestureOverlay } from './src/main/ets/overlay/CcGestureOverlay'
 
 export { CcTitleBarOverlay } from './src/main/ets/overlay/CcTitleBarOverlay'

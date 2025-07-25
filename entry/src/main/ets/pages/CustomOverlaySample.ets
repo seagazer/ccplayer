@@ -1,5 +1,5 @@
 import { AspectRatio, CcPlayer, CcPlayerView, GestureType, MediaSourceFactory } from '@seagazer/ccplayer';
-import { timeToString } from '../Extentions';
+import { MOCK_SOURCE, timeToString } from '../Extentions';
 import { window } from '@kit.ArkUI';
 import { CustomControlOverlay } from './CustomControlOverlay';
 
@@ -119,10 +119,7 @@ export struct CustomOverlaySample {
                     },
                     onSurfaceCreated: () => {
                         this.isLoading = true
-                        // let src = MediaSourceFactory.createAssets("TestVideo1", "video1.mp4",
-                        // "https://so1.360tres.com/dr/220__/t011e1ce4509d68021b.jpg")
-                        let src = MediaSourceFactory.createUrl('',
-                            'http://vd3.bdstatic.com/mda-re23rzrhznhfjp9a/cae_h264/1746240582840699857/mda-re23rzrhznhfjp9a.mp4')
+                        let src = MediaSourceFactory.createAssets(MOCK_SOURCE[0][0], MOCK_SOURCE[0][1], MOCK_SOURCE[0][2])
                         this.player.setMediaSource(src, () => {
                             this.player.start()
                         })
