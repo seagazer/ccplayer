@@ -1,9 +1,6 @@
-import { MediaSource } from '../../data/MediaSource';
 import media from '@ohos.multimedia.media';
 import { BasePlayer } from './BasePlayer';
-import { PlayerState } from '../config/PlayerState';
-import { MediaLogger } from '../../common/MediaLogger';
-import { IPlayer } from '../../interface/IPlayer';
+import { MediaLogger, MediaSource, PlayerState } from '@seagazer/ccplayer_base';
 
 const TAG = "[OhosAudioPlayer]"
 

@@ -1,21 +1,11 @@
-import { CcPlayer } from '../CcPlayer';
 import { BuilderNode, NodeController } from '@kit.ArkUI';
+import { BaseOverlayConfig } from './BaseOverlayConfig';
 
 /**
- * The base class of overlay.
  *
  * Author: Seagazer
- * Date: 2025/2/19
+ * Date: 2025/7/26
  */
-export abstract class BaseOverlayConfig {
-    player: CcPlayer
-    visible: boolean = false
-
-    constructor(player: CcPlayer) {
-        this.player = player;
-    }
-}
-
 export abstract class BaseOverlayController<C extends BaseOverlayConfig> extends NodeController {
     builderNode?: BuilderNode<[C]> = undefined
     config?: C = undefined

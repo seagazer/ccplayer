@@ -1,11 +1,6 @@
-import { MediaSource } from '../../data/MediaSource';
-import { MediaLogger } from '../../common/MediaLogger';
-import { PlayerState } from '../config/PlayerState';
 import media from '@ohos.multimedia.media';
-import { IPlayer } from '../../interface/IPlayer';
-import { MediaSourceType } from '../../data/MediaSourceType';
 import { audio } from '@kit.AudioKit';
-import { AudioFocusEvent } from '../config/AudioFocusEvent';
+import { AudioFocusEvent, IPlayer, MediaLogger, MediaSource, MediaSourceType, PlayerState } from '@seagazer/ccplayer_base';
 
 const TAG = "[OhosAvPlayer]"
 

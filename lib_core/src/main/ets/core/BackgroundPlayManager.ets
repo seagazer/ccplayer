@@ -1,7 +1,6 @@
-import wantAgent from '@ohos.app.ability.wantAgent';
-import backgroundTaskManager from '@ohos.resourceschedule.backgroundTaskManager';
-import common from '@ohos.app.ability.common';
-import { MediaLogger } from '../common/MediaLogger';
+import { MediaLogger } from '@seagazer/ccplayer_base';
+import { common, wantAgent } from '@kit.AbilityKit';
+import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 
 const TAG = '[BackgroundPlayManager]'
 

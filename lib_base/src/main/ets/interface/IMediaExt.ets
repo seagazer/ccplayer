@@ -1,4 +1,4 @@
-import { MediaSource } from '../data/MediaSource';
+import { MediaSource } from '../source/MediaSource';
 
 /**
  * Define the extensions action of media player.

@@ -1,7 +1,8 @@
 import { BuilderNode, UIContext } from '@kit.ArkUI';
+import { MediaSource } from '@seagazer/ccplayer_base';
 import { CcPlayer } from '../CcPlayer';
-import { MediaSource } from '../data/MediaSource';
-import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay';
+import { BaseOverlayConfig } from './base/BaseOverlayConfig';
+import { BaseOverlayController } from './base/BaseOverlayController';
 
 /**
  * The default overlay for title bar of CcPlayerView.

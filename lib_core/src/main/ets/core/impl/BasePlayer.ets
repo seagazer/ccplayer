@@ -1,9 +1,5 @@
-import { MediaSource } from '../../data/MediaSource';
-import { IPlayer } from '../../interface/IPlayer';
-import { AudioFocusEvent } from '../config/AudioFocusEvent';
-import { PlayerState } from '../config/PlayerState';
 import media from '@ohos.multimedia.media';
-import { MediaLogger } from '../../common/MediaLogger';
+import { AudioFocusEvent, IPlayer, MediaLogger, MediaSource, PlayerState } from '@seagazer/ccplayer_base';
 
 const TAG = "[BasePlayer]"
 

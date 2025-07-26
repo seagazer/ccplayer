@@ -1,9 +1,9 @@
-import { timeToString } from '../common/Extentions'
-import { GestureType } from '../view/config/GestureType'
 import { BuilderNode, FrameNode, UIContext, window } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
-import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'
+import { BaseOverlayConfig } from './base/BaseOverlayConfig'
 import { GestureLiveData } from './livedata/GestureLiveData'
+import { GestureType, timeToString } from '@seagazer/ccplayer_base'
+import { BaseOverlayController } from './base/BaseOverlayController'
 
 /**
  * The default overlay for gesture actions of CcPlayerView.

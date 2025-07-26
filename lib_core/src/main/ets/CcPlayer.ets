@@ -1,22 +1,23 @@
-import avSession from '@ohos.multimedia.avsession';
-import media from '@ohos.multimedia.media';
-import { IPlayer } from './interface/IPlayer';
 import { AvPlayerImpl } from './core/impl/AvPlayerImpl';
-import { MediaSource } from './data/MediaSource';
-import { PlayerState } from './core/config/PlayerState';
-import { MediaLogger } from './common/MediaLogger';
-import common from '@ohos.app.ability.common';
 import { AvSessionManager } from './core/AvSessionManager';
-import wantAgent from '@ohos.app.ability.wantAgent';
 import { BackgroundPlayManager } from './core/BackgroundPlayManager';
-import { AvSessionCallback } from './core/config/AvSessionCallback';
 import { PiPWindow, window } from '@kit.ArkUI';
-import { AudioFocusEvent } from './core/config/AudioFocusEvent';
-import { IMediaExt } from './interface/IMediaExt';
 import { fileIo } from '@kit.CoreFileKit';
-import { IAvSession } from './interface/IAvSession';
-import { IPip } from './interface/IPip';
 import { PipManager } from './core/PipManager';
+import {
+    MediaLogger,
+    AudioFocusEvent,
+    AvSessionCallback,
+    IAvSession,
+    IMediaExt,
+    IPip,
+    IPlayer,
+    PlayerState,
+    MediaSource
+} from '@seagazer/ccplayer_base';
+import { common, wantAgent } from '@kit.AbilityKit';
+import { media } from '@kit.MediaKit';
+import { avSession } from '@kit.AVSessionKit';
 
 const TAG = '[CcPlayer]'
 

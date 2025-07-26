@@ -1,8 +1,6 @@
-import { IPip } from '../interface/IPip';
 import { PiPWindow } from '@kit.ArkUI';
-import { MediaLogger } from '../common/MediaLogger';
+import { IPip, MediaLogger, PlayerState } from '@seagazer/ccplayer_base';
 import { CcPlayer } from '../CcPlayer';
-import { PlayerState } from './config/PlayerState';
 
 /**
  * The manager to handle pip mode.

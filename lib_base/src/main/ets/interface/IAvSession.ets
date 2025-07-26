@@ -1,6 +1,6 @@
-import { AvSessionCallback } from "../core/config/AvSessionCallback"
 import { common, wantAgent } from "@kit.AbilityKit"
 import { avSession } from "@kit.AVSessionKit"
+import { AvSessionCallback } from "../common/AvSessionCallback"
 
 /**
  * Define the action of av session.

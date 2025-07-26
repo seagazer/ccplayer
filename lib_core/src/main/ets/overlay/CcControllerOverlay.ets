@@ -1,7 +1,8 @@
 import { BuilderNode, UIContext } from '@kit.ArkUI';
+import { timeToString } from '@seagazer/ccplayer_base';
 import { CcPlayer } from '../CcPlayer';
-import { timeToString } from '../common/Extentions';
-import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay';
+import { BaseOverlayConfig } from './base/BaseOverlayConfig';
+import { BaseOverlayController } from './base/BaseOverlayController';
 
 /**
  * The default overlay for controller of CcPlayerView.

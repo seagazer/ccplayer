@@ -1,16 +1,14 @@
 export { CcPlayer } from './src/main/ets/CcPlayer'
 
-export { IPlayer } from './src/main/ets/interface/IPlayer'
-
 export { CcPlayerPool } from './src/main/ets/CcPlayerPool'
 
 export { CcPlayerView } from './src/main/ets/view/CcPlayerView'
 
 export { CcPlayerViewV2 } from './src/main/ets/view/CcPlayerViewV2'
 
-export { BaseOverlayConfig } from './src/main/ets/overlay/BaseOverlay'
+export { BaseOverlayConfig } from './src/main/ets/overlay/base/BaseOverlayConfig'
 
-export { BaseOverlayController } from './src/main/ets/overlay/BaseOverlay'
+export { BaseOverlayController } from './src/main/ets/overlay/base/BaseOverlayController'
 
 export { CcGestureOverlay } from './src/main/ets/overlay/CcGestureOverlay'
 
@@ -20,24 +18,26 @@ export { CcControllerOverlay } from './src/main/ets/overlay/CcControllerOverlay'
 
 export { CcLoadingOverlay } from './src/main/ets/overlay/CcLoadingOverlay'
 
-export { GestureType } from './src/main/ets/view/config/GestureType'
+export { GestureType } from '@seagazer/ccplayer_base'
 
-export { AudioFocusEvent } from './src/main/ets/core/config/AudioFocusEvent'
+export { GestureAreaConfig } from '@seagazer/ccplayer_base'
 
-export { AvSessionCallback } from './src/main/ets/core/config/AvSessionCallback'
+export { AspectRatio } from '@seagazer/ccplayer_base'
 
-export { PlayerState } from './src/main/ets/core/config/PlayerState'
+export { MediaLogger } from '@seagazer/ccplayer_base'
 
-export { GestureAreaConfig } from './src/main/ets/view/config/GestureAreaConfig'
+export { IPlayer } from '@seagazer/ccplayer_base'
 
-export { AspectRatio } from './src/main/ets/view/config/AspectRatio'
+export { AudioFocusEvent } from '@seagazer/ccplayer_base'
 
-export { MediaSourceFactory } from './src/main/ets/data/MediaSourceFactory'
+export { AvSessionCallback } from '@seagazer/ccplayer_base'
 
-export { MediaSource } from './src/main/ets/data/MediaSource'
+export { PlayerState } from '@seagazer/ccplayer_base'
 
-export { MediaSourceType } from './src/main/ets/data/MediaSourceType'
+export { MediaSourceFactory } from '@seagazer/ccplayer_base'
 
-export { MediaLogger } from './src/main/ets/common/MediaLogger'
+export { MediaSource } from '@seagazer/ccplayer_base'
+
+export { MediaSourceType } from '@seagazer/ccplayer_base'
 
 

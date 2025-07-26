@@ -1,10 +1,7 @@
-import { MediaSource } from '../../data/MediaSource';
 import media from '@ohos.multimedia.media';
 import { BasePlayer } from './BasePlayer';
-import { MediaLogger } from '../../common/MediaLogger';
-import { PlayerState } from '../config/PlayerState';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { IPlayer } from '../../interface/IPlayer';
+import { MediaLogger, MediaSource, PlayerState } from '@seagazer/ccplayer_base';
 
 const TAG = "[OhosVideoPlayer]"
 

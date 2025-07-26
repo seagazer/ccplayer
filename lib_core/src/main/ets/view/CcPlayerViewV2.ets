@@ -1,11 +1,8 @@
-import { MediaLogger } from '../common/MediaLogger';
 import { CcPlayer } from '../CcPlayer';
-import { AspectRatio } from './config/AspectRatio';
-import { GestureType } from './config/GestureType';
-import { GestureAreaConfig } from './config/GestureAreaConfig';
 import { PiPWindow } from '@kit.ArkUI';
 import { GestureLiveData } from '../overlay/livedata/GestureLiveData';
 import { GestureEvent } from '../overlay/CcGestureOverlay';
+import { AspectRatio, GestureAreaConfig, GestureType, MediaLogger } from '@seagazer/ccplayer_base';
 
 const TAG = "[CcPlayerViewV2]"
 

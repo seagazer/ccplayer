@@ -1,4 +1,4 @@
-import { MediaLogger } from '../../../Index';
+import { MediaLogger } from '@seagazer/ccplayer_base';
 import { CcPlayer } from './CcPlayer';
 
 const TAG = "[CcPlayerPool]"

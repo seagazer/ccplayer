@@ -1,13 +1,7 @@
-import avSession from '@ohos.multimedia.avsession';
-import common from '@ohos.app.ability.common';
-import { wantAgent } from '@kit.AbilityKit';
-import { PlayerState } from './config/PlayerState';
-import { MediaSource } from '../data/MediaSource';
-import { MediaLogger } from '../common/MediaLogger';
-import json from '@ohos.util.json';
-import { AvSessionCallback } from './config/AvSessionCallback';
-import { IAvSession } from '../interface/IAvSession';
+import { common, wantAgent } from '@kit.AbilityKit';
 import { CcPlayer } from '../CcPlayer';
+import { AvSessionCallback, IAvSession, MediaLogger, MediaSource, PlayerState } from '@seagazer/ccplayer_base';
+import { avSession } from '@kit.AVSessionKit';
 
 const TAG = "[AvSessionManager]"
 
@@ -58,7 +52,7 @@ export class AvSessionManager implements IAvSession {
 
     private async setLaunchInfo(agentInfo: wantAgent.WantAgentInfo) {
         if (this.avSession) {
-            MediaLogger.i(TAG, "setup launch app= " + json.stringify(agentInfo))
+            MediaLogger.i(TAG, "setup launch app= " + JSON.stringify(agentInfo))
             let agent = await wantAgent.getWantAgent(agentInfo)
             await this.avSession.setLaunchAbility(agent)
         }
@@ -85,7 +79,7 @@ export class AvSessionManager implements IAvSession {
     }
 
     setMediaSource(mediaSource: MediaSource) {
-        MediaLogger.i(TAG, "set media source= " + json.stringify(mediaSource))
+        MediaLogger.i(TAG, "set media source= " + JSON.stringify(mediaSource))
         this.mediaSource = mediaSource
     }
 
@@ -114,7 +108,7 @@ export class AvSessionManager implements IAvSession {
                 mediaImage: this.mediaSource.cover,
                 duration: this.player.getDuration()
             }
-            MediaLogger.d(TAG, "set meta data= " + json.stringify(data))
+            MediaLogger.d(TAG, "set meta data= " + JSON.stringify(data))
             this.avSession.setAVMetadata(data)
         }
     }

@@ -1,7 +1,8 @@
 import { BuilderNode } from '@kit.ArkUI'
+import { PlayerState } from '@seagazer/ccplayer_base'
 import { CcPlayer } from '../CcPlayer'
-import { PlayerState } from '../core/config/PlayerState'
-import { BaseOverlayConfig, BaseOverlayController } from './BaseOverlay'
+import { BaseOverlayConfig } from './base/BaseOverlayConfig'
+import { BaseOverlayController } from './base/BaseOverlayController'
 
 /**
  * The default overlay for loading state of CcPlayer.
