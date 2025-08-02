@@ -19,5 +19,9 @@
   "repository": "https://github.com/seagazer/ccplayer",
   "version": "1.0.0",
   "homepage": "https://github.com/seagazer",
-  "dependencies": {}
+  "dependencies": {
+    "@seagazer/ccplayer_base": "file:./lib/lib_base.har",
+    "@ohos/ijkplayer": "^2.0.6"
+  },
+  "dynamicDependencies": {}
 }

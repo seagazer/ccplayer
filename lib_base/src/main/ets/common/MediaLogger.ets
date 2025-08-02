@@ -16,6 +16,10 @@ export class MediaLogger {
         MediaLogger.DEBUG = debug
     }
 
+    static isDebug(): boolean {
+        return MediaLogger.DEBUG
+    }
+
     static setFilterName(name: string) {
         MediaLogger.FILTER_NAME = name
     }

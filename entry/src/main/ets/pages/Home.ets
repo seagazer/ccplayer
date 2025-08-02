@@ -6,6 +6,7 @@ import { PagePlayerSample } from './PagePlayerSample'
 import { CustomOverlaySample } from './CustomOverlaySample'
 import { CcPlayerViewSampleV2 } from './CcPlayerViewSampleV2'
 import { LOGO_COLOR } from '../Extentions'
+import { IjkSample } from './IjkSample'
 
 @Entry
 @Component
@@ -13,7 +14,7 @@ struct Home {
     private style = new HomeButtonStyle()
     private navRouter = new NavPathStack()
     private pageData: string[] =
-        ['MusicSample', 'VideoSample', 'CcPlayerViewSample', 'CcPlayerViewSampleV2', 'CustomOverlaySample', 'PagePlayerSample']
+        ['MusicSample', 'VideoSample', 'CcPlayerViewSample', 'CcPlayerViewSampleV2', 'CustomOverlaySample', 'PagePlayerSample', 'IjkSample']
     private navigationId: string = 'navId'
 
     aboutToAppear(): void {
@@ -60,6 +61,8 @@ struct Home {
             CustomOverlaySample()
         } else if (name === "PagePlayerSample") {
             PagePlayerSample()
+        } else if (name === "IjkSample") {
+            IjkSample()
         }
     }
 }
