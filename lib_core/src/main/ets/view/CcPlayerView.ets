@@ -2,7 +2,7 @@ import { CcPlayer } from '../CcPlayer';
 import { PiPWindow } from '@kit.ArkUI';
 import { GestureLiveData } from '../overlay/livedata/GestureLiveData';
 import { GestureEvent } from '../overlay/CcGestureOverlay';
-import { AspectRatio, GestureAreaConfig, GestureType, MediaLogger } from '@seagazer/ccplayer_base';
+import { AspectRatio, GestureAreaConfig, GestureType, MediaLogger } from '@seagazer/ccplayer-base';
 
 const TAG = "[CcPlayerView]"
 

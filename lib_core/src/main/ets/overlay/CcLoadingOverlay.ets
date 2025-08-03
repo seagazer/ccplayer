@@ -1,5 +1,5 @@
 import { BuilderNode } from '@kit.ArkUI'
-import { PlayerState } from '@seagazer/ccplayer_base'
+import { PlayerState } from '@seagazer/ccplayer-base'
 import { CcPlayer } from '../CcPlayer'
 import { BaseOverlayConfig } from './base/BaseOverlayConfig'
 import { BaseOverlayController } from './base/BaseOverlayController'

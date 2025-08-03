@@ -252,10 +252,20 @@ export interface IPlayer {
     getSystemPlayer(): media.AVPlayer | IPlayer
 
     /**
+     *
      * Set a surface to render picture for video player.
      * @param surfaceId The surface of XComponent to be bind the media player.
+     *
+     * @deprecated Use {@link bindXComponent} instead.
      */
     setSurface(surfaceId: string): void
+
+    /**
+     * Bind a surface to render picture for video player.
+     * @param controller The controller of XComponent.
+     * @param loadContext The context from XComponent onLoad callback.
+     */
+    bindXComponent(controller: XComponentController, loadContext: object): void
 
     /**
      * Add a listener to observe the video size changed of player.

@@ -1,6 +1,6 @@
 import media from '@ohos.multimedia.media';
 import { audio } from '@kit.AudioKit';
-import { AudioFocusEvent, IPlayer, MediaLogger, MediaSource, MediaSourceType, PlayerState } from '@seagazer/ccplayer_base';
+import { AudioFocusEvent, IPlayer, MediaLogger, MediaSource, MediaSourceType, PlayerState } from '@seagazer/ccplayer-base';
 
 const TAG = "[OhosAvPlayer]"
 
@@ -453,6 +453,10 @@ export class AvPlayerImpl implements IPlayer {
 
     setSurface(surfaceId: string) {
         this.curSurfaceId = surfaceId
+    }
+
+    bindXComponent(controller: XComponentController, loadContext: object): void {
+        this.curSurfaceId = controller.getXComponentSurfaceId()
     }
 
     getSystemPlayer(): media.AVPlayer | IPlayer {

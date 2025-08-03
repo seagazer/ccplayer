@@ -1,6 +1,6 @@
 import { common, wantAgent } from '@kit.AbilityKit';
 import { CcPlayer } from '../CcPlayer';
-import { AvSessionCallback, IAvSession, MediaLogger, MediaSource, PlayerState } from '@seagazer/ccplayer_base';
+import { AvSessionCallback, IAvSession, MediaLogger, MediaSource, PlayerState } from '@seagazer/ccplayer-base';
 import { avSession } from '@kit.AVSessionKit';
 
 const TAG = "[AvSessionManager]"

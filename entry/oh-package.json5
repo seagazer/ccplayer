@@ -8,6 +8,6 @@
   "version": "1.0.0",
   "dependencies": {
     "@seagazer/ccplayer": "file:../lib_core",
-    "@seagazer/ccplayer_ijk": "file:../lib_ijk"
+    "@seagazer/ccplayer-ijk": "file:../lib_ijk"
   }
 }

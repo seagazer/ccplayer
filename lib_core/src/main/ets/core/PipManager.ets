@@ -1,5 +1,5 @@
 import { PiPWindow } from '@kit.ArkUI';
-import { IPip, MediaLogger, PlayerState } from '@seagazer/ccplayer_base';
+import { IPip, MediaLogger, PlayerState } from '@seagazer/ccplayer-base';
 import { CcPlayer } from '../CcPlayer';
 
 /**

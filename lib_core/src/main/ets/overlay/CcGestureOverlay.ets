@@ -2,7 +2,7 @@ import { BuilderNode, FrameNode, UIContext, window } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
 import { BaseOverlayConfig } from './base/BaseOverlayConfig'
 import { GestureLiveData } from './livedata/GestureLiveData'
-import { GestureType, timeToString } from '@seagazer/ccplayer_base'
+import { GestureType, timeToString } from '@seagazer/ccplayer-base'
 import { BaseOverlayController } from './base/BaseOverlayController'
 
 /**

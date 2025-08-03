@@ -14,7 +14,7 @@ import {
     IPlayer,
     PlayerState,
     MediaSource
-} from '@seagazer/ccplayer_base';
+} from '@seagazer/ccplayer-base';
 import { common, wantAgent } from '@kit.AbilityKit';
 import { media } from '@kit.MediaKit';
 import { avSession } from '@kit.AVSessionKit';
@@ -188,6 +188,11 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
 
     setSurface(surfaceId: string) {
         this.player.setSurface(surfaceId)
+    }
+
+    bindXComponent(controller: XComponentController, loadContext: object) {
+        this.player.bindXComponent(controller, loadContext)
+        this.setXComponentController(controller)
     }
 
     getMediaSource(): MediaSource | undefined {

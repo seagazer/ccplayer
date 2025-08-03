@@ -13,14 +13,14 @@
     "name": "seagazer",
     "email": "seagazer@qq.com"
   },
-  "name": "@seagazer/ccplayer_ijk",
+  "name": "@seagazer/ccplayer-ijk",
   "description": "An extensions of ijkplayer for ccplayer.",
   "main": "Index.ets",
   "repository": "https://github.com/seagazer/ccplayer",
   "version": "1.0.0",
   "homepage": "https://github.com/seagazer",
   "dependencies": {
-    "@seagazer/ccplayer_base": "file:./lib/lib_base.har",
+    "@seagazer/ccplayer-base": "file:./libs/lib_base.har",
     "@ohos/ijkplayer": "^2.0.6"
   },
   "dynamicDependencies": {}

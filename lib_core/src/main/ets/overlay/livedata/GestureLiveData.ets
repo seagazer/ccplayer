@@ -1,4 +1,4 @@
-import { LiveData } from '@seagazer/ccplayer_base';
+import { LiveData } from '@seagazer/ccplayer-base';
 import { GestureEvent } from '../CcGestureOverlay';
 
 /**

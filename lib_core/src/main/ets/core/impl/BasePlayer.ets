@@ -1,5 +1,5 @@
 import media from '@ohos.multimedia.media';
-import { AudioFocusEvent, IPlayer, MediaLogger, MediaSource, PlayerState } from '@seagazer/ccplayer_base';
+import { AudioFocusEvent, IPlayer, MediaLogger, MediaSource, PlayerState } from '@seagazer/ccplayer-base';
 
 const TAG = "[BasePlayer]"
 
@@ -223,6 +223,10 @@ export abstract class BasePlayer implements IPlayer {
 
     setSurface(surfaceId: string) {
         // do action in sub class
+    }
+
+    bindXComponent(controller: XComponentController, loadContext: object): void {
+        // not support anymore
     }
 
     /**

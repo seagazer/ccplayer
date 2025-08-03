@@ -1,5 +1,5 @@
 import { BuilderNode, UIContext } from '@kit.ArkUI';
-import { timeToString } from '@seagazer/ccplayer_base';
+import { timeToString } from '@seagazer/ccplayer-base';
 import { CcPlayer } from '../CcPlayer';
 import { BaseOverlayConfig } from './base/BaseOverlayConfig';
 import { BaseOverlayController } from './base/BaseOverlayController';

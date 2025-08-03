@@ -1,4 +1,4 @@
-import { MediaLogger } from '@seagazer/ccplayer_base';
+import { MediaLogger } from '@seagazer/ccplayer-base';
 import { common, wantAgent } from '@kit.AbilityKit';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 

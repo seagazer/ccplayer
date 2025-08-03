@@ -13,7 +13,7 @@
     "name": "seagazer",
     "email": "seagazer@qq.com"
   },
-  "name": "@seagazer/ccplayer_base",
+  "name": "@seagazer/ccplayer-base",
   "description": "The base kit of ccplayer.",
   "main": "Index.ets",
   "repository": "https://github.com/seagazer/ccplayer",

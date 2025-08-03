@@ -18,26 +18,26 @@ export { CcControllerOverlay } from './src/main/ets/overlay/CcControllerOverlay'
 
 export { CcLoadingOverlay } from './src/main/ets/overlay/CcLoadingOverlay'
 
-export { GestureType } from '@seagazer/ccplayer_base'
+export { GestureType } from '@seagazer/ccplayer-base'
 
-export { GestureAreaConfig } from '@seagazer/ccplayer_base'
+export { GestureAreaConfig } from '@seagazer/ccplayer-base'
 
-export { AspectRatio } from '@seagazer/ccplayer_base'
+export { AspectRatio } from '@seagazer/ccplayer-base'
 
-export { MediaLogger } from '@seagazer/ccplayer_base'
+export { MediaLogger } from '@seagazer/ccplayer-base'
 
-export { IPlayer } from '@seagazer/ccplayer_base'
+export { IPlayer } from '@seagazer/ccplayer-base'
 
-export { AudioFocusEvent } from '@seagazer/ccplayer_base'
+export { AudioFocusEvent } from '@seagazer/ccplayer-base'
 
-export { AvSessionCallback } from '@seagazer/ccplayer_base'
+export { AvSessionCallback } from '@seagazer/ccplayer-base'
 
-export { PlayerState } from '@seagazer/ccplayer_base'
+export { PlayerState } from '@seagazer/ccplayer-base'
 
-export { MediaSourceFactory } from '@seagazer/ccplayer_base'
+export { MediaSourceFactory } from '@seagazer/ccplayer-base'
 
-export { MediaSource } from '@seagazer/ccplayer_base'
+export { MediaSource } from '@seagazer/ccplayer-base'
 
-export { MediaSourceType } from '@seagazer/ccplayer_base'
+export { MediaSourceType } from '@seagazer/ccplayer-base'
 
 
