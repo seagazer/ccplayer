@@ -1,4 +1,12 @@
-import { AudioFocusEvent, IPlayer, MediaLogger, MediaSource, MediaSourceType, PlayerState, IJK } from '@seagazer/ccplayer-base';
+import {
+    AudioFocusEvent,
+    IJK,
+    IPlayer,
+    MediaLogger,
+    MediaSource,
+    MediaSourceType,
+    PlayerState
+} from '@seagazer/ccplayer-base';
 import media from '@ohos.multimedia.media';
 import {
     IjkMediaPlayer,
@@ -243,8 +251,6 @@ export class IjkPlayerImpl implements IPlayer {
             this.player.native_setup()
         }
         this.player.setDataSource(mediaSource.url)
-        MediaLogger.d(TAG, ">> prepareAsync")
-        this.player.prepareAsync()
         onReady?.()
     }
 
@@ -254,7 +260,12 @@ export class IjkPlayerImpl implements IPlayer {
 
     start(): void {
         MediaLogger.d(TAG, ">> start")
-        this.player.start()
+        if (this.getPlayerState() == PlayerState.STATE_IDLE) {
+            MediaLogger.d(TAG, ">> prepareAsync")
+            this.player.prepareAsync()
+        } else {
+            this.player.start()
+        }
         this.startProgressTimer()
     }
 
@@ -268,22 +279,26 @@ export class IjkPlayerImpl implements IPlayer {
         MediaLogger.d(TAG, ">> pause")
         this.player.pause()
         this.stopProgressTimer()
+        this.changePlayerState(PlayerState.STATE_PAUSED)
     }
 
     stop(): void {
         MediaLogger.d(TAG, ">> stop")
         this.player.stop()
         this.stopProgressTimer()
+        this.changePlayerState(PlayerState.STATE_STOPPED)
     }
 
     reset(): void {
         MediaLogger.d(TAG, ">> reset")
         this.player.reset()
+        this.changePlayerState(PlayerState.STATE_IDLE)
     }
 
     release(): void {
+        this.stop()
+        this.reset()
         MediaLogger.d(TAG, ">> release")
-        this.stopProgressTimer()
         this.player.setOnVideoSizeChangedListener(null)
         this.player.setOnPreparedListener(null)
         this.player.setOnCompletionListener(null)
@@ -293,6 +308,7 @@ export class IjkPlayerImpl implements IPlayer {
         this.player.setOnErrorListener(null)
         this.player.off('audioInterrupt')
         this.player.release()
+        this.changePlayerState(PlayerState.STATE_NOT_INIT)
     }
 
     private startProgressTimer() {

@@ -16,6 +16,7 @@ import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { CButton } from './CButton';
 import { PiPWindow, window } from '@kit.ArkUI';
+import { IjkPlayer } from '@seagazer/ccplayer-ijk';
 
 const TAG = '[CcPlayerViewSampleV2]'
 
@@ -52,6 +53,9 @@ export struct CcPlayerViewSampleV2 {
     private controllerHideTimer = -1
 
     aboutToAppear(): void {
+        // 使用ijk扩展插件
+        const ijkPlayer = new IjkPlayer()
+        this.player.setPlayer(ijkPlayer)
         this.player.setKeepScreenOn(this.getUIContext(), true)
         this.player.addOnPipStateChangedListener(this.pipStateChangedListener)
         this.playerWindow = window.findWindow(this.getUIContext().getWindowName())
@@ -127,7 +131,8 @@ export struct CcPlayerViewSampleV2 {
                         // },
                         onSurfaceCreated: () => {
                             this.playIndex = 0
-                            let src = MediaSourceFactory.createAssets(MOCK_SOURCE[0][0], MOCK_SOURCE[0][1], MOCK_SOURCE[0][2])
+                            let src = MediaSourceFactory.createUrl("",
+                                "https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/mp4/xgplayer-demo-360p.mp4")
                             this.player.setMediaSource(src, () => {
                                 // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                 setTimeout(() => {
@@ -207,7 +212,7 @@ export struct CcPlayerViewSampleV2 {
                         onAction: () => {
                             if (this.playIndex == 0) {
                                 this.playIndex = 1
-                                let src = MediaSourceFactory.createAssets(MOCK_SOURCE[1][0], MOCK_SOURCE[1][1], MOCK_SOURCE[1][2])
+                                let src = MediaSourceFactory.createUrl("", "http://vjs.zencdn.net/v/oceans.mp4")
                                 this.player.setMediaSource(src, () => {
                                     // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                     setTimeout(() => {
@@ -216,7 +221,8 @@ export struct CcPlayerViewSampleV2 {
                                 })
                             } else {
                                 this.playIndex = 0
-                                let src = MediaSourceFactory.createAssets(MOCK_SOURCE[0][0], MOCK_SOURCE[0][1], MOCK_SOURCE[0][2])
+                                let src = MediaSourceFactory.createUrl("",
+                                    "https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/mp4/xgplayer-demo-360p.mp4")
                                 this.player.setMediaSource(src, () => {
                                     // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                     setTimeout(() => {

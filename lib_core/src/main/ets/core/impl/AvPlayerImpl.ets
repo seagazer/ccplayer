@@ -394,6 +394,7 @@ export class AvPlayerImpl implements IPlayer {
             await this.player.stop()
             await this.player.reset()
             await this.player.release()
+            this.changePlayerState(PlayerState.STATE_IDLE)
         }
     }
 
