@@ -1,1 +1,1 @@
-export { IjkPlugin } from './src/main/ets/IjkPlugin';
+export { IjkPlayer } from './src/main/ets/IjkPlayer';

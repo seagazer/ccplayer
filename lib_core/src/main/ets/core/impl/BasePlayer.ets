@@ -147,6 +147,10 @@ export abstract class BasePlayer implements IPlayer {
         return this
     }
 
+    getTag(): string {
+        throw new Error("Not support anymore")
+    }
+
     addOnVideoSizeChangedListener(listener: (newWidth: number, newHeight: number) => void): IPlayer {
         this.videoSizeChangedListeners.push(listener)
         return this

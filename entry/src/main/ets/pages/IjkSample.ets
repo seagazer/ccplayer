@@ -1,5 +1,5 @@
 import { CcPlayer, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer'
-import { IjkPlugin } from '@seagazer/ccplayer-ijk'
+import { IjkPlayer } from '@seagazer/ccplayer-ijk'
 import { timeToString } from '../Extentions'
 import { Logger } from '../Logger'
 import { CButton } from './CButton'
@@ -48,8 +48,8 @@ export struct IjkSample {
     private isSeeking = false
 
     aboutToAppear(): void {
-        const ijkPlugin = new IjkPlugin()
-        this.player.setPlayer(ijkPlugin)
+        const ijkPlayer = new IjkPlayer()
+        this.player.setPlayer(ijkPlayer)
         this.player
             .addOnPreparedListener(this.preparedListener)
             .addOnStateChangedListener(this.stateChangedListener)
@@ -80,17 +80,17 @@ export struct IjkSample {
                 XComponent({
                     controller: this.controller,
                     type: XComponentType.SURFACE,
-                    id: IjkPlugin.getXComponentId(),
-                    libraryname: IjkPlugin.getLibrary(),
+                    id: IjkPlayer.getXComponentId(),
+                    libraryname: IjkPlayer.getLibrary(),
                 }).onLoad((context) => {
                     Logger.d(TAG, "onLoad= " + context)
                     if (context) {
                         this.player.bindXComponent(this.controller, context)
+                        const source = MediaSourceFactory.createUrl("",
+                            "https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/mp4/xgplayer-demo-360p.mp4")
+                        this.player.setMediaSource(source)
+                        this.player.start()
                     }
-                    const source = MediaSourceFactory.createUrl("",
-                        "https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/mp4/xgplayer-demo-360p.mp4")
-                    this.player.setMediaSource(source)
-                    this.player.start()
                 }).width(300)
                     .height(200)
 

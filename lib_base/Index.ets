@@ -6,26 +6,28 @@ export { IPip } from './src/main/ets/interface/IPip'
 
 export { IMediaExt } from './src/main/ets/interface/IMediaExt'
 
-export { MediaLogger } from './src/main/ets/common/MediaLogger'
+export { MediaLogger } from './src/main/ets/base/MediaLogger'
 
-export { AudioFocusEvent } from './src/main/ets/common/AudioFocusEvent'
+export { IJK } from './src/main/ets/base/player/IJK'
 
-export { AvSessionCallback } from './src/main/ets/common/AvSessionCallback'
+export { AudioFocusEvent } from './src/main/ets/base/player/AudioFocusEvent'
 
-export { PlayerState } from './src/main/ets/common/PlayerState'
+export { AvSessionCallback } from './src/main/ets/base/player/AvSessionCallback'
 
-export { timeToString } from './src/main/ets/common/Extentions'
+export { PlayerState } from './src/main/ets/base/player/PlayerState'
 
-export { AspectRatio } from './src/main/ets/common/AspectRatio'
+export { timeToString } from './src/main/ets/base/Extentions'
 
-export { GestureAreaConfig } from './src/main/ets/common/GestureAreaConfig'
+export { AspectRatio } from './src/main/ets/base/view/AspectRatio'
 
-export { GestureType } from './src/main/ets/common/GestureType'
+export { GestureAreaConfig } from './src/main/ets/base/view/GestureAreaConfig'
 
-export { LiveData } from './src/main/ets/common/LiveData'
+export { GestureType } from './src/main/ets/base/view/GestureType'
 
-export { MediaSource } from './src/main/ets/source/MediaSource'
+export { LiveData } from './src/main/ets/base/LiveData'
 
-export { MediaSourceFactory } from './src/main/ets/source/MediaSourceFactory'
+export { MediaSource } from './src/main/ets/base/source/MediaSource'
 
-export { MediaSourceType } from './src/main/ets/source/MediaSourceType'
+export { MediaSourceFactory } from './src/main/ets/base/source/MediaSourceFactory'
+
+export { MediaSourceType } from './src/main/ets/base/source/MediaSourceType'

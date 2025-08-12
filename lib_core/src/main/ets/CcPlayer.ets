@@ -88,10 +88,10 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
     }
 
     startTo(position: number) {
-        if (this.isPlaying()) {
-            MediaLogger.attentionW(TAG, 'current state is playing, not start!')
-            return
-        }
+        // if (this.isPlaying()) {
+        //     MediaLogger.attentionW(TAG, 'current state is playing, not start!')
+        //     return
+        // }
         this.player.startTo(position)
     }
 
@@ -201,6 +201,10 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
 
     getSystemPlayer(): media.AVPlayer | IPlayer {
         return this.player.getSystemPlayer()
+    }
+
+    getTag(): string {
+        return this.player.getTag()
     }
 
     addOnPreparedListener(listener: () => void): IPlayer {

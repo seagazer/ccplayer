@@ -1,6 +1,6 @@
 import { common, wantAgent } from "@kit.AbilityKit"
 import { avSession } from "@kit.AVSessionKit"
-import { AvSessionCallback } from "../common/AvSessionCallback"
+import { AvSessionCallback } from "../base/player/AvSessionCallback"
 
 /**
  * Define the action of av session.

@@ -1,3 +1,8 @@
+# 1.2.6
+- CcPlayerView组件优化
+- CcPlayer新增bindXComponent接口，取替setSurface和setXComponentController接口（废弃）
+- 支持IjkPlayer扩展插件，需配合@seagazer/ccplayer-ijk使用
+
 # 1.2.5
 - 降低兼容版本至5.0.2(14)
 

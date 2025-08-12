@@ -2,12 +2,12 @@ import { CcPlayer } from '../CcPlayer';
 import { PiPWindow } from '@kit.ArkUI';
 import { GestureLiveData } from '../overlay/livedata/GestureLiveData';
 import { GestureEvent } from '../overlay/CcGestureOverlay';
-import { AspectRatio, GestureAreaConfig, GestureType, MediaLogger } from '@seagazer/ccplayer-base';
+import { AspectRatio, GestureAreaConfig, GestureType, MediaLogger, IJK } from '@seagazer/ccplayer-base';
+import { PlayerType } from '../common/PlayerType';
+import { AvPlayerImpl } from '../core/impl/AvPlayerImpl';
+import { GestureHandler } from './GestureHandler';
 
 const TAG = "[CcPlayerView]"
-
-
-const TOUCH_SHOT = 10
 
 /**
  * A component to play video, you can control media player with gesture and change the aspect ratio of the picture.
@@ -105,28 +105,23 @@ export struct CcPlayerView {
      */
     defaultVolume: number = 1
     /*-----------------------------------------------------------------------------------------------*/
+    private playerType: PlayerType = PlayerType.AVPLAYER
     private viewWidth: number = 0
     private viewHeight: number = 0
     private controller = new XComponentController()
     private surfaceId: string = ""
     private videoWidth: number = 0
     private videoHeight: number = 0
-    private controlType: GestureType = GestureType.PROGRESS
-    private downX: number = -1
-    private downY: number = -1
     private totalDuration: number = 0
-    private gesturePercentResult: number = 0
-    private hideControllerTimer: number = -1
-    private isUserMoved: boolean = false
     @State surfaceWidth: number = 0
     @State surfaceHeight: number = 0
     private isDoingLayout: boolean = true
     @State isShowSurface: boolean = false
     private isFrameReady: boolean = false
-    private currentBrightness: number = this.defaultBrightness
-    private currentVolume = this.defaultVolume
+    private gestureHandler: GestureHandler | null = null
     private preparedListener = () => {
         this.totalDuration = this.player!.getDuration()
+        this.gestureHandler?.setTotalDuration(this.totalDuration)
     }
     private videoSizeChangedListener = (width: number, height: number) => {
         this.videoWidth = width
@@ -147,16 +142,15 @@ export struct CcPlayerView {
         this.isFrameReady = false
         this.isShowSurface = false
     }
+    @State pipState: string = ''
+    private pipStateChangedListener = (state: PiPWindow.PiPState) => {
+        this.pipState = state.toString()
+    }
 
     private onAspectRatioChanged() {
         const videoRatio = this.getVideoRatio()
         MediaLogger.i(TAG, "aspectRatioChanged = " + videoRatio + ", type = " + this.asRatio)
         this.onMeasureSurface(videoRatio)
-    }
-
-    @State pipState: string = ''
-    private pipStateChangedListener = (state: PiPWindow.PiPState) => {
-        this.pipState = state.toString()
     }
 
     private getVideoRatio(): number {
@@ -213,11 +207,8 @@ export struct CcPlayerView {
         MediaLogger.d(TAG, "measure surface result = " + this.surfaceWidth + " x " + this.surfaceHeight)
     }
 
-    onControllerVisibleChanged(visible: boolean) {
-        this.onGestureUIListener && this.onGestureUIListener(visible)
-    }
-
     aboutToAppear() {
+        this.setPlayerType()
         MediaLogger.d(TAG, "init, add the listeners")
         this.player!.addOnPreparedListener(this.preparedListener)
             .addOnVideoSizeChangedListener(this.videoSizeChangedListener)
@@ -226,11 +217,38 @@ export struct CcPlayerView {
         if (this.player?.canUsePip()) {
             this.player!.addOnPipStateChangedListener(this.pipStateChangedListener)
         }
+        if (this.isSupportGesture) {
+            this.gestureHandler = new GestureHandler(
+                this.player!, this.gestureAreaConfig, this.horizontalGestureDamping, this.verticalGestureDamping,
+                this.defaultBrightness, this.defaultVolume, this.autoHideControllerDelay,
+                (visible: boolean) => {
+                    this.onGestureUIListener && this.onGestureUIListener(visible)
+                },
+                (type: GestureType, percent: number, isTouchUp: boolean) => {
+                    this.onGestureAction && this.onGestureAction(type, percent, isTouchUp)
+                })
+        }
+    }
+
+    private setPlayerType() {
+        const tag = this.player!.getTag();
+        switch (tag) {
+            case IJK.TAG:
+                this.playerType = PlayerType.IJKPLAYER;
+                break;
+            case AvPlayerImpl.TAG:
+                this.playerType = PlayerType.AVPLAYER;
+                break;
+            default:
+                this.playerType == PlayerType.CUSTOM;
+                break;
+        }
+        MediaLogger.d(TAG, "init, player tag= " + tag + ", type= " + this.playerType);
     }
 
     aboutToDisappear() {
         MediaLogger.d(TAG, "release, remove the listeners")
-        clearTimeout(this.hideControllerTimer)
+        this.gestureHandler?.release()
         this.player!.removeOnPreparedListener(this.preparedListener)
             .removeOnVideoSizeChangedListener(this.videoSizeChangedListener)
             .removeOnRenderFirstFrameListener(this.renderFirstFrameListener)
@@ -243,31 +261,59 @@ export struct CcPlayerView {
     build() {
         Stack() {
             // surface view
-            XComponent({
-                id: "ccplayer",
-                controller: this.controller,
-                type: this.renderType
-            })
-                .width(this.surfaceWidth)
-                .height(this.surfaceHeight)
-                .onLoad(() => {
-                    this.surfaceId = this.controller.getXComponentSurfaceId()
-                    MediaLogger.d(TAG, "set surface= " + this.surfaceId)
-                    this.player!.setSurface(this.surfaceId)
-                    this.player!.setXComponentController(this.controller)
-                    this.onSurfaceCreated && this.onSurfaceCreated(this.surfaceId)
+            if (this.playerType == PlayerType.IJKPLAYER) {
+                XComponent({
+                    controller: this.controller,
+                    type: this.renderType,
+                    id: IJK.ID,
+                    libraryname: IJK.NAPI,
                 })
-                .onDestroy(() => {
-                    this.onSurfaceDestroy && this.onSurfaceDestroy(this.surfaceId)
+                    .width(this.surfaceWidth)
+                    .height(this.surfaceHeight)
+                    .onLoad((context) => {
+                        this.surfaceId = this.controller.getXComponentSurfaceId()
+                        MediaLogger.d(TAG, "bind surface= " + context)
+                        this.player!.bindXComponent(this.controller, context!)
+                        this.onSurfaceCreated && this.onSurfaceCreated(this.surfaceId)
+                    })
+                    .onDestroy(() => {
+                        this.onSurfaceDestroy && this.onSurfaceDestroy(this.surfaceId)
+                    })
+                    .animation({
+                        duration: this.aspectRatioChangeAnimationDuration, onFinish: () => {
+                            this.isDoingLayout = false
+                            this.isShowSurface = this.isFrameReady
+                            MediaLogger.i(TAG, "resize completed, show surface= " + this.isShowSurface)
+                        }
+                    })
+                    .visibility(this.isShowSurface ? Visibility.Visible : Visibility.Hidden)
+            } else if (this.playerType == PlayerType.AVPLAYER) {
+                XComponent({
+                    id: "ccplayer",
+                    controller: this.controller,
+                    type: this.renderType
                 })
-                .animation({
-                    duration: this.aspectRatioChangeAnimationDuration, onFinish: () => {
-                        this.isDoingLayout = false
-                        this.isShowSurface = this.isFrameReady
-                        MediaLogger.i(TAG, "resize completed, show surface= " + this.isShowSurface)
-                    }
-                })
-                .visibility(this.isShowSurface ? Visibility.Visible : Visibility.Hidden)
+                    .width(this.surfaceWidth)
+                    .height(this.surfaceHeight)
+                    .onLoad(() => {
+                        this.surfaceId = this.controller.getXComponentSurfaceId()
+                        MediaLogger.d(TAG, "set surface= " + this.surfaceId)
+                        this.player!.setSurface(this.surfaceId)
+                        this.player!.setXComponentController(this.controller)
+                        this.onSurfaceCreated && this.onSurfaceCreated(this.surfaceId)
+                    })
+                    .onDestroy(() => {
+                        this.onSurfaceDestroy && this.onSurfaceDestroy(this.surfaceId)
+                    })
+                    .animation({
+                        duration: this.aspectRatioChangeAnimationDuration, onFinish: () => {
+                            this.isDoingLayout = false
+                            this.isShowSurface = this.isFrameReady
+                            MediaLogger.i(TAG, "resize completed, show surface= " + this.isShowSurface)
+                        }
+                    })
+                    .visibility(this.isShowSurface ? Visibility.Visible : Visibility.Hidden)
+            }
             // 添加这个是保证在前一个页面关闭画中画时，播放页能够正常销毁
             Text(this.pipState).visibility(Visibility.None)
         }
@@ -286,7 +332,9 @@ export struct CcPlayerView {
         }))
         .onTouch((event) => {
             if (this.isSupportGesture) {
-                this.onTouchEvent(event)
+                this.gestureHandler?.handleTouchEvent(event)
+                // handle outer touch event
+                this.onTouchCallback && this.onTouchCallback(event)
             }
         })
         .width('100%')
@@ -305,101 +353,10 @@ export struct CcPlayerView {
             if (this.asRatio != AspectRatio.FILL) {
                 this.onAspectRatioChanged()
             }
+            this.gestureHandler?.setViewSize(this.viewWidth, this.viewHeight)
         })
         .alignContent(Alignment.Center)
         .backgroundColor("#FF000000")
         .clip(true)
-    }
-
-    private onTouchEvent(event: TouchEvent) {
-        let touchEvent = event.touches[0]
-        switch (event.type) {
-            case TouchType.Down:
-                this.handleTouchDown(touchEvent)
-                break
-            case TouchType.Move:
-                this.handleTouchMove(touchEvent)
-                break
-            case TouchType.Up:
-            case TouchType.Cancel:
-                this.handleTouchUp()
-                break
-            default:
-                break
-        }
-        // handle outer touch event
-        this.onTouchCallback && this.onTouchCallback(event)
-    }
-
-    private handleTouchDown(touchEvent: TouchObject) {
-        clearTimeout(this.hideControllerTimer)
-        this.onControllerVisibleChanged(false)
-        this.downX = touchEvent.x
-        this.downY = touchEvent.y
-    }
-
-    private handleTouchMove(touchEvent: TouchObject) {
-        let dx = touchEvent.x - this.downX
-        let dy = touchEvent.y - this.downY
-        if (Math.abs(dx) > TOUCH_SHOT || Math.abs(dy) > TOUCH_SHOT) {
-            // check the gesture type
-            if (!this.isUserMoved) {
-                this.isUserMoved = true
-                if (Math.abs(dy) > Math.abs(dx)) { // vertical gesture
-                    if (this.downX < this.viewWidth / 2) { // left
-                        this.controlType = this.gestureAreaConfig.left
-                    } else { // right
-                        this.controlType = this.gestureAreaConfig.right
-                    }
-                } else { // horizontal gesture
-                    this.controlType = GestureType.PROGRESS
-                }
-                this.onControllerVisibleChanged(true)
-            }
-            if (this.controlType == GestureType.PROGRESS) {
-                let changePercent = dx / this.viewWidth / this.horizontalGestureDamping
-                let begin = this.player!.getCurrentPosition()
-                let current = begin + this.totalDuration * changePercent
-                let result = this.limit(current, this.totalDuration, 0)
-                this.gesturePercentResult = result / this.totalDuration
-            } else if (this.controlType == GestureType.VOLUME) {
-                let changePercent = -dy / this.viewHeight / this.verticalGestureDamping
-                let begin = this.currentVolume
-                let current = begin + 1 * changePercent
-                let result = this.limit(current, 1, 0)
-                this.gesturePercentResult = result / 1
-            } else if (this.controlType == GestureType.BRIGHTNESS) {
-                let changePercent = -dy / this.viewHeight / this.verticalGestureDamping
-                let begin = this.currentBrightness
-                let current = begin + 1 * changePercent
-                let result = this.limit(current, 1, 0)
-                this.gesturePercentResult = result / 1
-            }
-            this.onGestureAction && this.onGestureAction(this.controlType, this.gesturePercentResult, false)
-        }
-    }
-
-    private limit(value: number, max: number, min: number): number {
-        value = Math.max(value, min)
-        value = Math.min(value, max)
-        return value
-    }
-
-    private handleTouchUp() {
-        if (!this.isUserMoved) {
-            return
-        }
-        this.isUserMoved = false
-        this.onGestureAction && this.onGestureAction(this.controlType, this.gesturePercentResult, true)
-        if (this.controlType == GestureType.VOLUME) {
-            this.currentVolume = this.gesturePercentResult
-        } else if (this.controlType == GestureType.BRIGHTNESS) {
-            this.currentBrightness = this.gesturePercentResult
-        }
-        this.downX = -1
-        this.downY = -1
-        this.hideControllerTimer = setTimeout(() => {
-            this.onControllerVisibleChanged(false)
-        }, this.autoHideControllerDelay)
     }
 }

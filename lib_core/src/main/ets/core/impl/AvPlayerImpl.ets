@@ -11,6 +11,7 @@ const TAG = "[OhosAvPlayer]"
  * Date: 2024/9/18
  */
 export class AvPlayerImpl implements IPlayer {
+    static readonly TAG = "AvPlayer"
     private player?: media.AVPlayer = undefined
     private mediaSource?: MediaSource = undefined
     private curSurfaceId?: string = undefined
@@ -461,6 +462,10 @@ export class AvPlayerImpl implements IPlayer {
 
     getSystemPlayer(): media.AVPlayer | IPlayer {
         return this.player!
+    }
+
+    getTag(): string {
+        return AvPlayerImpl.TAG
     }
 
     addOnPreparedListener(listener: () => void): IPlayer {

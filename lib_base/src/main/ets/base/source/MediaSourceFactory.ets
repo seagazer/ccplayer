@@ -1,5 +1,5 @@
 import { MediaSource } from './MediaSource';
-import { MediaLogger } from '../common/MediaLogger';
+import { MediaLogger } from '../MediaLogger';
 import fs from '@ohos.file.fs';
 import media from '@ohos.multimedia.media';
 import { MediaSourceType } from './MediaSourceType';

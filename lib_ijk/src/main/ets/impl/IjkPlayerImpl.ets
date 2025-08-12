@@ -1,4 +1,4 @@
-import { AudioFocusEvent, IPlayer, MediaLogger, MediaSource, MediaSourceType, PlayerState } from '@seagazer/ccplayer-base';
+import { AudioFocusEvent, IPlayer, MediaLogger, MediaSource, MediaSourceType, PlayerState, IJK } from '@seagazer/ccplayer-base';
 import media from '@ohos.multimedia.media';
 import {
     IjkMediaPlayer,
@@ -12,7 +12,7 @@ import {
     OnSeekCompleteListener,
     OnVideoSizeChangedListener
 } from '@ohos/ijkplayer';
-import { IjkPlugin } from './IjkPlugin';
+import { IjkPlayer } from '../IjkPlayer';
 import { StateCode } from './StateCode';
 
 const TAG = "[IjkPlayerImpl]"
@@ -42,7 +42,9 @@ export class IjkPlayerImpl implements IPlayer {
     private renderFirstFrameListeners: Array<() => void> = []
     private audioFocusChangeListener: Array<(event: AudioFocusEvent) => void> = []
     private isSetupListener = false
-    private videoSize: number[] = [-1, -1]
+    private currentPosition = 0
+    private cbVideoSize: number[] = [-1, -1]
+    private cbBuffer: number = -1
     private progressTimer = -1
 
     constructor() {
@@ -58,7 +60,7 @@ export class IjkPlayerImpl implements IPlayer {
         MediaLogger.d(TAG, ">> init ijk")
         this.isSetupListener = true
         MediaLogger.d(TAG, ">> native set context= " + this.surfaceId)
-        this.player.setContext(this.surfaceId, IjkPlugin.getXComponentId())
+        this.player.setContext(this.surfaceId, IjkPlayer.getXComponentId())
         MediaLogger.d(TAG, ">> native setup")
         this.player.native_setup()
 
@@ -91,12 +93,12 @@ export class IjkPlayerImpl implements IPlayer {
         const mOnVideoSizeChangedListener: OnVideoSizeChangedListener = {
             onVideoSizeChanged: (width: number, height: number, sar_num: number, sar_den: number) => {
                 MediaLogger.d(TAG, ">> System callback: onVideoSizeChanged")
-                if (this.videoSize[0] == width && this.videoSize[1] == height) {
+                if (this.cbVideoSize[0] == width && this.cbVideoSize[1] == height) {
                     MediaLogger.w(TAG, ">> System callback: onVideoSizeChanged, but size is not changed!")
                     return
                 }
-                this.videoSize[0] = width
-                this.videoSize[1] = height
+                this.cbVideoSize[0] = width
+                this.cbVideoSize[1] = height
                 this.videoSizeChangedListeners.forEach((callback) => {
                     callback(width, height)
                 })
@@ -125,10 +127,14 @@ export class IjkPlayerImpl implements IPlayer {
         }
         const mOnBufferingUpdateListener: OnBufferingUpdateListener = {
             onBufferingUpdate: (percent: number) => {
-                MediaLogger.d(TAG, ">> System callback: onBufferingUpdate= " + percent)
-                this.bufferProgressChangedListeners.forEach((callback) => {
-                    callback(percent)
-                })
+                if (this.cbBuffer != percent) {
+                    // todo the system callback is always repeat
+                    MediaLogger.d(TAG, ">> System callback: onBufferingUpdate= " + percent)
+                    this.bufferProgressChangedListeners.forEach((callback) => {
+                        callback(percent)
+                    })
+                    this.cbBuffer = percent
+                }
             }
         }
         const mOnSeekCompleteListener: OnSeekCompleteListener = {
@@ -225,14 +231,16 @@ export class IjkPlayerImpl implements IPlayer {
     setMediaSource(mediaSource: MediaSource, onReady?: () => void): void {
         MediaLogger.d(TAG, ">> setMediaSource = " + JSON.stringify(mediaSource))
         this.mediaSource = mediaSource
+        if (mediaSource.type != MediaSourceType.NETWORK) {
+            MediaLogger.w(TAG, "The ijkPlayer is only support network source!")
+            this.errorListeners.forEach((callback) => {
+                callback(-2, "The ijkPlayer is only support network source!")
+            })
+            return
+        }
         if (this.isPlayed && this.player) {
             this.reset()
             this.player.native_setup()
-        }
-        // todo
-        if (mediaSource.type != MediaSourceType.NETWORK) {
-            MediaLogger.w(TAG, "The ijkPlayer is only support network source!")
-            return
         }
         this.player.setDataSource(mediaSource.url)
         MediaLogger.d(TAG, ">> prepareAsync")
@@ -251,8 +259,9 @@ export class IjkPlayerImpl implements IPlayer {
     }
 
     startTo(position: number): void {
-        // todo
-        throw new Error("Method not implemented.");
+        MediaLogger.d(TAG, ">> start to " + position)
+        this.start()
+        this.seekTo(position)
     }
 
     pause(): void {
@@ -291,10 +300,13 @@ export class IjkPlayerImpl implements IPlayer {
         this.stopProgressTimer()
         this.progressTimer = setInterval(() => {
             const position = this.getCurrentPosition()
-            MediaLogger.d(TAG, "current position= " + position)
-            this.progressChangedListeners.forEach((callback) => {
-                callback(position)
-            })
+            // MediaLogger.d(TAG, "current position= " + position)
+            if (this.currentPosition != position) {
+                this.progressChangedListeners.forEach((callback) => {
+                    callback(position)
+                })
+                this.currentPosition = position
+            }
         }, 300)
     }
 
@@ -363,6 +375,10 @@ export class IjkPlayerImpl implements IPlayer {
 
     getSystemPlayer(): IPlayer | media.AVPlayer {
         return this
+    }
+
+    getTag(): string {
+        return IJK.TAG
     }
 
     setSurface(surfaceId: string): void {

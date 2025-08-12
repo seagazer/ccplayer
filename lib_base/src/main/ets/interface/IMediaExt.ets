@@ -1,4 +1,4 @@
-import { MediaSource } from '../source/MediaSource';
+import { MediaSource } from '../base/source/MediaSource';
 
 /**
  * Define the extensions action of media player.
@@ -30,6 +30,8 @@ export interface IMediaExt {
     /**
      * Set the controller of XComponent to play video.
      * @param controller The controller{@link XComponentController} of XComponent to play video.
+     *
+     * @deprecated Since V1.2.6 Use {@link bindXComponent} instead.
      */
     setXComponentController(controller: XComponentController): void
 

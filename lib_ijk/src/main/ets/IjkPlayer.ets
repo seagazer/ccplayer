@@ -1,221 +1,223 @@
-import { AudioFocusEvent, IPlayer, MediaSource, PlayerState } from '@seagazer/ccplayer-base';
+import { AudioFocusEvent, IPlayer, MediaSource, PlayerState, IJK } from '@seagazer/ccplayer-base';
 import media from '@ohos.multimedia.media';
-import { IjkPlayerImpl } from './IjkPlayerImpl';
+import { IjkPlayerImpl } from './impl/IjkPlayerImpl';
 
 /**
- * The ijkPlayer plugin of CcPlayer.
+ * The ijkPlayer extensions of CcPlayer.
  *
  * Author: Seagazer
  * Date: 2025/8/2
  */
-export class IjkPlugin implements IPlayer {
-    private static readonly NAPI = "ijkplayer_napi"
-    private static readonly ID = "IjkPlayerImpl"
-    private ijkPlayer: IjkPlayerImpl
+export class IjkPlayer implements IPlayer {
+    private player: IjkPlayerImpl
 
     constructor() {
-        this.ijkPlayer = new IjkPlayerImpl()
+        this.player = new IjkPlayerImpl()
     }
 
     static getLibrary(): string {
-        return IjkPlugin.NAPI
+        return IJK.NAPI
     }
 
     static getXComponentId(): string {
-        return IjkPlugin.ID
+        return IJK.ID
     }
 
     start(): void {
-        this.ijkPlayer.start()
+        this.player.start()
     }
 
     startTo(position: number): void {
-        this.ijkPlayer.startTo(position)
+        this.player.startTo(position)
     }
 
     pause(): void {
-        this.ijkPlayer.pause()
+        this.player.pause()
     }
 
     stop(): void {
-        this.ijkPlayer.stop()
+        this.player.stop()
     }
 
     reset(): void {
-        this.ijkPlayer.reset()
+        this.player.reset()
     }
 
     release(): void {
-        this.ijkPlayer.release()
+        this.player.release()
     }
 
     seekTo(position: number): void {
-        this.ijkPlayer.seekTo(position)
+        this.player.seekTo(position)
     }
 
     setSeekMode(mode: media.SeekMode): void {
-        this.ijkPlayer.setSeekMode(mode)
+        this.player.setSeekMode(mode)
     }
 
     setMediaSource(mediaSource: MediaSource, onReady?: (() => void) | undefined): void {
-        this.ijkPlayer.setMediaSource(mediaSource, onReady)
+        this.player.setMediaSource(mediaSource, onReady)
     }
 
     getMediaSource(): MediaSource | undefined {
-        return this.ijkPlayer.getMediaSource()
+        return this.player.getMediaSource()
     }
 
     setLooper(isLoop: boolean): void {
-        this.ijkPlayer.setLooper(isLoop)
+        this.player.setLooper(isLoop)
     }
 
     setVolume(vol: number): void {
-        this.ijkPlayer.setVolume(vol)
+        this.player.setVolume(vol)
     }
 
     setPlaySpeed(speed: number): void {
-        this.ijkPlayer.setPlaySpeed(speed)
+        this.player.setPlaySpeed(speed)
     }
 
     addOnPreparedListener(listener: () => void): IPlayer {
-        this.ijkPlayer.addOnPreparedListener(listener)
+        this.player.addOnPreparedListener(listener)
         return this
     }
 
     removeOnPreparedListener(listener: () => void): IPlayer {
-        this.ijkPlayer.removeOnPreparedListener(listener)
+        this.player.removeOnPreparedListener(listener)
         return this
     }
 
     addOnCompletionListener(listener: () => void): IPlayer {
-        this.ijkPlayer.addOnCompletionListener(listener)
+        this.player.addOnCompletionListener(listener)
         return this
     }
 
     removeOnCompletionListener(listener: () => void): IPlayer {
-        this.ijkPlayer.removeOnCompletionListener(listener)
+        this.player.removeOnCompletionListener(listener)
         return this
     }
 
     addOnErrorListener(listener: (code: number, message: string) => void): IPlayer {
-        this.ijkPlayer.addOnErrorListener(listener)
+        this.player.addOnErrorListener(listener)
         return this
     }
 
     removeOnErrorListener(listener: (code: number, message: string) => void): IPlayer {
-        this.ijkPlayer.removeOnErrorListener(listener)
+        this.player.removeOnErrorListener(listener)
         return this
     }
 
     addOnProgressChangedListener(listener: (duration: number) => void): IPlayer {
-        this.ijkPlayer.addOnProgressChangedListener(listener)
+        this.player.addOnProgressChangedListener(listener)
         return this
     }
 
     removeOnProgressChangedListener(listener: (duration: number) => void): IPlayer {
-        this.ijkPlayer.removeOnProgressChangedListener(listener)
+        this.player.removeOnProgressChangedListener(listener)
         return this
     }
 
     addOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
-        this.ijkPlayer.addOnBufferProgressChangedListener(listener)
+        this.player.addOnBufferProgressChangedListener(listener)
         return this
     }
 
     removeOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
-        this.ijkPlayer.removeOnBufferProgressChangedListener(listener)
+        this.player.removeOnBufferProgressChangedListener(listener)
         return this
     }
 
     addOnSeekChangedListener(listener: (duration: number) => void): IPlayer {
-        this.ijkPlayer.addOnSeekChangedListener(listener)
+        this.player.addOnSeekChangedListener(listener)
         return this
     }
 
     removeOnSeekChangedListener(listener: (duration: number) => void): IPlayer {
-        this.ijkPlayer.removeOnSeekChangedListener(listener)
+        this.player.removeOnSeekChangedListener(listener)
         return this
     }
 
     addOnVolumeChangedListener(listener: (volume: number) => void): IPlayer {
-        this.ijkPlayer.addOnVolumeChangedListener(listener)
+        this.player.addOnVolumeChangedListener(listener)
         return this
     }
 
     removeOnVolumeChangedListener(listener: (volume: number) => void): IPlayer {
-        this.ijkPlayer.removeOnVolumeChangedListener(listener)
+        this.player.removeOnVolumeChangedListener(listener)
         return this
     }
 
     addOnStateChangedListener(listener: (state: PlayerState) => void): IPlayer {
-        this.ijkPlayer.addOnStateChangedListener(listener)
+        this.player.addOnStateChangedListener(listener)
         return this
     }
 
     removeOnStateChangedListener(listener: (state: PlayerState) => void): IPlayer {
-        this.ijkPlayer.removeOnStateChangedListener(listener)
+        this.player.removeOnStateChangedListener(listener)
         return this
     }
 
     addOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer {
-        this.ijkPlayer.addOnAudioFocusChangedListener(listener)
+        this.player.addOnAudioFocusChangedListener(listener)
         return this
     }
 
     removeOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer {
-        this.ijkPlayer.removeOnAudioFocusChangedListener(listener)
+        this.player.removeOnAudioFocusChangedListener(listener)
         return this
     }
 
     isPlaying(): boolean {
-        return this.ijkPlayer.isPlaying()
+        return this.player.isPlaying()
     }
 
     getDuration(): number {
-        return this.ijkPlayer.getDuration()
+        return this.player.getDuration()
     }
 
     getCurrentPosition(): number {
-        return this.ijkPlayer.getCurrentPosition()
+        return this.player.getCurrentPosition()
     }
 
     getBufferPosition(): number {
-        return this.ijkPlayer.getBufferPosition()
+        return this.player.getBufferPosition()
     }
 
     getPlayerState(): PlayerState {
-        return this.ijkPlayer.getPlayerState()
+        return this.player.getPlayerState()
     }
 
     getSystemPlayer(): IPlayer | media.AVPlayer {
         return this
     }
 
+    getTag(): string {
+        return this.player.getTag()
+    }
+
     setSurface(surfaceId: string): void {
-        this.ijkPlayer.setSurface(surfaceId)
+        this.player.setSurface(surfaceId)
     }
 
     bindXComponent(controller: XComponentController, loadContext: object): void {
-        this.ijkPlayer.bindXComponent(controller, loadContext)
+        this.player.bindXComponent(controller, loadContext)
     }
 
     addOnVideoSizeChangedListener(listener: (width: number, height: number) => void): IPlayer {
-        this.ijkPlayer.addOnVideoSizeChangedListener(listener)
+        this.player.addOnVideoSizeChangedListener(listener)
         return this
     }
 
     removeOnVideoSizeChangedListener(listener: (width: number, height: number) => void): IPlayer {
-        this.ijkPlayer.removeOnVideoSizeChangedListener(listener)
+        this.player.removeOnVideoSizeChangedListener(listener)
         return this
     }
 
     addOnRenderFirstFrameListener(listener: () => void): IPlayer {
-        this.ijkPlayer.addOnRenderFirstFrameListener(listener)
+        this.player.addOnRenderFirstFrameListener(listener)
         return this
     }
 
     removeOnRenderFirstFrameListener(listener: () => void): IPlayer {
-        this.ijkPlayer.removeOnRenderFirstFrameListener(listener)
+        this.player.removeOnRenderFirstFrameListener(listener)
         return this
     }
 }

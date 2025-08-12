@@ -1,7 +1,7 @@
 import media from '@ohos.multimedia.media';
-import { AudioFocusEvent } from '../common/AudioFocusEvent';
-import { PlayerState } from '../common/PlayerState';
-import { MediaSource } from '../source/MediaSource';
+import { AudioFocusEvent } from '../base/player/AudioFocusEvent';
+import { PlayerState } from '../base/player/PlayerState';
+import { MediaSource } from '../base/source/MediaSource';
 
 
 /**
@@ -252,11 +252,17 @@ export interface IPlayer {
     getSystemPlayer(): media.AVPlayer | IPlayer
 
     /**
+     * Get the tag of player type, default is "AvPlayer".
+     * @returns The tag of player type.
+     */
+    getTag(): string
+
+    /**
      *
      * Set a surface to render picture for video player.
      * @param surfaceId The surface of XComponent to be bind the media player.
      *
-     * @deprecated Use {@link bindXComponent} instead.
+     * @deprecated Since V1.2.6 Use {@link bindXComponent} instead.
      */
     setSurface(surfaceId: string): void
 
