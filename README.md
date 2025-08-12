@@ -18,7 +18,7 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 提供播放器实例缓存池，提供资源管理及复用能力
 - 支持获取本地视频文件缩略图
 - 支持接入自定义播放业务(切换播放内核，自定义类需要实现IPlayer接口)
-- TODO:新增适配IjkPlayer内核（Doing...）
+- 支持IjkPlayer扩展插件（需要依赖@seagazer/ccplayer-ijk插件，仅支持网络媒体播放）
 
 ## 示例效果
 | 视频组件                                                                          | 音乐播放                                                                          | 播控中心                                                                          | PIP模式                                                                           |
@@ -64,6 +64,7 @@ ohpm install @seagazer/ccplayer
   | getPlayerState                        | void                                                                                | PlayerState             | 获取当前播放状态                                              |
   | getSystemPlayer                       | void                                                                                | AVPlayer \| IPlayer     | 获取当前系统播放器实例                                        |
   | setSurface                            | surfaceId: string                                                                   | void                    | 绑定 surafce(仅媒体类型为视频时有效)                          |
+  | bindXComponent                        | controller: XComponentController, loadContext: object                               | void                    | 绑定 surafce和Native对象                                                  |
   | addOnPreparedListener                 | listener: () => void                                                                | IPlayer                 | 添加媒体资源 prepare 状态监听                                 |
   | removeOnPreparedListener              | listener: () => void                                                                | IPlayer                 | 移除媒体资源 preapare 状态监听                                |
   | addOnCompletionListener               | listener: () => void                                                                | IPlayer                 | 添加媒体资源播放结束状态监听                                  |
@@ -262,6 +263,9 @@ struct PlayerViewPage {
     private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
 
     aboutToAppear(): void {
+        // 如果使用ijk插件，需要先绑定插件
+        const ijkPlayer = new IjkPlayer()
+        this.player.setPlayer(ijkPlayer)
         // 3.设置手势UI面板各项参数
         this.gestureOverlay.setTextSize(18)
         this.gestureOverlay.setTextColor('#ffead981')
@@ -543,6 +547,68 @@ struct PlayerViewPage {
 }
 ```
 
+- 使用 IjkPlayer 插件播放网络视频
+``` typescript
+@Entry
+@Component
+struct IjkSample {
+     // 1.实例化CcPlayer
+    private player: CcPlayer = new CcPlayer(getContext(this))
+    // 2.实例化controller
+    private controller = new XComponentController()
+
+    aboutToAppear(): void {
+        // 3.设置插件
+        const ijkPlayer = new IjkPlayer()
+        this.player.setPlayer(ijkPlayer)
+    }
+
+    build() {
+        Column() {
+            Stack() {
+                XComponent({
+                    controller: this.controller,
+                    type: XComponentType.SURFACE,
+                    id: IjkPlayer.getXComponentId(), // 4.需要绑定插件的id
+                    libraryname: IjkPlayer.getLibrary(), // 5.需要绑定插件的so名
+                }).onLoad((context) => {
+                    Logger.d(TAG, "onLoad= " + context)
+                    if (context) {
+                        // 6.绑定surface
+                        this.player.bindXComponent(this.controller, context)
+                    }
+                })  
+            }
+            .width(400)
+            .height(300)
+            .clip(true)
+
+            // play actions
+            Button("play")
+                .onClick(() => {
+                    this.play()
+                })
+        }
+        .width("100%")
+        .height("100%")
+        .justifyContent(FlexAlign.Center)
+    }
+
+    private async play() {
+        // 7.创建mediaSource
+        const source = MediaSourceFactory.createUrl("", "https:xxx.mp4")
+        // 8.设置source
+        this.player.setMediaSource(source)
+        // 9.开始播放
+        this.player.start()
+    }
+
+    aboutToDisappear() {
+        // 10.释放资源
+        this.player.release()
+    }
+}
+```
 
 更多使用场景和示例，例如自定义手势操作 UI，播放器状态事件监听，绑定播控中心等，类似抖音的列表预加载播放，可以参考本库代码仓的 entry 示例工程：
 https://github.com/seagazer/ccplayer
