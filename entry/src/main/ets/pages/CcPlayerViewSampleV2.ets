@@ -10,7 +10,7 @@ import {
     MediaSourceFactory,
     PlayerState
 } from '@seagazer/ccplayer';
-import { MOCK_SOURCE, toast } from '../Extentions';
+import { toast } from '../Extentions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
@@ -93,7 +93,6 @@ export struct CcPlayerViewSampleV2 {
             .removeOnStateChangedListener(this.stateChangedListener)
             .removeOnErrorListener(this.errorListener)
         this.player.removeOnPipStateChangedListener(this.pipStateChangedListener)
-        this.player.release()
     }
 
     // 用户自己手动处理手势事件
@@ -296,5 +295,9 @@ export struct CcPlayerViewSampleV2 {
         .width("100%")
         .height("100%")
         .title("CcPlayerViewSampleV2")
+        .onWillDisappear(() => {
+            // 注意：导航组件，需要在该方法中释放
+            this.player.release()
+        })
     }
 }

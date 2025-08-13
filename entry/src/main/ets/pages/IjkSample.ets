@@ -71,7 +71,6 @@ export struct IjkSample {
             .removeOnSeekChangedListener(this.seekListener)
             .removeOnVideoSizeChangedListener(this.videoSizeListener)
             .removeOnCompletionListener(this.completedListener)
-        this.player.release()
     }
 
     build() {
@@ -140,6 +139,10 @@ export struct IjkSample {
 
             }
         }.title("IjkSample")
+        .onWillDisappear(() => {
+            // 注意：导航组件，需要在该方法中释放
+            this.player.release()
+        })
     }
 
     private playNext() {

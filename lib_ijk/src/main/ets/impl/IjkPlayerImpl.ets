@@ -297,7 +297,6 @@ export class IjkPlayerImpl implements IPlayer {
 
     release(): void {
         this.stop()
-        this.reset()
         MediaLogger.d(TAG, ">> release")
         this.player.setOnVideoSizeChangedListener(null)
         this.player.setOnPreparedListener(null)
