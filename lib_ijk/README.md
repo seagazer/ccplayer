@@ -2,7 +2,7 @@
 
 ## 简介
 
-ccplayer-ijk是基于官方@ohos/ijkplayer进行二次开发，为CcPlayer服务的一个扩展插件，需要结合CcPlayer(@seagazer/ccplayer)使用。
+ccplayer-ijk是基于官方@ohos/ijkplayer进行二次开发，为CcPlayer服务的一个扩展插件，需要结合CcPlayer使用。
 
 - 支持网络媒体基础播放能力(当前1.0.0版本仅支持视频，不支持音频)
 - TODO：支持网络音频播放（doing...）
@@ -18,7 +18,7 @@ ohpm install @seagazer/ccplayer-ijk
 
 ## 注意事项
 
-- 插件基于 @ohos/ijkplayer 2.0.6 版本，无法独立使用，需结合@seagazer/ccplayer使用，具体使用说明参考@seagazer/ccplayer。
+- 插件基于 @ohos/ijkplayer 2.0.6 版本，无法独立使用，需结合@seagazer/ccplayer 1.2.6及以上版本使用，具体使用说明参考@seagazer/ccplayer。
 - 播放前需要申请网络权限。
 
 

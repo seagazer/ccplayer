@@ -1,4 +1,5 @@
 {
+  "name": "@seagazer/ccplayer-ijk",
   "license": "Apache License 2.0",
   "devDependencies": {},
   "keywords": [
@@ -13,7 +14,6 @@
     "name": "seagazer",
     "email": "seagazer@qq.com"
   },
-  "name": "@seagazer/ccplayer-ijk",
   "description": "An extensions of ijkplayer for ccplayer.",
   "main": "Index.ets",
   "repository": "https://github.com/seagazer/ccplayer",
@@ -21,7 +21,7 @@
   "homepage": "https://github.com/seagazer",
   "dependencies": {
     "@seagazer/ccplayer-base": "file:./libs/lib_base.har",
-    "@ohos/ijkplayer": "^2.0.6"
+    "@ohos/ijkplayer": "2.0.6"
   },
   "dynamicDependencies": {}
 }

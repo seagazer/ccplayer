@@ -1,4 +1,5 @@
 {
+  "name": "@seagazer/ccplayer",
   "license": "Apache License 2.0",
   "devDependencies": {},
   "keywords": [
@@ -13,11 +14,10 @@
     "name": "seagazer",
     "email": "seagazer@qq.com"
   },
-  "name": "@seagazer/ccplayer",
   "description": "A media player for OpenHarmony & HarmonyOS.",
   "main": "Index.ets",
   "repository": "https://github.com/seagazer/ccplayer",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "homepage": "https://github.com/seagazer",
   "dependencies": {
     "@seagazer/ccplayer-base": "file:./libs/lib_base.har"
