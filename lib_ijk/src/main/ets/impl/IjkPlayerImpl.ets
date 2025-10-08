@@ -22,6 +22,7 @@ import {
 } from '@ohos/ijkplayer';
 import { IjkPlayer } from '../IjkPlayer';
 import { StateCode } from './StateCode';
+import { IIjk } from '../interface/IIjk';
 
 const TAG = "[IjkPlayerImpl]"
 
@@ -31,7 +32,7 @@ const TAG = "[IjkPlayerImpl]"
  * Author: Seagazer
  * Date: 2025/8/2
  */
-export class IjkPlayerImpl implements IPlayer {
+export class IjkPlayerImpl implements IPlayer, IIjk {
     private player: IjkMediaPlayer
     private surfaceId?: object = undefined
     private currentState = PlayerState.STATE_NOT_INIT
@@ -54,6 +55,7 @@ export class IjkPlayerImpl implements IPlayer {
     private cbVideoSize: number[] = [-1, -1]
     private cbBuffer: number = -1
     private progressTimer = -1
+    private options: Map<string, string[]> = new Map()
 
     constructor() {
         const id = "IjkPlayerImpl_" + new Date().getTime()
@@ -64,6 +66,10 @@ export class IjkPlayerImpl implements IPlayer {
         this.changePlayerState(PlayerState.STATE_IDLE)
     }
 
+    setOption(category: string, key: string, value: string): void {
+        this.options.set(category, [key, value])
+    }
+
     private initIjk() {
         MediaLogger.d(TAG, ">> init ijk")
         this.isSetupListener = true
@@ -71,6 +77,11 @@ export class IjkPlayerImpl implements IPlayer {
         this.player.setContext(this.surfaceId, IjkPlayer.getXComponentId())
         MediaLogger.d(TAG, ">> native setup")
         this.player.native_setup()
+
+        this.options.forEach((value, category) => {
+            MediaLogger.d(TAG, ">> set option category= " + category + ", key= " + value[0] + ", value= " + value[1])
+            this.player.setOption(category, value[0], value[1])
+        })
 
         // //使用精确寻帧 例如，拖动播放后，会寻找最近的关键帧进行播放，很有可能关键帧的位置不是拖动后的位置，而是较前的位置.可以设置这个参数来解决问题
         // this.player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", "1");

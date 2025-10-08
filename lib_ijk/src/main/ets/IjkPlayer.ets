@@ -1,6 +1,7 @@
-import { AudioFocusEvent, IPlayer, MediaSource, PlayerState, IJK } from '@seagazer/ccplayer-base';
+import { AudioFocusEvent, IJK, IPlayer, MediaSource, PlayerState } from '@seagazer/ccplayer-base';
 import media from '@ohos.multimedia.media';
 import { IjkPlayerImpl } from './impl/IjkPlayerImpl';
+import { IIjk } from './interface/IIjk';
 
 /**
  * The ijkPlayer extensions of CcPlayer.
@@ -8,11 +9,15 @@ import { IjkPlayerImpl } from './impl/IjkPlayerImpl';
  * Author: Seagazer
  * Date: 2025/8/2
  */
-export class IjkPlayer implements IPlayer {
+export class IjkPlayer implements IPlayer, IIjk {
     private player: IjkPlayerImpl
 
     constructor() {
         this.player = new IjkPlayerImpl()
+    }
+
+    setOption(category: string, key: string, value: string): void {
+        this.player.setOption(category, key, value)
     }
 
     static getLibrary(): string {

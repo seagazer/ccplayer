@@ -17,7 +17,7 @@
   "description": "An extensions of ijkplayer for ccplayer.",
   "main": "Index.ets",
   "repository": "https://github.com/seagazer/ccplayer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/seagazer",
   "dependencies": {
     "@seagazer/ccplayer-base": "file:./libs/lib_base.har",

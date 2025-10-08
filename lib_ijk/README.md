@@ -30,10 +30,66 @@ ohpm install @seagazer/ccplayer-ijk
   | construct       | void | IjkPlayer | 创建IjkPlayer插件实例 |
   | getLibrary      | void | string    | Native so名称         |
   | getXComponentId | void | string    | XComponent绑定的Id    |
+  | setOption| category: string, key: string, value: string | void | 设置ijk参数 |
 
 ## 场景示例
 
-- 使用 CcPlayer 结合 IjkPlayer 插件进行视频播放：
+- 使用 CcPlayerView 可以无感切换至 IjkPlayer内核：
+
+```typescript
+@
+Entry
+@
+Component
+struct
+IjkSample
+{
+  // 1.实例化CcPlayer
+  private
+  player: CcPlayer = new CcPlayer(getContext(this))
+
+  aboutToAppear():
+  void {
+    // 2.设置插件
+    const
+    ijkPlayer = new IjkPlayer()
+    this
+    .
+    player
+    .
+    setPlayer(ijkPlayer)
+  }
+
+  build()
+  {
+    Column()
+    {
+      RelativeContainer()
+      {
+        // 3.正常使用CcPlayerView
+        CcPlayerViewV2({
+          player: this.player,
+          asRatio: this.ratio,
+          renderType: XComponentType.SURFACE,
+          onSurfaceCreated: () => {
+            this.playIndex = 0
+            let src = MediaSourceFactory.createUrl("", "https://xx.mp4")
+            this.player.setMediaSource(src, () => {
+              this.player.start()
+            }
+          }
+          )
+        }
+      }
+      .
+      width("100%")
+        .height("100%")
+    }
+
+  }
+```
+
+- 使用 CcPlayer 结合 IjkPlayer 插件，使用原生组件进行视频播放：
 
 ```typescript
 @Entry
