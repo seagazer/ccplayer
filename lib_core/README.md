@@ -15,7 +15,7 @@ CcPlayer 是一个为 OpenHarmony和HarmonyOS Next 设计，支持音视频媒�
 - 提供默认媒体控制面板组件CcControllerOverlay
 - 提供默认标题面板组件CcTitleBarOverlay
 - 提供默认加载面板组件CcLoadingOverlay
-- 提供播放器实例缓存池，提供资源管理及复用能力
+- 提供播放器实例缓存池，资源管理及复用能力
 - 支持获取本地视频文件缩略图
 - 支持接入自定义播放业务(切换播放内核，自定义类需要实现IPlayer接口)
 - 支持IjkPlayer扩展插件（需要依赖@seagazer/ccplayer-ijk插件，仅支持网络媒体播放）
@@ -612,4 +612,4 @@ struct IjkSample {
 
 更多使用场景和示例，例如自定义手势操作 UI，播放器状态事件监听，绑定播控中心等，类似抖音的列表预加载播放，可以参考本库代码仓的 entry 示例工程：
 https://github.com/seagazer/ccplayer
-使用过程中存在任何相关问题欢迎各位开发者提Issue和PR，或者加群反馈（Q群:1051643574），欢迎大家一起共建完善该库。
+使用过程中存在任何相关问题欢迎各位开发者提Issue和PR，或者加群反馈（Q群:1051643574），欢迎大家一起共建完善该库，如果觉得对你有用，请给个star鼓励一下谢谢。
