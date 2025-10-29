@@ -8,6 +8,5 @@ ccplayer-base是为CcPlayer提供基础公共能力的库，请勿直接引用�
 ## 依赖方式
 
 ```shell
-安装ccplayer
-ohpm install @seagazer/ccplayer
+ohpm install  @seagazer/ccplayer-base
 ```

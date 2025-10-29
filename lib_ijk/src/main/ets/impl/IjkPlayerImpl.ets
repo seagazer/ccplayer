@@ -275,7 +275,9 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
             MediaLogger.d(TAG, ">> prepareAsync")
             this.player.prepareAsync()
         } else {
+            MediaLogger.d(TAG, ">> resume play")
             this.player.start()
+            this.changePlayerState(PlayerState.STATE_STARTED)
         }
         this.startProgressTimer()
     }
