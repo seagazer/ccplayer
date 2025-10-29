@@ -1,3 +1,7 @@
+# 1.2.7
+- lib-base调整为远程依赖
+- 同步ccplayer-ijk修复部分问题
+
 # 1.2.6
 - CcPlayerView组件优化
 - CcPlayer新增bindXComponent接口，取替setSurface和setXComponentController接口（废弃）

@@ -20,7 +20,7 @@
   "version": "1.0.2",
   "homepage": "https://github.com/seagazer",
   "dependencies": {
-    "@seagazer/ccplayer-base": "file:./libs/lib_base.har",
+    "@seagazer/ccplayer-base": "1.0.0",
     "@ohos/ijkplayer": "2.0.6"
   },
   "dynamicDependencies": {}
