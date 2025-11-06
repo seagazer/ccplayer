@@ -336,15 +336,15 @@ export class AvPlayerImpl implements IPlayer {
         } else {
             this.player!.play()
         }
+        if (this.currentState == PlayerState.STATE_BUFFER_UPDATE || this.currentState == PlayerState.STATE_BUFFER_START) {
+            this.isPlayingBeforeBufferState = true
+        }
     }
 
     async startTo(position: number) {
         MediaLogger.d(TAG, ">> start to: " + position)
         this.startPosition = position
         await this.start()
-        if (this.currentState == PlayerState.STATE_BUFFER_UPDATE || this.currentState == PlayerState.STATE_BUFFER_START) {
-            this.isPlayingBeforeBufferState = true
-        }
     }
 
     async pause() {
