@@ -4,8 +4,8 @@
 
 ccplayer-ijk是基于官方@ohos/ijkplayer进行二次开发，为CcPlayer服务的一个扩展插件，需要结合CcPlayer使用。
 
-- 支持网络媒体基础播放能力(当前1.0.0版本仅支持视频，不支持音频)
-- TODO：支持网络音频播放（doing...）
+- 支持网络媒体基础播放能力(当前版本仅支持视频，不支持音频)
+
 
 ## 依赖方式
 
@@ -37,56 +37,41 @@ ohpm install @seagazer/ccplayer-ijk
 - 使用 CcPlayerView 可以无感切换至 IjkPlayer内核：
 
 ```typescript
-@
-Entry
-@
-Component
-struct
-IjkSample
-{
-  // 1.实例化CcPlayer
-  private
-  player: CcPlayer = new CcPlayer(getContext(this))
+@Entry
+@Component
+struct IjkSample {
+    // 1.实例化CcPlayer
+    private player: CcPlayer = new CcPlayer(getContext(this))
 
-  aboutToAppear():
-  void {
-    // 2.设置插件
-    const
-    ijkPlayer = new IjkPlayer()
-    this
-    .
-    player
-    .
-    setPlayer(ijkPlayer)
-  }
-
-  build()
-  {
-    Column()
-    {
-      RelativeContainer()
-      {
-        // 3.正常使用CcPlayerView
-        CcPlayerViewV2({
-          player: this.player,
-          asRatio: this.ratio,
-          renderType: XComponentType.SURFACE,
-          onSurfaceCreated: () => {
-            this.playIndex = 0
-            let src = MediaSourceFactory.createUrl("", "https://xx.mp4")
-            this.player.setMediaSource(src, () => {
-              this.player.start()
-            }
-          }
-          )
-        }
-      }
-      .
-      width("100%")
-        .height("100%")
+    aboutToAppear(): void {
+        // 2.设置插件
+        const ijkPlayer = new IjkPlayer()
+        this.player.setPlayer(ijkPlayer)
     }
 
-  }
+    build() {
+        Column() {
+            RelativeContainer() {
+                // 3.正常使用CcPlayerView
+                CcPlayerViewV2({
+                    player: this.player,
+                    asRatio: this.ratio,
+                    renderType: XComponentType.SURFACE,
+                    onSurfaceCreated: () => {
+                        this.playIndex = 0
+                        let src = MediaSourceFactory.createUrl("", "https://xx.mp4")
+                        this.player.setMediaSource(src, () => {
+                            this.player.start()
+                        }
+                    }
+                    )
+                }
+            }
+            .width("100%")
+            .height("100%")
+        }
+
+    }
 ```
 
 - 使用 CcPlayer 结合 IjkPlayer 插件，使用原生组件进行视频播放：
