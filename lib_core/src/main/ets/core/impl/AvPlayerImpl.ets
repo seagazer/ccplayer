@@ -96,7 +96,6 @@ export class AvPlayerImpl implements IPlayer {
                     break
                 case "playing":
                     MediaLogger.d(TAG, ">> System callback: playing")
-                    this.isPlayed = true
                     this.player!.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_STARTED)
                     break
@@ -273,6 +272,7 @@ export class AvPlayerImpl implements IPlayer {
         if (this.isPlayed && this.player) {
             await this.player.reset()
         }
+        this.isPlayed = true
         await this.setMediaSourceInner(mediaSource)
     }
 
