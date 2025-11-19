@@ -433,6 +433,7 @@ export class AvPlayerImpl implements IPlayer {
 
     private isInPlayReadyState(): boolean {
         return this.isPlaying() || this.currentState == PlayerState.STATE_PAUSED || this.currentState == PlayerState.STATE_COMPLETED
+            || this.currentState == PlayerState.STATE_PREPARED
     }
 
     setLooper(isLoop: boolean) {
