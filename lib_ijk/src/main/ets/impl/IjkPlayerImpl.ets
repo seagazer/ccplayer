@@ -261,7 +261,16 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
             this.reset()
             this.player.native_setup()
         }
+        const header = mediaSource.httpHeaders
         this.player.setDataSource(mediaSource.url)
+        if (header !== undefined) {
+            const map = new Map<string, string>()
+            Object.keys(header).forEach((key) => {
+                map.set(key, header[key])
+                MediaLogger.d(TAG, "url header= [" + key + ":" + header[key] + "]")
+            })
+            this.player.setDataSourceHeader(map)
+        }
         onReady?.()
     }
 
@@ -369,8 +378,8 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
     }
 
     setPlaySpeed(speed: number): void {
-        // todo
-        throw new Error("Method not implemented.");
+        this.player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "soundtouch", "1");
+        this.player.setSpeed(speed + "f");
     }
 
     isPlaying(): boolean {

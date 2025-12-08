@@ -1,3 +1,7 @@
+# 1.0.3
+- 新增setPlaySpeed接口实现
+- 修复MediaSource请求头未设置问题
+
 # 1.0.2
 - 修复START状态二次失效问题
 
