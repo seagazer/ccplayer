@@ -1,3 +1,7 @@
+# 1.2.9
+- 修复prepare状态无法设置播放倍速，音量及seek问题
+- 同步@seagazer/ccplayer-ijk修复部分问题
+
 # 1.2.8
 - 修复complete后重新播放会先触发buffer回调导致暂停问题
 - 修复首播出现异常后还需要用户手动reset才可播放问题
