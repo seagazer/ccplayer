@@ -82,7 +82,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
             MediaLogger.d(TAG, ">> set option category= " + category + ", key= " + value[0] + ", value= " + value[1])
             this.player.setOption(category, value[0], value[1])
         })
-
+        this.player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "soundtouch", "1");
         // //使用精确寻帧 例如，拖动播放后，会寻找最近的关键帧进行播放，很有可能关键帧的位置不是拖动后的位置，而是较前的位置.可以设置这个参数来解决问题
         // this.player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", "1");
         // //预读数据的缓冲区大小
@@ -378,7 +378,6 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
     }
 
     setPlaySpeed(speed: number): void {
-        this.player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "soundtouch", "1");
         this.player.setSpeed(speed + "f");
     }
 
@@ -402,7 +401,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
 
     getBufferPosition(): number {
         // todo
-        throw new Error("Method not implemented.");
+        throw new Error("Not support for ijkplayer now.");
     }
 
     getPlayerState(): PlayerState {
@@ -482,8 +481,9 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
     }
 
     addOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
-        this.bufferProgressChangedListeners.push(listener)
-        return this
+        throw new Error("Not support for ijkplayer now.");
+        // this.bufferProgressChangedListeners.push(listener)
+        // return this
     }
 
     removeOnBufferProgressChangedListener(listener: (duration: number) => void): IPlayer {
