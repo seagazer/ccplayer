@@ -1,3 +1,6 @@
+# 1.0.4
+- 默认开启倍速播放能力，setPlaySpeed前无需再主动配置
+
 # 1.0.3
 - 新增setPlaySpeed接口实现
 - 修复MediaSource请求头未设置问题
