@@ -7,8 +7,8 @@
   "main": "",
   "version": "1.0.0",
   "dependencies": {
-    "@seagazer/ccplayer": "^1.2.6",
-    "@seagazer/ccplayer-ijk": "^1.0.1"
+    "@seagazer/ccplayer": "file:./lib_core",
+    "@seagazer/ccplayer-ijk": "file:./lib_ijk"
   },
   "devDependencies": {
     "@ohos/hypium": "1.0.19",
