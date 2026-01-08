@@ -27,6 +27,7 @@ export struct CcPlayerViewSampleV2 {
     @Local ratioText: string = "AUTO"
     @Local totalDuration: number = 0
     @Param navigationId: string = ''
+    @Local state: PlayerState = PlayerState.STATE_NOT_INIT
     private playIndex: number = 0
     private preparedListener = () => {
         this.totalDuration = this.player.getDuration()
@@ -34,6 +35,7 @@ export struct CcPlayerViewSampleV2 {
     }
     private stateChangedListener = (state: PlayerState) => {
         Logger.d(TAG, "new state= " + state)
+        this.state = state
     }
     private errorListener = (code: number, message: string) => {
         Logger.e(TAG, "play error= " + code + ", " + message)
@@ -55,7 +57,7 @@ export struct CcPlayerViewSampleV2 {
     aboutToAppear(): void {
         // 使用ijk扩展插件
         const ijkPlayer = new IjkPlayer()
-        this.player.setPlayer(ijkPlayer)
+        // this.player.setPlayer(ijkPlayer)
         this.player.setKeepScreenOn(this.getUIContext(), true)
         this.player.addOnPipStateChangedListener(this.pipStateChangedListener)
         this.playerWindow = window.findWindow(this.getUIContext().getWindowName())
@@ -179,6 +181,9 @@ export struct CcPlayerViewSampleV2 {
                     }
                 })
 
+                // display player state
+                Text(this.state)
+                    .fontSize(24)
 
                 Row() {
                     CButton({
@@ -211,7 +216,9 @@ export struct CcPlayerViewSampleV2 {
                         onAction: () => {
                             if (this.playIndex == 0) {
                                 this.playIndex = 1
-                                let src = MediaSourceFactory.createUrl("", "http://vjs.zencdn.net/v/oceans.mp4")
+                                // let src = MediaSourceFactory.createUrl("", "http://vjs.zencdn.net/v/oceans.mp4")
+                                let src = MediaSourceFactory.createUrl("",
+                                    "https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/hls/xgplayer-demo.m3u8")
                                 this.player.setMediaSource(src, () => {
                                     // 模拟1.5s的loading状态，用于展示LoadingOverlay
                                     setTimeout(() => {

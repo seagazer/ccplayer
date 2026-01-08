@@ -7,7 +7,7 @@
   "main": "",
   "version": "1.0.0",
   "dependencies": {
-    "@seagazer/ccplayer": "^1.2.9",
+    "@seagazer/ccplayer": "file:./lib_core",
     "@seagazer/ccplayer-base": "^1.0.0",
     "@seagazer/ccplayer-ijk": "^1.0.3"
   },

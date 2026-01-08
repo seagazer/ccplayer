@@ -19,7 +19,6 @@ export class AvPlayerImpl implements IPlayer {
     private onReady?: () => void = undefined
     private isLazyInitForPlay = false
     private isPlayed = false
-    private isLoop = false
     private currentState = PlayerState.STATE_NOT_INIT
     private isPrepared = false
     private startPosition = -1
@@ -37,6 +36,8 @@ export class AvPlayerImpl implements IPlayer {
     private context: Context
     private bufferPosition: number = 0
     private seekMode: media.SeekMode = media.SeekMode.SEEK_CLOSEST
+    private bufferingRecordState: PlayerState[] = []
+    private isBuffering: boolean = false
 
     private constructor(context: Context) {
         this.context = context
@@ -84,7 +85,6 @@ export class AvPlayerImpl implements IPlayer {
                 case "prepared":
                     MediaLogger.d(TAG, ">> System callback: prepared")
                     this.isPrepared = true
-                    this.player!.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_PREPARED)
                     if (this.preparedListeners.length > 0) {
                         this.preparedListeners.forEach((callback) => {
@@ -96,17 +96,14 @@ export class AvPlayerImpl implements IPlayer {
                     break
                 case "playing":
                     MediaLogger.d(TAG, ">> System callback: playing")
-                    this.player!.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_STARTED)
                     break
                 case "paused":
                     MediaLogger.d(TAG, ">> System callback: paused")
-                    this.player!.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_PAUSED)
                     break
                 case "completed":
                     MediaLogger.d(TAG, ">> System callback: completed")
-                    this.player!.loop = this.isLoop
                     this.changePlayerState(PlayerState.STATE_COMPLETED)
                     if (this.completedListeners.length > 0) {
                         this.completedListeners.forEach((callback) => {
@@ -126,6 +123,7 @@ export class AvPlayerImpl implements IPlayer {
                 case "error":
                     MediaLogger.attentionE(TAG, ">> System callback: error")
                     this.changePlayerState(PlayerState.STATE_ERROR)
+                    this.endBuffering(true)
                     if (this.errorListeners.length > 0) {
                         this.errorListeners.forEach((callback) => {
                             callback(-1, "state error")
@@ -135,8 +133,9 @@ export class AvPlayerImpl implements IPlayer {
             }
         })
         this.player!.on("error", (err) => {
-            MediaLogger.attentionE(TAG, ">> System callback: error = " + JSON.stringify(err))
+            MediaLogger.attentionE(TAG, ">> System callback: onError = " + JSON.stringify(err))
             this.changePlayerState(PlayerState.STATE_ERROR)
+            this.endBuffering(true)
             if (this.errorListeners.length > 0) {
                 this.errorListeners.forEach((callback) => {
                     if (err) {
@@ -213,8 +212,8 @@ export class AvPlayerImpl implements IPlayer {
         this.player!.on("bufferingUpdate", (type: media.BufferingInfoType, value: number) => {
             switch (type) {
                 case media.BufferingInfoType.BUFFERING_START:
-                    this.isPlayingBeforeBufferState = this.isPlaying()
                     MediaLogger.d(TAG, ">> System callback: BUFFERING_START")
+                    this.beginBuffering()
                     this.changePlayerState(PlayerState.STATE_BUFFER_START)
                     break
                 case media.BufferingInfoType.BUFFERING_PERCENT:
@@ -223,12 +222,24 @@ export class AvPlayerImpl implements IPlayer {
                     break
                 case media.BufferingInfoType.BUFFERING_END:
                     MediaLogger.d(TAG, ">> System callback: BUFFERING_END")
-                    this.changePlayerState(PlayerState.STATE_BUFFER_END)
-                    if (this.isPlayingBeforeBufferState) {
-                        this.changePlayerState(PlayerState.STATE_STARTED)
-                    } else {
-                        this.changePlayerState(PlayerState.STATE_PAUSED)
+                    const lastState = this.endBuffering(false)
+                    if (lastState === undefined) {
+                        MediaLogger.d(TAG, "state is not changed between buffering")
+                        // state not changed between buffering, just callback #BufferEnd
+                        this.changePlayerState(PlayerState.STATE_BUFFER_END)
+                        break
                     }
+                    if (lastState === PlayerState.STATE_ERROR) {
+                        // not callback anymore if cause error between buffering
+                        MediaLogger.w(TAG, "last state is error between buffering")
+                        break
+                    }
+                    MediaLogger.d(TAG, "state is changed to #" + lastState + " between buffering")
+                    this.changePlayerState(PlayerState.STATE_BUFFER_END)
+                    // resume to the latest state between buffering
+                    this.changePlayerState(lastState)
+                    // clear record state
+                    this.bufferingRecordState = []
                     break
                 case media.BufferingInfoType.CACHED_DURATION:
                     const current = this.getCurrentPosition();
@@ -242,11 +253,36 @@ export class AvPlayerImpl implements IPlayer {
         })
     }
 
-    private isPlayingBeforeBufferState: boolean = false
+    private beginBuffering() {
+        if (this.isBuffering) {
+            return
+        }
+        this.isBuffering = true
+        const currentState = this.getPlayerState()
+        if (currentState !== PlayerState.STATE_BUFFER_START && currentState !== PlayerState.STATE_BUFFER_UPDATE &&
+            currentState !== PlayerState.STATE_IDLE && currentState !== PlayerState.STATE_COMPLETED) {
+            this.bufferingRecordState.push(currentState)
+        }
+    }
+
+    private endBuffering(isEndByError: boolean) {
+        if (this.isBuffering) {
+            this.isBuffering = false
+            MediaLogger.w(TAG, "record state between buffering is " + JSON.stringify(this.bufferingRecordState))
+            if (this.bufferingRecordState.length > 0) {
+                const lastState = this.bufferingRecordState.pop()
+                MediaLogger.w(TAG, "last state between buffering is " + lastState)
+                if (isEndByError) { // clear state
+                    this.bufferingRecordState = []
+                }
+                return lastState
+            }
+        }
+        return undefined
+    }
 
     isPlaying(): boolean {
-        return this.currentState == PlayerState.STATE_STARTED || this.currentState == PlayerState.STATE_BUFFER_START
-            || this.currentState == PlayerState.STATE_BUFFER_UPDATE || this.currentState == PlayerState.STATE_BUFFER_END
+        return this.currentState == PlayerState.STATE_STARTED
     }
 
     getPlayerState(): PlayerState {
@@ -257,6 +293,9 @@ export class AvPlayerImpl implements IPlayer {
     private changePlayerState(state: PlayerState) {
         if (this.currentState == state) {
             return
+        }
+        if (this.isBuffering && state !== PlayerState.STATE_BUFFER_START && state !== PlayerState.STATE_BUFFER_UPDATE) {
+            this.bufferingRecordState.push(state)
         }
         this.currentState = state
         this.stateChangedListeners.forEach((callback) => {
@@ -336,9 +375,6 @@ export class AvPlayerImpl implements IPlayer {
         } else {
             this.player!.play()
         }
-        if (this.currentState == PlayerState.STATE_BUFFER_UPDATE || this.currentState == PlayerState.STATE_BUFFER_START) {
-            this.isPlayingBeforeBufferState = true
-        }
     }
 
     async startTo(position: number) {
@@ -350,9 +386,6 @@ export class AvPlayerImpl implements IPlayer {
     async pause() {
         MediaLogger.d(TAG, ">> pause")
         await this.player!.pause()
-        if (this.currentState == PlayerState.STATE_BUFFER_UPDATE || this.currentState == PlayerState.STATE_BUFFER_START) {
-            this.isPlayingBeforeBufferState = false
-        }
     }
 
     async stop() {
@@ -438,7 +471,9 @@ export class AvPlayerImpl implements IPlayer {
 
     setLooper(isLoop: boolean) {
         MediaLogger.d(TAG, ">> set loop: " + isLoop)
-        this.isLoop = isLoop
+        if (this.player) {
+            this.player.loop = isLoop
+        }
     }
 
     getDuration(): number {

@@ -5,15 +5,15 @@ import { PiPWindow, window } from '@kit.ArkUI';
 import { fileIo } from '@kit.CoreFileKit';
 import { PipManager } from './core/PipManager';
 import {
-    MediaLogger,
     AudioFocusEvent,
     AvSessionCallback,
     IAvSession,
     IMediaExt,
     IPip,
     IPlayer,
-    PlayerState,
-    MediaSource
+    MediaLogger,
+    MediaSource,
+    PlayerState
 } from '@seagazer/ccplayer-base';
 import { common, wantAgent } from '@kit.AbilityKit';
 import { media } from '@kit.MediaKit';
@@ -81,23 +81,23 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
 
     start() {
         if (this.isPlaying()) {
-            MediaLogger.attentionW(TAG, 'current is playing, not start!')
+            MediaLogger.attentionW(TAG, 'current state is already playing!')
             return
         }
         this.player.start()
     }
 
     startTo(position: number) {
-        // if (this.isPlaying()) {
-        //     MediaLogger.attentionW(TAG, 'current state is playing, not start!')
-        //     return
-        // }
+        if (this.isPlaying()) {
+            MediaLogger.attentionW(TAG, 'current state is already playing!')
+            return
+        }
         this.player.startTo(position)
     }
 
     pause() {
-        if (!this.isPlaying()) {
-            MediaLogger.attentionW(TAG, 'current state is no playing, not pause!')
+        if (this.getPlayerState() === PlayerState.STATE_PAUSED) {
+            MediaLogger.attentionW(TAG, 'current state is already paused!')
             return
         }
         this.player.pause()
