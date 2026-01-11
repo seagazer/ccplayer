@@ -1,3 +1,7 @@
+# 1.3.0
+- 修复#29buffering状态时序导致播放器PlayState回调不准的问题
+- 修复#37实时流setLoop异常问题，后续setLoop接口需要用户自己判断当前状态机，否则可能设置失败
+
 # 1.2.9
 - 修复prepare状态无法设置播放倍速，音量及seek问题
 - 同步@seagazer/ccplayer-ijk修复部分问题
