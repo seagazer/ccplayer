@@ -2,8 +2,10 @@ import { BuilderNode, FrameNode, UIContext, window } from '@kit.ArkUI'
 import { CcPlayer } from '../CcPlayer'
 import { BaseOverlayConfig } from './base/BaseOverlayConfig'
 import { GestureLiveData } from './livedata/GestureLiveData'
-import { GestureType, timeToString } from '@seagazer/ccplayer-base'
+import { GestureType, MediaLogger, timeToString } from '@seagazer/ccplayer-base'
 import { BaseOverlayController } from './base/BaseOverlayController'
+
+const TAG = "[CcGestureOverlay]"
 
 /**
  * The default overlay for gesture actions of CcPlayerView.
@@ -28,6 +30,17 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
     private visibleChangedListener = (value: boolean) => {
         this.setVisible(value)
     }
+    private doubleClickListener = () => {
+        // the player is prepared
+        if (this.totalDuration > 0) {
+            MediaLogger.d(TAG, "current state = " + this.player.getPlayerState())
+            if (this.player.isPlaying()) {
+                this.player.pause()
+            } else {
+                this.player.start()
+            }
+        }
+    }
 
     /**
      * The default constructor.
@@ -42,12 +55,14 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
     aboutToAppear(): void {
         GestureLiveData.getInstance().addOnGestureStateChangedListener(this.gestureChangedListener)
         GestureLiveData.getInstance().addOnVisibleStateChangedListener(this.visibleChangedListener)
+        GestureLiveData.getInstance().addOnDoubleClickListener(this.doubleClickListener)
         this.player.addOnPreparedListener(this.prepareListener)
     }
 
     aboutToDisappear(): void {
         GestureLiveData.getInstance().removeOnGestureStateChangedListener(this.gestureChangedListener)
         GestureLiveData.getInstance().removeOnVisibleStateChangedListener(this.visibleChangedListener)
+        GestureLiveData.getInstance().removeOnDoubleClickListener()
         this.player.removeOnPreparedListener(this.prepareListener)
     }
 

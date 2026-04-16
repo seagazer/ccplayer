@@ -11,6 +11,7 @@ export class GestureLiveData {
     private static sInstance = new GestureLiveData()
     private gestureState = new LiveData<GestureEvent>()
     private visibleState = new LiveData<boolean>()
+    private doubleClickListener?: () => void = undefined
 
     private constructor() {
     }
@@ -23,6 +24,17 @@ export class GestureLiveData {
         this.gestureState.setValue(value)
     }
 
+    onDoubleClick() {
+        this.doubleClickListener?.()
+    }
+
+    addOnDoubleClickListener(listener: () => void) {
+        this.doubleClickListener = listener
+    }
+
+    removeOnDoubleClickListener() {
+        this.doubleClickListener = undefined
+    }
     addOnGestureStateChangedListener(listener: (value: GestureEvent) => void) {
         this.gestureState.addOnValueChangedListener(listener)
     }

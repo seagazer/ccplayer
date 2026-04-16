@@ -1,5 +1,5 @@
-import { GestureAreaConfig, GestureType } from "@seagazer/ccplayer-base"
-import { CcPlayer } from "../CcPlayer"
+import { GestureAreaConfig, GestureType } from '@seagazer/ccplayer-base'
+import { CcPlayer } from '../CcPlayer'
 
 const TOUCH_SHOT = 10
 
@@ -26,12 +26,14 @@ export class GestureHandler {
     private autoHideControllerDelay: number
     private onControllerVisibleChanged: (visible: boolean) => void
     private onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => void
+    private onDoubleClickAction: () => void
 
     constructor(player: CcPlayer,
         gestureAreaConfig: GestureAreaConfig, horizontalGestureDamping: number, verticalGestureDamping: number,
         currentBrightness: number, currentVolume: number, autoHideControllerDelay: number,
         onControllerVisibleChanged: (visible: boolean) => void,
-        onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => void) {
+        onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => void,
+        onDoubleClickAction: () => void) {
         this.player = player
         this.gestureAreaConfig = gestureAreaConfig
         this.horizontalGestureDamping = horizontalGestureDamping
@@ -41,6 +43,7 @@ export class GestureHandler {
         this.autoHideControllerDelay = autoHideControllerDelay
         this.onControllerVisibleChanged = onControllerVisibleChanged
         this.onGestureAction = onGestureAction
+        this.onDoubleClickAction = onDoubleClickAction
     }
 
     setTotalDuration(duration: number) {
@@ -54,6 +57,10 @@ export class GestureHandler {
 
     release() {
         clearTimeout(this.hideControllerTimer)
+    }
+
+    handleDoubleClickEvent() {
+        this.onDoubleClickAction()
     }
 
     handleTouchEvent(event: TouchEvent) {

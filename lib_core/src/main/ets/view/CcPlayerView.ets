@@ -2,7 +2,7 @@ import { CcPlayer } from '../CcPlayer';
 import { PiPWindow } from '@kit.ArkUI';
 import { GestureLiveData } from '../overlay/livedata/GestureLiveData';
 import { GestureEvent } from '../overlay/CcGestureOverlay';
-import { AspectRatio, GestureAreaConfig, GestureType, MediaLogger, IJK } from '@seagazer/ccplayer-base';
+import { AspectRatio, GestureAreaConfig, GestureType, IJK, MediaLogger } from '@seagazer/ccplayer-base';
 import { PlayerType } from '../common/PlayerType';
 import { AvPlayerImpl } from '../core/impl/AvPlayerImpl';
 import { GestureHandler } from './GestureHandler';
@@ -95,6 +95,12 @@ export struct CcPlayerView {
             }
             GestureLiveData.getInstance().setGestureState(this.gestureEvent)
         }
+    /**
+     * The listener to handle the double click action.
+     */
+    onDoubleClickAction: () => void = () => {
+        GestureLiveData.getInstance().onDoubleClick()
+    }
     private gestureEvent: GestureEvent | null = null
     /**
      * Set the default brightness, the value is [0,1], default is 0.5.
@@ -226,6 +232,9 @@ export struct CcPlayerView {
                 },
                 (type: GestureType, percent: number, isTouchUp: boolean) => {
                     this.onGestureAction && this.onGestureAction(type, percent, isTouchUp)
+                },
+                () => {
+                    this.onDoubleClickAction && this.onDoubleClickAction()
                 })
         }
     }
@@ -319,15 +328,7 @@ export struct CcPlayerView {
         }
         .gesture(TapGesture({ count: 2 }).onAction(() => {
             if (this.isSupportGesture) {
-                // the player is prepared
-                if (this.totalDuration > 0) {
-                    MediaLogger.d(TAG, "current state = " + this.player!.getPlayerState())
-                    if (this.player!.isPlaying()) {
-                        this.player!.pause()
-                    } else {
-                        this.player!.start()
-                    }
-                }
+                this.gestureHandler?.handleDoubleClickEvent()
             }
         }))
         .onTouch((event) => {
