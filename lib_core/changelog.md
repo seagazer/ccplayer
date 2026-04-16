@@ -1,3 +1,8 @@
+# 1.3.1
+- 手势优化，双击暂停/播放事件归一至GestureOverlay，CcPlayerView默认不再提供双击事件功能
+- CcPlayerView新增onDoubleClickAction接口，供用户自定义双击事件逻辑
+- 细节优化
+
 # 1.3.0
 - 修复#29buffering状态时序导致播放器PlayState回调不准的问题
 - 修复#37实时流setLoop异常问题，后续setLoop接口需要用户自己判断当前状态机，否则可能设置失败

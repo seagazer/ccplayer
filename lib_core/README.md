@@ -144,6 +144,7 @@ ohpm install @seagazer/ccplayer
   | onSurfaceDestroy                   | (surfaceId: string) => void                                      | Surface 销毁事件回调                                            | 否       |
   | onGestureUIListener                | (visible: boolean) => void                                       | 手势 UI 显示/隐藏回调                                           | 否       |
   | onGestureAction                    | (type: GestureType, percent: number, isTouchUp: boolean) => void | 手势操作回调                                                    | 否       |
+  | onDoubleClickAction                | () => void                                                       | 双击事件回调                                                    | 否       |
   | aspectRatioChangeAnimationDuration | number                                                           | 视频切换宽高比动效时长，默认150ms                               | 否       |
   | defaultBrightness                  | number                                                           | 组件启用的默认手势亮度值，取值0-1，默认0.5                      | 否       |
   | defaultVolume                      | number                                                           | 组件启用的默认手势音量值，取值0-1，默认1                        | 否       |
