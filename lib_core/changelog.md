@@ -1,3 +1,8 @@
+# 1.3.2
+- 移除3.1/3.2兼容性代码
+- 优化重构，大面积完善历史代码
+- 同步ijk插件，使用ijk插件时支持多路同时播放
+
 # 1.3.1
 - 手势优化，双击暂停/播放事件归一至GestureOverlay，CcPlayerView默认不再提供双击事件功能
 - CcPlayerView新增onDoubleClickAction接口，供用户自定义双击事件逻辑

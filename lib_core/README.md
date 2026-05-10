@@ -32,7 +32,7 @@ ohpm install @seagazer/ccplayer
 ```
 
 ## 注意事项
-
+- 从1.3.2版本开始，内部移除了3.1/3.2兼容性代码，不再支持4.1之前版本
 - 从1.0.6版本开始基于API 12进行重构，仅支持OpenHarmony-5.0+ Release和HarmonyOS 5.0.0+。
 - 如果需要在5.0-Release之前的系统版本中使用，请采用1.0.5及以下版本。各个版本详情可以参照之前版本的ChangeLog说明。
 - 因为OpenHarmony缺失部分能力，某些能力仅支持HarmonyOS，上述简介中已标注。
@@ -144,7 +144,6 @@ ohpm install @seagazer/ccplayer
   | onSurfaceDestroy                   | (surfaceId: string) => void                                      | Surface 销毁事件回调                                            | 否       |
   | onGestureUIListener                | (visible: boolean) => void                                       | 手势 UI 显示/隐藏回调                                           | 否       |
   | onGestureAction                    | (type: GestureType, percent: number, isTouchUp: boolean) => void | 手势操作回调                                                    | 否       |
-  | onDoubleClickAction                | () => void                                                       | 双击事件回调                                                    | 否       |
   | aspectRatioChangeAnimationDuration | number                                                           | 视频切换宽高比动效时长，默认150ms                               | 否       |
   | defaultBrightness                  | number                                                           | 组件启用的默认手势亮度值，取值0-1，默认0.5                      | 否       |
   | defaultVolume                      | number                                                           | 组件启用的默认手势音量值，取值0-1，默认1                        | 否       |
@@ -259,13 +258,14 @@ struct PlayerViewPage {
     // 视频画面比例模式
     @State videoRatio: AspectRatio = AspectRatio.AUTO
      // 1.实例化CcPlayer
-    private player: CcPlayer = new CcPlayer(getContext(this))
+    private player: CcPlayer = new CcPlayer(this.getUIContext().getHostContext()!)
     // 2.实例化手势UI面板
     private gestureOverlay: CcGestureOverlay = new CcGestureOverlay(this.player)
 
     aboutToAppear(): void {
         // 如果使用ijk插件，需要先绑定插件
         const ijkPlayer = new IjkPlayer()
+        ijkPlayer.setXComponentId("ccplayer_view_sample")
         this.player.setPlayer(ijkPlayer)
         // 3.设置手势UI面板各项参数
         this.gestureOverlay.setTextSize(18)
@@ -302,7 +302,7 @@ struct PlayerViewPage {
 
     private async play() {
         // 7.创建mediaSource
-        let src = await MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
+        let src = await MediaSourceFactory.createFile(this.getUIContext().getHostContext()!.filesDir + "/test.mp4", "test.mp4")
         // 8.设置mediaSource
         this.player!.setMediaSource(src, () => {
             // 9.设置成功回调，开始播放
@@ -325,7 +325,7 @@ struct PlayerViewPage {
 struct PlayerViewPage {
     private controller = new XComponentController()
     // 1.实例化CcPlayer
-    private player = new CcPlayer(getContext(this))
+    private player = new CcPlayer(this.getUIContext().getHostContext()!)
 
     build() {
         Column() {
@@ -355,7 +355,7 @@ struct PlayerViewPage {
 
     private async play() {
         // 3.创建mediaSource
-        let src = await MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp4", "test.mp4")
+        let src = await MediaSourceFactory.createFile(this.getUIContext().getHostContext()!.filesDir + "/test.mp4", "test.mp4")
         // 4.设置mediaSource
         this.player.setMediaSource(src, () => {
             // 5.设置成功回调，开始播放
@@ -377,7 +377,7 @@ struct PlayerViewPage {
 @Component
 struct PlayerViewPage {
      // 1.实例化CcPlayer
-    private player = new CcPlayer(getContext(this))
+    private player = new CcPlayer(this.getUIContext().getHostContext()!)
 
     build() {
         Column() {
@@ -394,7 +394,7 @@ struct PlayerViewPage {
 
     private async play() {
         // 2.创建mediaSource
-        let src = await MediaSourceFactory.createFile(getContext(this).filesDir + "/test.mp3", "test.mp3")
+        let src = await MediaSourceFactory.createFile(this.getUIContext().getHostContext()!.filesDir + "/test.mp3", "test.mp3")
         // 3.设置mediaSource
         this.player.setMediaSource(src, () => {
             // 4.设置成功回调，开始播放
@@ -421,7 +421,7 @@ export struct PagePlayerSample {
 
     aboutToAppear(): void {
         // 初始化缓存池
-        this.playerPool.init(getContext(this), 4)        
+        this.playerPool.init(this.getUIContext().getHostContext()!, 4)        
         // 添加mock数据
         this.dataList.uriList.push('video1.mp4')
         this.dataList.uriList.push('video2.mp4')
@@ -522,7 +522,7 @@ struct VideoItemPageView {
 struct PlayerViewPage {
     @State snapshot?: PixelMap = undefined
      // 1.实例化CcPlayer
-    private player = new CcPlayer(getContext(this))
+    private player = new CcPlayer(this.getUIContext().getHostContext()!)
 
     build() {
         Column() {
@@ -554,13 +554,14 @@ struct PlayerViewPage {
 @Component
 struct IjkSample {
      // 1.实例化CcPlayer
-    private player: CcPlayer = new CcPlayer(getContext(this))
+    private player: CcPlayer = new CcPlayer(this.getUIContext().getHostContext()!)
     // 2.实例化controller
     private controller = new XComponentController()
 
     aboutToAppear(): void {
         // 3.设置插件
         const ijkPlayer = new IjkPlayer()
+        ijkPlayer.setXComponentId("ijk_sample")
         this.player.setPlayer(ijkPlayer)
     }
 
