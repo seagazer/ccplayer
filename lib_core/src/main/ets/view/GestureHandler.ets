@@ -106,19 +106,19 @@ export class GestureHandler {
                 }
                 this.onControllerVisibleChanged(true)
             }
-            if (this.controlType == GestureType.PROGRESS) {
+            if (this.controlType === GestureType.PROGRESS) {
                 let changePercent = dx / this.viewWidth / this.horizontalGestureDamping
                 let begin = this.player!.getCurrentPosition()
                 let current = begin + this.totalDuration * changePercent
                 let result = this.limit(current, this.totalDuration, 0)
                 this.gesturePercentResult = result / this.totalDuration
-            } else if (this.controlType == GestureType.VOLUME) {
+            } else if (this.controlType === GestureType.VOLUME) {
                 let changePercent = -dy / this.viewHeight / this.verticalGestureDamping
                 let begin = this.currentVolume
                 let current = begin + 1 * changePercent
                 let result = this.limit(current, 1, 0)
                 this.gesturePercentResult = result / 1
-            } else if (this.controlType == GestureType.BRIGHTNESS) {
+            } else if (this.controlType === GestureType.BRIGHTNESS) {
                 let changePercent = -dy / this.viewHeight / this.verticalGestureDamping
                 let begin = this.currentBrightness
                 let current = begin + 1 * changePercent
@@ -141,9 +141,9 @@ export class GestureHandler {
         }
         this.isUserMoved = false
         this.onGestureAction(this.controlType, this.gesturePercentResult, true)
-        if (this.controlType == GestureType.VOLUME) {
+        if (this.controlType === GestureType.VOLUME) {
             this.currentVolume = this.gesturePercentResult
-        } else if (this.controlType == GestureType.BRIGHTNESS) {
+        } else if (this.controlType === GestureType.BRIGHTNESS) {
             this.currentBrightness = this.gesturePercentResult
         }
         this.downX = -1

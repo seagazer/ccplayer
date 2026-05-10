@@ -123,9 +123,9 @@ export struct VideoSample {
                     }).layoutWeight(1)
                         .enabled(this.totalDuration > 0)
                         .onChange((value, mode) => {
-                            if (mode == SliderChangeMode.Begin) {
+                            if (mode === SliderChangeMode.Begin) {
                                 this.isSeeking = true
-                            } else if (mode == SliderChangeMode.End) {
+                            } else if (mode === SliderChangeMode.End) {
                                 let position = Math.ceil(value)
                                 this.player.seekTo(position)
                                 this.currentPosition = position

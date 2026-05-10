@@ -162,12 +162,12 @@ export struct CcPlayerViewSample {
                 .width("100%")
                 .height(500)
                 .onTouch((ev) => {
-                    if (ev.type == TouchType.Down) {
+                    if (ev.type === TouchType.Down) {
                         clearTimeout(this.controllerHideTimer)
                         this.titleOverlay.setVisible(true)
                         this.controllerOverlay.setVisible(true)
                     }
-                    if (ev.type == TouchType.Up) {
+                    if (ev.type === TouchType.Up) {
                         this.controllerHideTimer = setTimeout(() => {
                             this.titleOverlay.setVisible(false)
                             this.controllerOverlay.setVisible(false)
@@ -205,7 +205,7 @@ export struct CcPlayerViewSample {
                     CButton({
                         text: "next",
                         onAction: () => {
-                            if (this.playIndex == 0) {
+                            if (this.playIndex === 0) {
                                 this.playIndex = 1
                                 let src = MediaSourceFactory.createAssets(MOCK_SOURCE[1][0], MOCK_SOURCE[1][1], MOCK_SOURCE[1][2])
                                 this.player.setMediaSource(src, () => {

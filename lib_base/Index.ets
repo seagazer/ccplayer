@@ -16,7 +16,7 @@ export { AvSessionCallback } from './src/main/ets/base/player/AvSessionCallback'
 
 export { PlayerState } from './src/main/ets/base/player/PlayerState'
 
-export { timeToString } from './src/main/ets/base/Extentions'
+export { timeToString } from './src/main/ets/base/Extensions'
 
 export { AspectRatio } from './src/main/ets/base/view/AspectRatio'
 

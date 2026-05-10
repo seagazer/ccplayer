@@ -47,7 +47,7 @@ export class CcTitleBarOverlay extends BaseOverlayController<TitleBarOverlayConf
      * @param size The size of text with unit fp.
      */
     setTextSize(size: Length) {
-        if (this.config!.textSize != size) {
+        if (this.config!.textSize !== size) {
             this.config!.textSize = size
             this.invalidate()
         }
@@ -58,7 +58,7 @@ export class CcTitleBarOverlay extends BaseOverlayController<TitleBarOverlayConf
      * @param color The color of text.
      */
     setTextColor(color: ResourceColor) {
-        if (this.config!.textColor != color) {
+        if (this.config!.textColor !== color) {
             this.config!.textColor = color
             this.invalidate()
         }
@@ -69,7 +69,7 @@ export class CcTitleBarOverlay extends BaseOverlayController<TitleBarOverlayConf
      * @param padding The padding of title container.
      */
     setPadding(padding: Length | Padding) {
-        if (this.config!.padding != padding) {
+        if (this.config!.padding !== padding) {
             this.config!.padding = padding
             this.invalidate()
         }
@@ -80,7 +80,7 @@ export class CcTitleBarOverlay extends BaseOverlayController<TitleBarOverlayConf
      * @param color The color of overlay background.
      */
     setBackgroundColor(color: ResourceColor) {
-        if (this.config!.bgColor != color) {
+        if (this.config!.bgColor !== color) {
             this.config!.bgColor = color
             this.builderNode?.update(this.config!)
         }

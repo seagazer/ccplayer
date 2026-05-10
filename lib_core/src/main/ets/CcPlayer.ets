@@ -44,7 +44,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
                 }
                 break
             case AudioFocusEvent.AUDIO_FOCUS_GAIN:
-                if (this.player.getPlayerState() == PlayerState.STATE_PAUSED) {
+                if (this.player.getPlayerState() === PlayerState.STATE_PAUSED) {
                     this.start()
                 }
                 break
@@ -105,7 +105,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
 
     stop() {
         let state = this.getPlayerState()
-        if (state == PlayerState.STATE_STOPPED) {
+        if (state === PlayerState.STATE_STOPPED) {
             MediaLogger.attentionW(TAG, 'current state is already stopped!')
             return
         }
@@ -114,7 +114,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
 
     reset() {
         let state = this.getPlayerState()
-        if (state == PlayerState.STATE_IDLE) {
+        if (state === PlayerState.STATE_IDLE) {
             MediaLogger.attentionW(TAG, 'current state is already idle!')
             return
         }
@@ -131,7 +131,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
         this.disablePip()
         this.player.removeOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
         let state = this.getPlayerState()
-        if (state == PlayerState.STATE_NOT_INIT) {
+        if (state === PlayerState.STATE_NOT_INIT) {
             MediaLogger.attentionW(TAG, 'current state is already released!')
             return
         }
@@ -315,6 +315,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
 
     removeOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer {
         this.player.removeOnAudioFocusChangedListener(listener)
+        this.player.addOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
         return this
     }
 
@@ -341,7 +342,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
             MediaLogger.attentionW(TAG, "The agent is null, you should call {@Link bindAvSession} first.")
             return false
         }
-        if (this.isBackgroundPlay == enable) {
+        if (this.isBackgroundPlay === enable) {
             return false
         }
         let result = false
@@ -352,7 +353,9 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
             MediaLogger.d(TAG, "stop background play")
             result = await BackgroundPlayManager.stopBackground(this.context)
         }
-        this.isBackgroundPlay = enable
+        if (result) {
+            this.isBackgroundPlay = enable
+        }
         return result
     }
 
@@ -368,7 +371,7 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
     }
 
     setXComponentController(controller: XComponentController) {
-        if (this.xComponentController != controller) {
+        if (this.xComponentController !== controller) {
             MediaLogger.d(TAG, "set xComponent controller= " + controller)
             this.xComponentController = controller
             this.pipManager?.notifyControllerChanged()

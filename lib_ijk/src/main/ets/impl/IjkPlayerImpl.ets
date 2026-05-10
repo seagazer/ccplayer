@@ -112,7 +112,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
         const mOnVideoSizeChangedListener: OnVideoSizeChangedListener = {
             onVideoSizeChanged: (width: number, height: number, sar_num: number, sar_den: number) => {
                 MediaLogger.d(TAG, ">> System callback: onVideoSizeChanged")
-                if (this.cbVideoSize[0] == width && this.cbVideoSize[1] == height) {
+                if (this.cbVideoSize[0] === width && this.cbVideoSize[1] === height) {
                     MediaLogger.w(TAG, ">> System callback: onVideoSizeChanged, but size is not changed!")
                     return
                 }
@@ -146,7 +146,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
         }
         const mOnBufferingUpdateListener: OnBufferingUpdateListener = {
             onBufferingUpdate: (percent: number) => {
-                if (this.cbBuffer != percent) {
+                if (this.cbBuffer !== percent) {
                     // todo the system callback is always repeat
                     MediaLogger.d(TAG, ">> System callback: onBufferingUpdate= " + percent)
                     this.bufferProgressChangedListeners.forEach((callback) => {
@@ -183,7 +183,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
                 // 80001	硬解码开启成功	成功启用硬件解码
                 // 80002	硬解码开启失败	自动切换到软件解码
                 // 90001	播放器内部状态变化	如从暂停切换到播放状态
-                if (what == StateCode.MEDIA_INFO_VIDEO_RENDERING_START) {
+                if (what === StateCode.MEDIA_INFO_VIDEO_RENDERING_START) {
                     this.changePlayerState(PlayerState.STATE_STARTED)
                     this.renderFirstFrameListeners.forEach((callback) => {
                         callback()
@@ -238,7 +238,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
     }
 
     private changePlayerState(state: PlayerState) {
-        if (this.currentState == state) {
+        if (this.currentState === state) {
             return
         }
         this.currentState = state
@@ -250,7 +250,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
     setMediaSource(mediaSource: MediaSource, onReady?: () => void): void {
         MediaLogger.d(TAG, ">> setMediaSource = " + JSON.stringify(mediaSource))
         this.mediaSource = mediaSource
-        if (mediaSource.type != MediaSourceType.NETWORK) {
+        if (mediaSource.type !== MediaSourceType.NETWORK) {
             MediaLogger.w(TAG, "The ijkPlayer is only support network source!")
             this.errorListeners.forEach((callback) => {
                 callback(-2, "The ijkPlayer is only support network source!")
@@ -280,7 +280,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
 
     start(): void {
         MediaLogger.d(TAG, ">> start")
-        if (this.getPlayerState() == PlayerState.STATE_IDLE) {
+        if (this.getPlayerState() === PlayerState.STATE_IDLE) {
             MediaLogger.d(TAG, ">> prepareAsync")
             this.player.prepareAsync()
         } else {
@@ -338,7 +338,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
         this.progressTimer = setInterval(() => {
             const position = this.getCurrentPosition()
             // MediaLogger.d(TAG, "current position= " + position)
-            if (this.currentPosition != position) {
+            if (this.currentPosition !== position) {
                 this.progressChangedListeners.forEach((callback) => {
                     callback(position)
                 })
@@ -348,7 +348,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
     }
 
     private stopProgressTimer() {
-        if (this.progressTimer == -1) {
+        if (this.progressTimer === -1) {
             return
         }
         MediaLogger.d(TAG, "stopProgressTimer")
@@ -362,7 +362,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
     }
 
     setSeekMode(mode: media.SeekMode): void {
-        if (mode == media.SeekMode.SEEK_CLOSEST) {
+        if (mode === media.SeekMode.SEEK_CLOSEST) {
             this.player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", "1")
         }
     }
@@ -384,8 +384,8 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
     isPlaying(): boolean {
         // todo
         MediaLogger.d(TAG, "currentState= " + this.currentState)
-        // return this.currentState == PlayerState.STATE_STARTED || this.currentState == PlayerState.STATE_BUFFER_START
-        //     || this.currentState == PlayerState.STATE_BUFFER_UPDATE || this.currentState == PlayerState.STATE_BUFFER_END
+        // return this.currentState === PlayerState.STATE_STARTED || this.currentState === PlayerState.STATE_BUFFER_START
+        //     || this.currentState === PlayerState.STATE_BUFFER_UPDATE || this.currentState === PlayerState.STATE_BUFFER_END
         return this.player.isPlaying()
     }
 

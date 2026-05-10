@@ -85,7 +85,7 @@ export struct CcPlayerView {
      */
     onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => void =
         (type: GestureType, percent: number, isTouchUp: boolean) => {
-            if (this.gestureEvent == null) {
+            if (this.gestureEvent === null) {
                 this.gestureEvent = new GestureEvent(this.getUIContext(), type, percent, isTouchUp)
             } else {
                 this.gestureEvent.uiContext = this.getUIContext()
@@ -134,7 +134,7 @@ export struct CcPlayerView {
         this.videoHeight = height
         MediaLogger.d(TAG, "video size is " + width + " * " + height)
         // if the ratio mode is AUTO or STRETCH, refresh videoRatio when get the video size info.
-        if (this.asRatio == AspectRatio.AUTO || this.asRatio == AspectRatio.STRETCH) {
+        if (this.asRatio === AspectRatio.AUTO || this.asRatio === AspectRatio.STRETCH) {
             this.onAspectRatioChanged()
         }
     }
@@ -185,7 +185,7 @@ export struct CcPlayerView {
         let measureWidth: number = 0
         let measureHeight: number = 0
         if (videoRatio < parentViewRatio) {
-            if (this.asRatio == AspectRatio.STRETCH) {
+            if (this.asRatio === AspectRatio.STRETCH) {
                 measureWidth = this.viewWidth
                 measureHeight = Math.ceil(this.viewWidth * videoRatio)
             } else {
@@ -193,7 +193,7 @@ export struct CcPlayerView {
                 measureWidth = Math.ceil(this.viewWidth * videoRatio / parentViewRatio)
             }
         } else {
-            if (this.asRatio == AspectRatio.STRETCH) {
+            if (this.asRatio === AspectRatio.STRETCH) {
                 measureHeight = this.viewHeight
                 measureWidth = Math.ceil(this.viewHeight * videoRatio)
             } else {
@@ -201,7 +201,7 @@ export struct CcPlayerView {
                 measureHeight = Math.ceil(this.viewHeight / videoRatio * parentViewRatio)
             }
         }
-        if (this.surfaceWidth != measureWidth || this.surfaceHeight != measureHeight) {
+        if (this.surfaceWidth !== measureWidth || this.surfaceHeight !== measureHeight) {
             MediaLogger.d(TAG, "measure surface size changed, resize surface")
             if (!this.isFrameReady) {
                 MediaLogger.i(TAG, "hide to resize surface, the frame is not ready!")
@@ -249,7 +249,7 @@ export struct CcPlayerView {
                 this.playerType = PlayerType.AVPLAYER;
                 break;
             default:
-                this.playerType == PlayerType.CUSTOM;
+                this.playerType = PlayerType.CUSTOM;
                 break;
         }
         MediaLogger.d(TAG, "init, player tag= " + tag + ", type= " + this.playerType);
@@ -270,7 +270,7 @@ export struct CcPlayerView {
     build() {
         Stack() {
             // surface view
-            if (this.playerType == PlayerType.IJKPLAYER) {
+            if (this.playerType === PlayerType.IJKPLAYER) {
                 XComponent({
                     controller: this.controller,
                     type: this.renderType,
@@ -296,7 +296,7 @@ export struct CcPlayerView {
                         }
                     })
                     .visibility(this.isShowSurface ? Visibility.Visible : Visibility.Hidden)
-            } else if (this.playerType == PlayerType.AVPLAYER) {
+            } else if (this.playerType === PlayerType.AVPLAYER) {
                 XComponent({
                     id: "ccplayer",
                     controller: this.controller,
@@ -343,7 +343,7 @@ export struct CcPlayerView {
         .onSizeChange((_, newSize) => {
             this.viewWidth = newSize.width as number
             this.viewHeight = newSize.height as number
-            if (this.viewWidth == 0 || this.viewHeight == 0) {
+            if (this.viewWidth === 0 || this.viewHeight === 0) {
                 MediaLogger.attentionW(TAG, "The view size is " + JSON.stringify(newSize))
                 MediaLogger.attentionE(TAG, "You must set the width and height when create a instance of CcPlayerView!")
                 return
@@ -351,7 +351,7 @@ export struct CcPlayerView {
             this.surfaceWidth = this.viewWidth
             this.surfaceHeight = this.viewHeight
             MediaLogger.d(TAG, "The player view default size is: " + this.viewWidth + " x " + this.viewHeight)
-            if (this.asRatio != AspectRatio.FILL) {
+            if (this.asRatio !== AspectRatio.FILL) {
                 this.onAspectRatioChanged()
             }
             this.gestureHandler?.setViewSize(this.viewWidth, this.viewHeight)

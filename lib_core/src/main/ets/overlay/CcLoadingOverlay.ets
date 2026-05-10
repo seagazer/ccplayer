@@ -21,10 +21,10 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
         this.invalidate()
     }
     private stateChangedListener = (state: PlayerState) => {
-        if (state == PlayerState.STATE_BUFFER_START) {
+        if (state === PlayerState.STATE_BUFFER_START) {
             this.config!.visible = true
             this.invalidate()
-        } else if (state == PlayerState.STATE_BUFFER_END || state == PlayerState.STATE_ERROR) {
+        } else if (state === PlayerState.STATE_BUFFER_END || state === PlayerState.STATE_ERROR) {
             this.config!.visible = false
             this.invalidate()
         }
@@ -64,7 +64,7 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
      * @param text The text if loading view.
      */
     setLoadingText(text: ResourceStr) {
-        if (this.config!.loadingText != text) {
+        if (this.config!.loadingText !== text) {
             this.config!.loadingText = text
             this.invalidate()
         }
@@ -75,7 +75,7 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
      * @param size The  size of loading progress bar.
      */
     setLoadingSize(size: Length) {
-        if (this.config!.loadingSize != size) {
+        if (this.config!.loadingSize !== size) {
             this.config!.loadingSize = size
             this.invalidate()
         }
@@ -86,7 +86,7 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
      * @param size The margin between loading progress bar and loading text.
      */
     setLoadingMargin(size: Length) {
-        if (this.config!.loadingMargin != size) {
+        if (this.config!.loadingMargin !== size) {
             this.config!.loadingMargin = size
             this.invalidate()
         }
@@ -97,7 +97,7 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
      * @param size The size of text with unit fp.
      */
     setTextSize(size: Length) {
-        if (this.config!.textSize != size) {
+        if (this.config!.textSize !== size) {
             this.config!.textSize = size
             this.invalidate()
         }
@@ -108,7 +108,7 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
      * @param color The color of text.
      */
     setTextColor(color: ResourceColor) {
-        if (this.config!.textColor != color) {
+        if (this.config!.textColor !== color) {
             this.config!.textColor = color
             this.invalidate()
         }
@@ -119,7 +119,7 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
      * @param padding The padding of loading container.
      */
     setPadding(padding: Length | Padding) {
-        if (this.config!.padding != padding) {
+        if (this.config!.padding !== padding) {
             this.config!.padding = padding
             this.invalidate()
         }
@@ -130,7 +130,7 @@ export class CcLoadingOverlay extends BaseOverlayController<LoadingOverlayConfig
      * @param color The color of overlay background.
      */
     setBackgroundColor(color: ResourceColor) {
-        if (this.config!.bgColor != color) {
+        if (this.config!.bgColor !== color) {
             this.config!.bgColor = color
             this.builderNode?.update(this.config!)
         }

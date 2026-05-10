@@ -55,7 +55,7 @@ export struct CustomOverlaySample {
     @Builder
     GestureOverlay() {
         if (this.gestureOverlayVisible && !this.isLoading) {
-            if (this.gestureType == GestureType.PROGRESS) {
+            if (this.gestureType === GestureType.PROGRESS) {
                 Row() {
                     Text(timeToString(this.player.getDuration() * this.seekPercent) + " / " + timeToString(this.player.getDuration()))
                         .fontSize(18)
@@ -67,7 +67,7 @@ export struct CustomOverlaySample {
                 .height(50)
                 .justifyContent(FlexAlign.Center)
                 .animation({ duration: 150 })
-            } else if (this.gestureType == GestureType.VOLUME) {
+            } else if (this.gestureType === GestureType.VOLUME) {
                 Row() {
                     Text("音量：" + Math.round(this.volumePercent * 100) + "%")
                         .fontSize(18)

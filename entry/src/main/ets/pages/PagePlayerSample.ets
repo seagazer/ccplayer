@@ -86,7 +86,7 @@ struct ItemPage {
     }
 
     onPageChanged() {
-        if (this.curPageIndex == this.pageIndex) {
+        if (this.curPageIndex === this.pageIndex) {
             Logger.d(TAG, "onPageChanged: page " + this.pageIndex + " play")
             this.player.start()
         } else {
@@ -122,7 +122,7 @@ struct ItemPage {
                     Logger.d(TAG, "page " + this.pageIndex + " is surface ready")
                     let src = MediaSourceFactory.createAssets('', this.uri)
                     this.player.setMediaSource(src, () => {
-                        if (this.curPageIndex == this.pageIndex) {
+                        if (this.curPageIndex === this.pageIndex) {
                             Logger.d(TAG, "page " + this.pageIndex + " start play")
                             this.player.start()
                         }

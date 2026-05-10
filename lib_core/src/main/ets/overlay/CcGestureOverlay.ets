@@ -79,7 +79,7 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
      * @param size The size of text with unit fp.
      */
     setTextSize(size: Length) {
-        if (this.config!.textSize != size) {
+        if (this.config!.textSize !== size) {
             this.config!.textSize = size
             this.builderNode?.update(this.config!)
         }
@@ -90,7 +90,7 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
      * @param size The size of icon with unit vp.
      */
     setIconSize(size: Length) {
-        if (this.config!.symbolSize != size) {
+        if (this.config!.symbolSize !== size) {
             this.config!.symbolSize = size
             this.builderNode?.update(this.config!)
         }
@@ -101,7 +101,7 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
      * @param color The color of text.
      */
     setTextColor(color: ResourceColor) {
-        if (this.config!.textColor != color) {
+        if (this.config!.textColor !== color) {
             this.config!.textColor = color
             this.builderNode?.update(this.config!)
         }
@@ -112,7 +112,7 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
      * @param color The color of overlay background.
      */
     setBackgroundColor(color: ResourceColor) {
-        if (this.config!.bgColor != color) {
+        if (this.config!.bgColor !== color) {
             this.config!.bgColor = color
             this.builderNode?.update(this.config!)
         }
@@ -123,7 +123,7 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
      * @param type The gesture type.{@link GestureType}
      */
     setGestureType(type: GestureType) {
-        if (this.config!.gestureType != type) {
+        if (this.config!.gestureType !== type) {
             this.config!.gestureType = type
             this.builderNode?.update(this.config!)
         }
@@ -134,7 +134,7 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
      * @param type The gesture percent value.
      */
     setGesturePercent(percent: number) {
-        if (this.config!.gesturePercent != percent) {
+        if (this.config!.gesturePercent !== percent) {
             this.config!.gesturePercent = percent
             this.builderNode?.update(this.config!)
         }
@@ -160,7 +160,7 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
                 }
                 break
             case GestureType.BRIGHTNESS:
-                if (this.playerWindow == undefined) {
+                if (this.playerWindow === undefined) {
                     this.playerWindow = window.findWindow(uiContext.getWindowName())
                 }
                 this.playerWindow?.setWindowBrightness(percent)
@@ -175,7 +175,7 @@ export class CcGestureOverlay extends BaseOverlayController<GestureOverlayConfig
 @Builder
 function overlay(config: GestureOverlayConfig) {
     if (config.visible) {
-        if (config.gestureType == GestureType.PROGRESS) {
+        if (config.gestureType === GestureType.PROGRESS) {
             Row() {
                 SymbolGlyph($r('sys.symbol.fast_forward'))
                     .fontColor([config.textColor])
@@ -193,9 +193,9 @@ function overlay(config: GestureOverlayConfig) {
                 top: 12,
                 bottom: 12
             })
-        } else if (config.gestureType == GestureType.VOLUME) {
+        } else if (config.gestureType === GestureType.VOLUME) {
             Row() {
-                SymbolGlyph(config.gesturePercent == 0 ? $r('sys.symbol.speaker') : $r('sys.symbol.speaker_wave_1'))
+                SymbolGlyph(config.gesturePercent === 0 ? $r('sys.symbol.speaker') : $r('sys.symbol.speaker_wave_1'))
                     .fontColor([config.textColor])
                     .fontSize(config.symbolSize)
                 Text(Math.round(config.gesturePercent * 100) + "%")

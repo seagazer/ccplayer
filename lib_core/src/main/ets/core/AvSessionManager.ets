@@ -141,9 +141,6 @@ export class AvSessionManager implements IAvSession {
             case PlayerState.STATE_COMPLETED:
                 avState = avSession.PlaybackState.PLAYBACK_STATE_COMPLETED
                 break
-            case PlayerState.STATE_COMPLETED:
-                avState = avSession.PlaybackState.PLAYBACK_STATE_COMPLETED
-                break
             case PlayerState.STATE_ERROR:
                 avState = avSession.PlaybackState.PLAYBACK_STATE_ERROR
                 break

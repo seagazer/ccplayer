@@ -16,6 +16,6 @@ export function timeToString(time: number): string {
     }
     let resultMinute: string = minute < 10 ? `0${minute}` : minute.toString()
     let resultSecond: string = seconds < 10 ? `0${seconds}` : seconds.toString()
-    let result = hour != 0 ? `${hour}:${resultMinute}:${resultSecond}` : `${resultMinute}:${resultSecond}`
+    let result = hour !== 0 ? `${hour}:${resultMinute}:${resultSecond}` : `${resultMinute}:${resultSecond}`
     return result
 }

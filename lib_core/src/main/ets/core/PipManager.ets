@@ -19,7 +19,7 @@ export class PipManager implements IPip {
     private pipController?: PiPWindow.PiPController = undefined
     private navigationId: string = ''
     private defaultStateChangedListener = (state: PlayerState) => {
-        if (state == PlayerState.STATE_STARTED) {
+        if (state === PlayerState.STATE_STARTED) {
             this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PLAY)
         } else {
             this.pipController?.updatePiPControlStatus(PiPWindow.PiPControlType.VIDEO_PLAY_PAUSE, PiPWindow.PiPControlStatus.PAUSE)
@@ -35,7 +35,7 @@ export class PipManager implements IPip {
     private pipActionEventListener = (event: PiPWindow.PiPActionEventType, status?: number) => {
         switch (event) {
             case "playbackStateChanged":
-                if (status == 0) {
+                if (status === 0) {
                     this.player.pause();
                 } else {
                     this.player.start();
@@ -96,6 +96,8 @@ export class PipManager implements IPip {
             MediaLogger.d(TAG, "disable pip")
             await this.stopPip()
             this.pipController.off("controlPanelActionEvent")
+            this.pipController.off("stateChange")
+            this.pipController = undefined
         }
     }
 

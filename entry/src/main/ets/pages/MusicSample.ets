@@ -1,8 +1,7 @@
 import { AvSessionCallback, CcPlayer, MediaSource, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer';
 import { timeToString } from '../Extentions';
 import { Logger } from '../Logger';
-import common from '@ohos.app.ability.common';
-import wantAgent from '@ohos.app.ability.wantAgent';
+import { common, wantAgent } from '@kit.AbilityKit';
 import { CButton } from './CButton';
 
 const TAG = '[MusicSample]'
@@ -110,7 +109,7 @@ export struct MusicSample {
         NavDestination() {
             Column() {
                 // video view
-                Image(this.playIndex == 0 ? this.cover : this.cover2)
+                Image(this.playIndex === 0 ? this.cover : this.cover2)
                     .width(200)
                     .height(200)
                     .borderRadius(16)
@@ -125,9 +124,9 @@ export struct MusicSample {
                     }).layoutWeight(1)
                         .enabled(this.totalDuration > 0)
                         .onChange((value, mode) => {
-                            if (mode == SliderChangeMode.Begin) {
+                            if (mode === SliderChangeMode.Begin) {
                                 this.isSeeking = true
-                            } else if (mode == SliderChangeMode.End) {
+                            } else if (mode === SliderChangeMode.End) {
                                 let position = Math.ceil(value)
                                 this.player.seekTo(position)
                                 this.currentPosition = position

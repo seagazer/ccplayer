@@ -75,7 +75,7 @@ export class AvPlayerImpl implements IPlayer {
                     break
                 case "initialized": // src ready -> initialized
                     MediaLogger.d(TAG, ">> System callback: initialized")
-                    if (this.curSurfaceId && this.curSurfaceId != this.lastSurfaceId) {
+                    if (this.curSurfaceId && this.curSurfaceId !== this.lastSurfaceId) {
                         MediaLogger.d(TAG, ">> set surface: " + this.curSurfaceId)
                         this.player!.surfaceId = this.curSurfaceId
                         this.lastSurfaceId = this.curSurfaceId
@@ -169,7 +169,7 @@ export class AvPlayerImpl implements IPlayer {
                     callback(position)
                 })
             }
-            if (this.startPosition != -1) { // start with seek action
+            if (this.startPosition !== -1) { // start with seek action
                 this.startPosition = -1
                 this.start()
                 this.changePlayerState(PlayerState.STATE_STARTED)
@@ -190,7 +190,7 @@ export class AvPlayerImpl implements IPlayer {
         })
         this.player!.on("audioInterrupt", (event: audio.InterruptEvent) => {
             MediaLogger.d(TAG, ">> System callback: audioFocusChange: " + JSON.stringify(event))
-            if (event.forceType == audio.InterruptForceType.INTERRUPT_FORCE) {
+            if (event.forceType === audio.InterruptForceType.INTERRUPT_FORCE) {
                 switch (event.hintType) {
                     case audio.InterruptHint.INTERRUPT_HINT_PAUSE:
                     case audio.InterruptHint.INTERRUPT_HINT_STOP:
@@ -243,7 +243,7 @@ export class AvPlayerImpl implements IPlayer {
                     break
                 case media.BufferingInfoType.CACHED_DURATION:
                     const current = this.getCurrentPosition();
-                    const buffer = current + value > 0 ? value : 0;
+                    const buffer = (current + value) > 0 ? (current + value) : 0;
                     if (buffer > this.bufferPosition) { // 防止回跳
                         this.bufferPosition = buffer;
                     }
@@ -282,7 +282,7 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     isPlaying(): boolean {
-        return this.currentState == PlayerState.STATE_STARTED
+        return this.currentState === PlayerState.STATE_STARTED
     }
 
     getPlayerState(): PlayerState {
@@ -291,7 +291,7 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     private changePlayerState(state: PlayerState) {
-        if (this.currentState == state) {
+        if (this.currentState === state) {
             return
         }
         if (this.isBuffering && state !== PlayerState.STATE_BUFFER_START && state !== PlayerState.STATE_BUFFER_UPDATE) {
@@ -320,7 +320,7 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     private async setMediaSourceInner(mediaSource: MediaSource) {
-        if (mediaSource.type == MediaSourceType.NETWORK && mediaSource.httpHeaders) {
+        if (mediaSource.type === MediaSourceType.NETWORK && mediaSource.httpHeaders) {
             // impl set media source for api12+
             this.setMediaSourceInner12Impl(mediaSource)
         } else {
@@ -369,11 +369,15 @@ export class AvPlayerImpl implements IPlayer {
 
     async start() {
         MediaLogger.d(TAG, ">> start, isPrepared = " + this.isPrepared)
-        if (this.startPosition != -1) { // start with seek action
+        if (!this.player) {
+            MediaLogger.attentionW(TAG, "start failed, the player is not created yet!")
+            return
+        }
+        if (this.startPosition !== -1) { // start with seek action
             MediaLogger.d(TAG, "start to " + this.startPosition)
             this.seekTo(this.startPosition)
         } else {
-            this.player!.play()
+            this.player.play()
         }
     }
 
@@ -385,7 +389,11 @@ export class AvPlayerImpl implements IPlayer {
 
     async pause() {
         MediaLogger.d(TAG, ">> pause")
-        await this.player!.pause()
+        if (!this.player) {
+            MediaLogger.attentionW(TAG, "pause failed, the player is not created yet!")
+            return
+        }
+        await this.player.pause()
     }
 
     async stop() {
@@ -399,7 +407,11 @@ export class AvPlayerImpl implements IPlayer {
 
     async reset() {
         MediaLogger.d(TAG, ">> reset")
-        await this.player!.reset()
+        if (!this.player) {
+            MediaLogger.attentionW(TAG, "reset failed, the player is not created yet!")
+            return
+        }
+        await this.player.reset()
     }
 
     async release() {
@@ -420,14 +432,20 @@ export class AvPlayerImpl implements IPlayer {
             this.errorListeners = []
             this.seekChangedListeners = []
             this.volumeChangedListeners = []
+            this.changePlayerState(PlayerState.STATE_NOT_INIT)
             this.stateChangedListeners = []
             this.videoSizeChangedListeners = []
             this.renderFirstFrameListeners = []
             this.audioFocusChangeListener = []
-            await this.player.stop()
-            await this.player.reset()
-            await this.player.release()
-            this.changePlayerState(PlayerState.STATE_IDLE)
+            try {
+                if (this.isInPlayReadyState()) {
+                    await this.player.stop()
+                }
+                await this.player.reset()
+                await this.player.release()
+            } catch (e) {
+                MediaLogger.attentionE(TAG, "release cause error= " + JSON.stringify(e))
+            }
         }
     }
 
@@ -465,8 +483,8 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     private isInPlayReadyState(): boolean {
-        return this.isPlaying() || this.currentState == PlayerState.STATE_PAUSED || this.currentState == PlayerState.STATE_COMPLETED
-            || this.currentState == PlayerState.STATE_PREPARED
+        return this.isPlaying() || this.currentState === PlayerState.STATE_PAUSED || this.currentState === PlayerState.STATE_COMPLETED
+            || this.currentState === PlayerState.STATE_PREPARED
     }
 
     setLooper(isLoop: boolean) {
@@ -477,12 +495,18 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     getDuration(): number {
-        MediaLogger.d(TAG, "duration = " + this.player!.duration)
-        return Math.round(this.player!.duration)
+        if (!this.player) {
+            return 0
+        }
+        MediaLogger.d(TAG, "duration = " + this.player.duration)
+        return Math.round(this.player.duration)
     }
 
     getCurrentPosition(): number {
-        return Math.round(this.player!.currentTime)
+        if (!this.player) {
+            return 0
+        }
+        return Math.round(this.player.currentTime)
     }
 
     getBufferPosition(): number {
@@ -498,7 +522,7 @@ export class AvPlayerImpl implements IPlayer {
     }
 
     getSystemPlayer(): media.AVPlayer | IPlayer {
-        return this.player!
+        return this.player ?? this
     }
 
     getTag(): string {

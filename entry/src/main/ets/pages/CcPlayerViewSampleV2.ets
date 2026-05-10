@@ -168,12 +168,12 @@ export struct CcPlayerViewSampleV2 {
                 .width("100%")
                 .height(500)
                 .onTouch((ev) => {
-                    if (ev.type == TouchType.Down) {
+                    if (ev.type === TouchType.Down) {
                         clearTimeout(this.controllerHideTimer)
                         this.titleOverlay.setVisible(true)
                         this.controllerOverlay.setVisible(true)
                     }
-                    if (ev.type == TouchType.Up) {
+                    if (ev.type === TouchType.Up) {
                         this.controllerHideTimer = setTimeout(() => {
                             this.titleOverlay.setVisible(false)
                             this.controllerOverlay.setVisible(false)
@@ -214,7 +214,7 @@ export struct CcPlayerViewSampleV2 {
                     CButton({
                         text: "next",
                         onAction: () => {
-                            if (this.playIndex == 0) {
+                            if (this.playIndex === 0) {
                                 this.playIndex = 1
                                 // let src = MediaSourceFactory.createUrl("", "http://vjs.zencdn.net/v/oceans.mp4")
                                 let src = MediaSourceFactory.createUrl("",

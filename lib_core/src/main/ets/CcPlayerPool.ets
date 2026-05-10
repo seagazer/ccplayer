@@ -90,6 +90,10 @@ export class CcPlayerPool {
         innerPlayer.reset()
         MediaLogger.d(TAG, "release the player= " + innerPlayer.id)
         let index = this.runningCache.indexOf(innerPlayer)
+        if (index < 0) {
+            MediaLogger.attentionW(TAG, "The player is not in running cache, skip recycle.")
+            return
+        }
         this.runningCache.splice(index, 1)
         this.idleCache.push(innerPlayer)
         this.checkSize()

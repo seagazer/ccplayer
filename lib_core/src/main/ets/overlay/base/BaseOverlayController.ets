@@ -15,7 +15,7 @@ export abstract class BaseOverlayController<C extends BaseOverlayConfig> extends
      * @param type The visible of this view.
      */
     setVisible(visible: boolean) {
-        if (this.config!.visible != visible) {
+        if (this.config!.visible !== visible) {
             this.config!.visible = visible
             this.builderNode?.update(this.config!)
         }

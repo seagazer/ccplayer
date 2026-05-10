@@ -62,7 +62,7 @@ export class CcControllerOverlay extends BaseOverlayController<ControllerOverlay
      * @param size The size of text with unit fp.
      */
     setTextSize(size: Length) {
-        if (this.config!.textSize != size) {
+        if (this.config!.textSize !== size) {
             this.config!.textSize = size
             this.builderNode?.update(this.config!)
         }
@@ -73,7 +73,7 @@ export class CcControllerOverlay extends BaseOverlayController<ControllerOverlay
      * @param color The color of text.
      */
     setTextColor(color: ResourceColor) {
-        if (this.config!.textColor != color) {
+        if (this.config!.textColor !== color) {
             this.config!.textColor = color
             this.builderNode?.update(this.config!)
         }
@@ -84,7 +84,7 @@ export class CcControllerOverlay extends BaseOverlayController<ControllerOverlay
      * @param color The color of seekbar.
      */
     setSliderTrackColor(color: ResourceColor) {
-        if (this.config!.trackColor != color) {
+        if (this.config!.trackColor !== color) {
             this.config!.trackColor = color
             this.builderNode?.update(this.config!)
         }
@@ -95,7 +95,7 @@ export class CcControllerOverlay extends BaseOverlayController<ControllerOverlay
      * @param color The color of seekbar.
      */
     setSliderBlockColor(color: ResourceColor) {
-        if (this.config!.blockColor != color) {
+        if (this.config!.blockColor !== color) {
             this.config!.blockColor = color
             this.builderNode?.update(this.config!)
         }
@@ -106,7 +106,7 @@ export class CcControllerOverlay extends BaseOverlayController<ControllerOverlay
      * @param color The color of seekbar.
      */
     setSliderSelectedColor(color: ResourceColor) {
-        if (this.config!.selectedColor != color) {
+        if (this.config!.selectedColor !== color) {
             this.config!.selectedColor = color
             this.builderNode?.update(this.config!)
         }
@@ -117,7 +117,7 @@ export class CcControllerOverlay extends BaseOverlayController<ControllerOverlay
      * @param margin The horizontal margin of seekbar.
      */
     setSliderMargin(margin: Margin) {
-        if (this.config!.sliderMargin != margin) {
+        if (this.config!.sliderMargin !== margin) {
             this.config!.sliderMargin = margin
             this.builderNode?.update(this.config!)
         }
@@ -128,7 +128,7 @@ export class CcControllerOverlay extends BaseOverlayController<ControllerOverlay
      * @param padding The horizontal padding of overlay.
      */
     setPadding(padding: Length | Padding) {
-        if (this.config!.padding != padding) {
+        if (this.config!.padding !== padding) {
             this.config!.padding = padding
             this.builderNode?.update(this.config!)
         }
@@ -154,9 +154,9 @@ function overlay(config: ControllerOverlayConfig) {
             .blockColor(config.blockColor)
             .margin(config.sliderMargin)
             .onChange((value, mode) => {
-                if (mode == SliderChangeMode.Begin) {
+                if (mode === SliderChangeMode.Begin) {
                     config.isSeeking = true
-                } else if (mode == SliderChangeMode.End) {
+                } else if (mode === SliderChangeMode.End) {
                     let position = Math.ceil(value)
                     config.player.seekTo(position)
                     config.currentPosition = position
