@@ -20,7 +20,6 @@ import {
     OnSeekCompleteListener,
     OnVideoSizeChangedListener
 } from '@ohos/ijkplayer';
-import { IjkPlayer } from '../IjkPlayer';
 import { StateCode } from './StateCode';
 import { IIjk } from '../interface/IIjk';
 
@@ -34,7 +33,6 @@ const TAG = "[IjkPlayerImpl]"
  */
 export class IjkPlayerImpl implements IPlayer, IIjk {
     private player: IjkMediaPlayer
-    private surfaceId?: object = undefined
     private currentState = PlayerState.STATE_NOT_INIT
     private mediaSource?: MediaSource = undefined
     private seekPosition = 0
@@ -56,6 +54,7 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
     private cbBuffer: number = -1
     private progressTimer = -1
     private options: Map<string, string[]> = new Map()
+    private xComponentId: string = IJK.ID
 
     constructor() {
         const id = "IjkPlayerImpl_" + new Date().getTime()
@@ -66,15 +65,23 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
         this.changePlayerState(PlayerState.STATE_IDLE)
     }
 
+    setXComponentId(id: string): void {
+        this.xComponentId = id
+    }
+
+    getXComponentId(): string {
+        return this.xComponentId
+    }
+
     setOption(category: string, key: string, value: string): void {
         this.options.set(category, [key, value])
     }
 
-    private initIjk() {
+    private initIjk(surfaceContext: object) {
         MediaLogger.d(TAG, ">> init ijk")
         this.isSetupListener = true
-        MediaLogger.d(TAG, ">> native set context= " + this.surfaceId)
-        this.player.setContext(this.surfaceId, IjkPlayer.getXComponentId())
+        MediaLogger.d(TAG, ">> native set context= " + surfaceContext + ", xid= " + this.getXComponentId())
+        this.player.setContext(surfaceContext, this.getXComponentId())
         MediaLogger.d(TAG, ">> native setup")
         this.player.native_setup()
 
@@ -422,9 +429,8 @@ export class IjkPlayerImpl implements IPlayer, IIjk {
     }
 
     bindXComponent(controller: XComponentController, loadContext: object): void {
-        this.surfaceId = loadContext
         if (!this.isSetupListener) {
-            this.initIjk()
+            this.initIjk(loadContext)
         }
     }
 

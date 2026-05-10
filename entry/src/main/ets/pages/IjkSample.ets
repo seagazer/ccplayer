@@ -13,7 +13,8 @@ export struct IjkSample {
     @Local currentPosition: number = 0
     @Local totalDuration: number = 0
     private controller = new XComponentController()
-    private player = new CcPlayer(getContext(this))
+    private player = new CcPlayer(this.getUIContext().getHostContext()!)
+    private ijkPlayer = new IjkPlayer()
     private preparedListener = () => {
         this.totalDuration = this.player.getDuration()
         Logger.d(TAG, "prepared= " + this.totalDuration)
@@ -48,8 +49,8 @@ export struct IjkSample {
     private isSeeking = false
 
     aboutToAppear(): void {
-        const ijkPlayer = new IjkPlayer()
-        this.player.setPlayer(ijkPlayer)
+        this.ijkPlayer.setXComponentId("ijk_sample")
+        this.player.setPlayer(this.ijkPlayer)
         this.player
             .addOnPreparedListener(this.preparedListener)
             .addOnStateChangedListener(this.stateChangedListener)
@@ -79,7 +80,7 @@ export struct IjkSample {
                 XComponent({
                     controller: this.controller,
                     type: XComponentType.SURFACE,
-                    id: IjkPlayer.getXComponentId(),
+                    id: this.ijkPlayer.getXComponentId(),
                     libraryname: IjkPlayer.getLibrary(),
                 }).onLoad((context) => {
                     Logger.d(TAG, "onLoad= " + context)

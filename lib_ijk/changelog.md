@@ -1,3 +1,8 @@
+# 1.0.5
+- 增加多路视频同时播放，多路并行需要同时使用多实例方式
+- 新增setXComponentId/getXComponentId接口
+- 底层同步更新@ohos/ijkplayer至2.0.7版本
+
 # 1.0.4
 - 默认开启倍速播放能力，setPlaySpeed前无需再主动配置
 

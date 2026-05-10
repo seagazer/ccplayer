@@ -16,16 +16,20 @@ export class IjkPlayer implements IPlayer, IIjk {
         this.player = new IjkPlayerImpl()
     }
 
+    setXComponentId(id: string): void {
+        this.player.setXComponentId(id)
+    }
+
+    getXComponentId(): string {
+        return this.player.getXComponentId()
+    }
+
     setOption(category: string, key: string, value: string): void {
         this.player.setOption(category, key, value)
     }
 
     static getLibrary(): string {
         return IJK.NAPI
-    }
-
-    static getXComponentId(): string {
-        return IJK.ID
     }
 
     start(): void {

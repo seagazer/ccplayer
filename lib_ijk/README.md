@@ -41,12 +41,12 @@ ohpm install @seagazer/ccplayer-ijk
 @Component
 struct IjkSample {
     // 1.实例化CcPlayer
-    private player: CcPlayer = new CcPlayer(getContext(this))
+    private player: CcPlayer = new CcPlayer(this.getUIContext().getHostContext()!)
+    private ijkPlayer = new IjkPlayer()
 
     aboutToAppear(): void {
         // 2.设置插件
-        const ijkPlayer = new IjkPlayer()
-        this.player.setPlayer(ijkPlayer)
+        this.player.setPlayer(this.ijkPlayer)
     }
 
     build() {
@@ -81,13 +81,13 @@ struct IjkSample {
 @Component
 struct IjkSample {
      // 1.实例化CcPlayer
-    private player: CcPlayer = new CcPlayer(getContext(this))
+    private player: CcPlayer = new CcPlayer(this.getUIContext().getHostContext()!)
     // 2.实例化controller
     private controller = new XComponentController()
-
+    private ijkPlayer = new IjkPlayer()
+  
     aboutToAppear(): void {
         // 3.设置插件
-        const ijkPlayer = new IjkPlayer()
         this.player.setPlayer(ijkPlayer)
     }
 
@@ -97,7 +97,7 @@ struct IjkSample {
                 XComponent({
                     controller: this.controller,
                     type: XComponentType.SURFACE,
-                    id: IjkPlayer.getXComponentId(), //需要绑定插件的id
+                    id: this.ijkPlayer.getXComponentId(), //需要绑定插件的id
                     libraryname: IjkPlayer.getLibrary(), //需要绑定插件的so名
                 }).onLoad((context) => {
                     Logger.d(TAG, "onLoad= " + context)

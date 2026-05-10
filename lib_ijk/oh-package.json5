@@ -17,11 +17,11 @@
   "description": "An extensions of ijkplayer for ccplayer.",
   "main": "Index.ets",
   "repository": "https://github.com/seagazer/ccplayer",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "homepage": "https://github.com/seagazer",
   "dependencies": {
     "@seagazer/ccplayer-base": "1.0.0",
-    "@ohos/ijkplayer": "2.0.6"
+    "@ohos/ijkplayer": "2.0.7"
   },
   "dynamicDependencies": {}
 }
