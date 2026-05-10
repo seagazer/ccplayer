@@ -22,7 +22,7 @@ const TAG = '[CcPlayerViewSampleV2]'
 
 @ComponentV2
 export struct CcPlayerViewSampleV2 {
-    private player = new CcPlayer(getContext(this))
+    private player = new CcPlayer(this.getUIContext().getHostContext()!)
     @Local ratio: AspectRatio = AspectRatio.AUTO
     @Local ratioText: string = "AUTO"
     @Local totalDuration: number = 0
@@ -56,7 +56,8 @@ export struct CcPlayerViewSampleV2 {
 
     aboutToAppear(): void {
         // 使用ijk扩展插件
-        const ijkPlayer = new IjkPlayer()
+        // const ijkPlayer = new IjkPlayer()
+        // ijkPlayer.setXComponentId("ccplayer_view2_sample")
         // this.player.setPlayer(ijkPlayer)
         this.player.setKeepScreenOn(this.getUIContext(), true)
         this.player.addOnPipStateChangedListener(this.pipStateChangedListener)
@@ -67,8 +68,8 @@ export struct CcPlayerViewSampleV2 {
         this.gestureOverlay.setTextColor('#ffead981')
         this.loadingOverlay.setLoadingText("loading...")
         // bind av session
-        const context = getContext(this) as common.UIAbilityContext
-        this.player.bindAvSession(getContext(this), 'VideoViewSample', 'video', {
+        const context = this.getUIContext().getHostContext()! as common.UIAbilityContext
+        this.player.bindAvSession(this.getUIContext().getHostContext()!, 'VideoViewSample', 'video', {
             wants: [{
                 bundleName: context.abilityInfo.bundleName,
                 abilityName: context.abilityInfo.name

@@ -21,7 +21,7 @@ const TAG = '[CcPlayerViewSample]'
 
 @Component
 export struct CcPlayerViewSample {
-    private player = new CcPlayer(getContext(this))
+    private player = new CcPlayer(this.getUIContext().getHostContext()!)
     @State ratio: AspectRatio = AspectRatio.AUTO
     @State ratioText: string = "AUTO"
     @State totalDuration: number = 0
@@ -61,8 +61,8 @@ export struct CcPlayerViewSample {
         this.gestureOverlay.setTextColor('#ffead981')
         this.loadingOverlay.setLoadingText("loading...")
         // bind av session
-        const context = getContext(this) as common.UIAbilityContext
-        this.player.bindAvSession(getContext(this), 'VideoViewSample', 'video', {
+        const context = this.getUIContext().getHostContext()! as common.UIAbilityContext
+        this.player.bindAvSession(this.getUIContext().getHostContext()!, 'VideoViewSample', 'video', {
             wants: [{
                 bundleName: context.abilityInfo.bundleName,
                 abilityName: context.abilityInfo.name

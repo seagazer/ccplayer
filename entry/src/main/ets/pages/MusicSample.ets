@@ -8,7 +8,7 @@ const TAG = '[MusicSample]'
 
 @Component
 export struct MusicSample {
-    private player = new CcPlayer(getContext(this))
+    private player = new CcPlayer(this.getUIContext().getHostContext()!)
     @State currentPosition: number = 0
     @State totalDuration: number = 0
     @State seekPosition: number = 0
@@ -45,8 +45,8 @@ export struct MusicSample {
         // mock data
         this.playlist.push(MediaSourceFactory.createAssets("Song1", "music1.mp3", this.cover))
         this.playlist.push(MediaSourceFactory.createAssets("Song2", "music2.mp3", this.cover2))
-        const context = getContext(this) as common.UIAbilityContext
-        this.player.bindAvSession(getContext(this), 'MusicSample', 'audio', {
+        const context = this.getUIContext().getHostContext()! as common.UIAbilityContext
+        this.player.bindAvSession(this.getUIContext().getHostContext()!, 'MusicSample', 'audio', {
             wants: [{
                 bundleName: context.abilityInfo.bundleName,
                 abilityName: context.abilityInfo.name

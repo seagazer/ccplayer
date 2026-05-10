@@ -6,6 +6,7 @@ import { AspectRatio, GestureAreaConfig, GestureType, IJK, MediaLogger } from '@
 import { PlayerType } from '../common/PlayerType';
 import { AvPlayerImpl } from '../core/impl/AvPlayerImpl';
 import { GestureHandler } from './GestureHandler';
+import { IjkPlayer } from '@seagazer/ccplayer-ijk';
 
 const TAG = "[CcPlayerViewV2]"
 
@@ -275,7 +276,7 @@ export struct CcPlayerViewV2 {
                 XComponent({
                     controller: this.controller,
                     type: this.renderType,
-                    id: IJK.ID,
+                    id: (this.player.getSystemPlayer() as IjkPlayer).getXComponentId(),
                     libraryname: IJK.NAPI,
                 })
                     .width(this.surfaceWidth)

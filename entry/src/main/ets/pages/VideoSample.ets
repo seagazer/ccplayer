@@ -10,7 +10,7 @@ const TAG = '[VideoSample]'
 
 @Component
 export struct VideoSample {
-    private player = new CcPlayer(getContext(this))
+    private player = new CcPlayer(this.getUIContext().getHostContext()!)
     @State isLoading: boolean = false
     @State currentPosition: number = 0
     @State totalDuration: number = 0
@@ -43,8 +43,8 @@ export struct VideoSample {
     }
 
     aboutToAppear(): void {
-        const context = getContext(this) as common.UIAbilityContext
-        this.player.bindAvSession(getContext(this), 'VideoSample', 'video', {
+        const context = this.getUIContext().getHostContext()! as common.UIAbilityContext
+        this.player.bindAvSession(this.getUIContext().getHostContext()!, 'VideoSample', 'video', {
             wants: [{
                 bundleName: context.abilityInfo.bundleName,
                 abilityName: context.abilityInfo.name

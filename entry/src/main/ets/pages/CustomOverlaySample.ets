@@ -7,7 +7,7 @@ const TAG = '[CustomOverlaySample]'
 
 @Component
 export struct CustomOverlaySample {
-    private player = new CcPlayer(getContext(this))
+    private player = new CcPlayer(this.getUIContext().getHostContext()!)
     @State ratio: AspectRatio = AspectRatio.AUTO
     @State isLoading: boolean = false
     @State gestureOverlayVisible: boolean = false
