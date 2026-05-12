@@ -6,6 +6,10 @@
  */
 export enum AspectRatio {
     /**
+     * The custom mode, change the view size by user.
+     */
+    CUSTOM,
+    /**
      * Auto
      */
     AUTO,
