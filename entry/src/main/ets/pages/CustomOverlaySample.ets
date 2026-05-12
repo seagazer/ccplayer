@@ -1,5 +1,5 @@
 import { AspectRatio, CcPlayer, CcPlayerView, GestureType, MediaSourceFactory } from '@seagazer/ccplayer';
-import { MOCK_SOURCE, timeToString } from '../Extentions';
+import { MOCK_SOURCE, timeToString } from '../Extensions';
 import { window } from '@kit.ArkUI';
 import { CustomControlOverlay } from './CustomControlOverlay';
 

@@ -1,5 +1,5 @@
 import { AvSessionCallback, CcPlayer, MediaSource, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer';
-import { timeToString } from '../Extentions';
+import { timeToString } from '../Extensions';
 import { Logger } from '../Logger';
 import { common, wantAgent } from '@kit.AbilityKit';
 import { CButton } from './CButton';

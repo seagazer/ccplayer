@@ -5,7 +5,7 @@ import { VideoSample } from './VideoSample'
 import { PagePlayerSample } from './PagePlayerSample'
 import { CustomOverlaySample } from './CustomOverlaySample'
 import { CcPlayerViewSampleV2 } from './CcPlayerViewSampleV2'
-import { LOGO_COLOR } from '../Extentions'
+import { LOGO_COLOR } from '../Extensions'
 import { IjkSample } from './IjkSample'
 
 @Entry

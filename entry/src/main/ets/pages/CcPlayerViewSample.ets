@@ -10,7 +10,7 @@ import {
     MediaSourceFactory,
     PlayerState
 } from '@seagazer/ccplayer';
-import { MOCK_SOURCE, toast } from '../Extentions';
+import { MOCK_SOURCE, toast } from '../Extensions';
 import { Logger } from '../Logger';
 import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';

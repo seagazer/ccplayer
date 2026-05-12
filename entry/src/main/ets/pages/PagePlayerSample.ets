@@ -1,5 +1,5 @@
 import { AspectRatio, CcPlayerPool, CcPlayerView, MediaSourceFactory } from '@seagazer/ccplayer';
-import { timeToString } from '../Extentions';
+import { timeToString } from '../Extensions';
 import { Logger } from '../Logger';
 
 const TAG = '[PagePlayerSample]'

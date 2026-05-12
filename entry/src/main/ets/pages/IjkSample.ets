@@ -1,6 +1,6 @@
 import { CcPlayer, MediaSourceFactory, PlayerState } from '@seagazer/ccplayer'
 import { IjkPlayer } from '@seagazer/ccplayer-ijk'
-import { timeToString } from '../Extentions'
+import { timeToString } from '../Extensions'
 import { Logger } from '../Logger'
 import { CButton } from './CButton'
 

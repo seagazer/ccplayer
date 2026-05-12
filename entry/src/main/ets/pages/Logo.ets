@@ -1,5 +1,5 @@
 import router from '@ohos.router';
-import { LOGO_COLOR } from '../Extentions';
+import { LOGO_COLOR } from '../Extensions';
 
 @Extend(Text)
 function logoStyle() {

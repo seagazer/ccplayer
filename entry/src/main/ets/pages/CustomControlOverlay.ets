@@ -1,7 +1,7 @@
 import { CcPlayer, BaseOverlayConfig, BaseOverlayController } from "@seagazer/ccplayer";
 import { UIContext } from "@ohos.arkui.UIContext";
 import { BuilderNode } from "@kit.ArkUI";
-import { timeToString } from "../Extentions";
+import { timeToString } from "../Extensions";
 
 export class CustomControlOverlay extends BaseOverlayController<ControlOverlayConfig> {
     private overlayView: WrappedBuilder<[ControlOverlayConfig]> = wrapBuilder(controlOverlay);
