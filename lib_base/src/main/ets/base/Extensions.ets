@@ -10,7 +10,7 @@ export function timeToString(time: number): string {
     let minute = Math.floor(seconds / 60)
     seconds %= 60
     let hour = 0
-    if (minute > 60) {
+    if (minute >= 60) {
         hour = Math.floor(minute / 60)
         minute %= 60
     }

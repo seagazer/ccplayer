@@ -399,8 +399,10 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
     }
 
     async disablePip() {
-        this.checkPipManagerNotNull()
-        await this.pipManager!.disablePip()
+        if (!this.pipManager) {
+            return
+        }
+        await this.pipManager.disablePip()
     }
 
     async startPip() {
@@ -424,36 +426,68 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
     }
 
     async getSnapshotFromFile(filePath: string, width: number, height: number, timestamp: number): Promise<PixelMap | undefined> {
+        let imageG: media.AVImageGenerator | undefined = undefined
+        let fd: number | undefined = undefined
         try {
-            const imageG = await media.createAVImageGenerator()
+            imageG = await media.createAVImageGenerator()
             let file = await fileIo.open(filePath, fileIo.OpenMode.READ_ONLY)
-            imageG.fdSrc = { fd: file.fd }
+            fd = file.fd
+            imageG.fdSrc = { fd: fd }
             const result =
                 await imageG.fetchFrameByTime(timestamp, media.AVImageQueryOptions.AV_IMAGE_QUERY_NEXT_SYNC,
                     { width: width, height: height })
-            await imageG.release()
-            fileIo.close(file.fd)
             return result
         } catch (e) {
             MediaLogger.attentionE(TAG, 'getSnapshotFromFile error= ' + JSON.stringify(e))
             return undefined
+        } finally {
+            if (imageG) {
+                try {
+                    await imageG.release()
+                } catch (e) {
+                    MediaLogger.attentionE(TAG, 'release snapshot generator error= ' + JSON.stringify(e))
+                }
+            }
+            if (fd !== undefined) {
+                try {
+                    fileIo.close(fd)
+                } catch (e) {
+                    MediaLogger.attentionE(TAG, 'close snapshot file error= ' + JSON.stringify(e))
+                }
+            }
         }
     }
 
     async getSnapshotFromAssets(rawPath: string, width: number, height: number, timestamp: number): Promise<PixelMap | undefined> {
+        let imageG: media.AVImageGenerator | undefined = undefined
+        let isRawFdOpen = false
         try {
-            const imageG = await media.createAVImageGenerator()
+            imageG = await media.createAVImageGenerator()
             const afd = this.context.resourceManager.getRawFdSync(rawPath)
+            isRawFdOpen = true
             imageG.fdSrc = afd
             const result =
                 await imageG.fetchFrameByTime(timestamp, media.AVImageQueryOptions.AV_IMAGE_QUERY_NEXT_SYNC,
                     { width: width, height: height })
-            await imageG.release()
-            this.context.resourceManager.closeRawFdSync(rawPath)
             return result
         } catch (e) {
             MediaLogger.attentionE(TAG, 'getSnapshotFromAssets error= ' + JSON.stringify(e))
             return undefined
+        } finally {
+            if (imageG) {
+                try {
+                    await imageG.release()
+                } catch (e) {
+                    MediaLogger.attentionE(TAG, 'release snapshot generator error= ' + JSON.stringify(e))
+                }
+            }
+            if (isRawFdOpen) {
+                try {
+                    this.context.resourceManager.closeRawFdSync(rawPath)
+                } catch (e) {
+                    MediaLogger.attentionE(TAG, 'close snapshot assets error= ' + JSON.stringify(e))
+                }
+            }
         }
     }
 

@@ -36,10 +36,10 @@ export class GestureHandler {
         onDoubleClickAction: () => void) {
         this.player = player
         this.gestureAreaConfig = gestureAreaConfig
-        this.horizontalGestureDamping = horizontalGestureDamping
-        this.verticalGestureDamping = verticalGestureDamping
-        this.currentBrightness = currentBrightness
-        this.currentVolume = currentVolume
+        this.horizontalGestureDamping = this.safePositiveValue(horizontalGestureDamping, 2)
+        this.verticalGestureDamping = this.safePositiveValue(verticalGestureDamping, 1.5)
+        this.currentBrightness = this.limit(currentBrightness, 1, 0)
+        this.currentVolume = this.limit(currentVolume, 1, 0)
         this.autoHideControllerDelay = autoHideControllerDelay
         this.onControllerVisibleChanged = onControllerVisibleChanged
         this.onGestureAction = onGestureAction
@@ -47,12 +47,12 @@ export class GestureHandler {
     }
 
     setTotalDuration(duration: number) {
-        this.totalDuration = duration
+        this.totalDuration = Math.max(duration, 0)
     }
 
     setViewSize(width: number, height: number) {
-        this.viewWidth = width
-        this.viewHeight = height
+        this.viewWidth = Math.max(width, 0)
+        this.viewHeight = Math.max(height, 0)
     }
 
     release() {
@@ -107,26 +107,40 @@ export class GestureHandler {
                 this.onControllerVisibleChanged(true)
             }
             if (this.controlType === GestureType.PROGRESS) {
+                if (this.viewWidth <= 0 || this.totalDuration <= 0) {
+                    return
+                }
                 let changePercent = dx / this.viewWidth / this.horizontalGestureDamping
                 let begin = this.player!.getCurrentPosition()
                 let current = begin + this.totalDuration * changePercent
                 let result = this.limit(current, this.totalDuration, 0)
-                this.gesturePercentResult = result / this.totalDuration
+                this.gesturePercentResult = this.limit(result / this.totalDuration, 1, 0)
             } else if (this.controlType === GestureType.VOLUME) {
+                if (this.viewHeight <= 0) {
+                    return
+                }
                 let changePercent = -dy / this.viewHeight / this.verticalGestureDamping
                 let begin = this.currentVolume
                 let current = begin + 1 * changePercent
-                let result = this.limit(current, 1, 0)
-                this.gesturePercentResult = result / 1
+                this.gesturePercentResult = this.limit(current, 1, 0)
             } else if (this.controlType === GestureType.BRIGHTNESS) {
+                if (this.viewHeight <= 0) {
+                    return
+                }
                 let changePercent = -dy / this.viewHeight / this.verticalGestureDamping
                 let begin = this.currentBrightness
                 let current = begin + 1 * changePercent
-                let result = this.limit(current, 1, 0)
-                this.gesturePercentResult = result / 1
+                this.gesturePercentResult = this.limit(current, 1, 0)
             }
             this.onGestureAction(this.controlType, this.gesturePercentResult, false)
         }
+    }
+
+    private safePositiveValue(value: number, defaultValue: number): number {
+        if (value > 0) {
+            return value
+        }
+        return defaultValue
     }
 
     private limit(value: number, max: number, min: number): number {
