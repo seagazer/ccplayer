@@ -53,11 +53,12 @@ export struct CcPlayerViewSampleV2 {
     private titleOverlay: CcTitleBarOverlay = new CcTitleBarOverlay(this.player)
     private playerWindow?: window.Window = undefined
     private controllerHideTimer = -1
+    private ijkXComponentId: string = "ccplayer_view2_sample"
 
     aboutToAppear(): void {
         // 使用ijk扩展插件
         // const ijkPlayer = new IjkPlayer()
-        // ijkPlayer.setXComponentId("ccplayer_view2_sample")
+        // ijkPlayer.setXComponentId(this.ijkXComponentId)
         // this.player.setPlayer(ijkPlayer)
         this.player.setKeepScreenOn(this.getUIContext(), true)
         this.player.addOnPipStateChangedListener(this.pipStateChangedListener)
@@ -122,6 +123,7 @@ export struct CcPlayerViewSampleV2 {
                 RelativeContainer() {
                     // video view
                     CcPlayerViewV2({
+                        xComponentId: this.ijkXComponentId, //使用ijk插件时必须设置
                         player: this.player,
                         asRatio: this.ratio,
                         renderType: XComponentType.SURFACE,

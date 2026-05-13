@@ -112,6 +112,10 @@ export struct CcPlayerViewV2 {
      * Set the ratio value of the video view at AspectRatio.Custom mode, default is 1.78(16:9).
      */
     @Param customAspectRatioValue: number = 1.78 // default is 16:9
+    /**
+     * The id of XComponent for IjkPlayer mode.
+     */
+    @Param @Once xComponentId: string = IJK.ID
     /*-----------------------------------------------------------------------------------------------*/
     private controller = new XComponentController()
     private surfaceId: string = ""
@@ -190,7 +194,7 @@ export struct CcPlayerViewV2 {
                 XComponent({
                     controller: this.controller,
                     type: this.renderType,
-                    id: IJK.ID,
+                    id: this.xComponentId,
                     libraryname: IJK.NAPI,
                 })
                     .width(this.surfaceWidth)
@@ -210,7 +214,7 @@ export struct CcPlayerViewV2 {
                     .visibility(this.isShowSurface ? Visibility.Visible : Visibility.Hidden)
             } else if (this.getPlayerViewLogic().getPlayerType() === PlayerType.AVPLAYER) {
                 XComponent({
-                    id: "ccplayer",
+                    id: "ccplayer" + new Date().getTime(),
                     controller: this.controller,
                     type: this.renderType
                 })

@@ -136,6 +136,7 @@ ohpm install @seagazer/ccplayer
   | horizontalGestureDamping           | number                                                           | 手势水平滑动阻尼系数，默认2，手势滑动距离与进度换算比为2：1     | 否       |
   | verticalGestureDamping             | number                                                           | 手势垂直滑动阻尼系数，默认1.5，手势滑动距离与进度换算比为1.5：1 | 否       |
   | renderType                         | XComponentType                                                   | 视频渲染模式，默认SURFACE                                       | 否       |
+  | xComponentId                       | string                                                           | IjkPlayer模式下XComponent的id，默认IJK.ID                       | 否       |
   | asRatio                            | AspectRatio                                                      | 视频画面比例，AspectRatio.CUSTOM模式需修改customAspectRatioValue值 | 是       |
   | customAspectRatioValue              | number                                                           | 自定义视频画面比例，仅AspectRatio.CUSTOM模式生效，取值需大于0 | 否       |
   | autoHideControllerDelay            | number                                                           | 自动隐藏手势 UI 的延时，默认1.5s                                | 否       |
