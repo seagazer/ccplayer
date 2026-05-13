@@ -136,7 +136,8 @@ ohpm install @seagazer/ccplayer
   | horizontalGestureDamping           | number                                                           | 手势水平滑动阻尼系数，默认2，手势滑动距离与进度换算比为2：1     | 否       |
   | verticalGestureDamping             | number                                                           | 手势垂直滑动阻尼系数，默认1.5，手势滑动距离与进度换算比为1.5：1 | 否       |
   | renderType                         | XComponentType                                                   | 视频渲染模式，默认SURFACE                                       | 否       |
-  | asRatio                            | AspectRatio                                                      | 视频画面比例                                                    | 是       |
+  | asRatio                            | AspectRatio                                                      | 视频画面比例，AspectRatio.CUSTOM模式需修改customAspectRatioValue值 | 是       |
+  | customAspectRatioValue              | number                                                           | 自定义视频画面比例，仅AspectRatio.CUSTOM模式生效，取值需大于0 | 否       |
   | autoHideControllerDelay            | number                                                           | 自动隐藏手势 UI 的延时，默认1.5s                                | 否       |
   | isSupportGesture                   | boolean                                                          | 是否支持手势操作，默认true                                      | 否       |
   | onTouchCallback                    | (event: TouchEvent) => void                                      | 触摸事件回调                                                    | 否       |
@@ -221,6 +222,7 @@ ohpm install @seagazer/ccplayer
   | W_21_9  | 21:9 宽屏        |
   | STRETCH | 保持比例裁切填充 |
   | FILL    | 拉伸填充         |
+  | CUSTOM  | 自定义画面比例   |
 
 - AudioFocusEvent 音频焦点变更事件  
   | 枚举值           | 说明         |
