@@ -1,7 +1,7 @@
 import { CcPlayer } from '../CcPlayer';
 import { GestureLiveData } from '../overlay/livedata/GestureLiveData';
 import { GestureEvent } from '../overlay/CcGestureOverlay';
-import { AspectRatio, GestureAreaConfig, GestureType, IJK } from '@seagazer/ccplayer-base';
+import { AspectRatio, GestureAreaConfig, GestureType, IJK, MediaLogger } from '@seagazer/ccplayer-base';
 import { PlayerType } from '../common/PlayerType';
 import { PlayerViewLogic } from './PlayerViewLogic';
 
@@ -116,6 +116,10 @@ export struct CcPlayerView {
     @State surfaceHeight: number = 0
     @State isShowSurface: boolean = false
     @State pipState: string = ''
+    /**
+     * Set the ratio value of the video view at AspectRatio.Custom mode, default is 1.78(16:9).
+     */
+    @Link @Watch("onCustomAspectRatioChanged") customAspectRatioValue: number
 
     private getPlayerViewLogic(): PlayerViewLogic {
         if (this.playerViewLogic === null) {
@@ -156,11 +160,22 @@ export struct CcPlayerView {
     }
 
     private onAspectRatioChanged(): void {
+        if (this.asRatio === AspectRatio.CUSTOM) {
+            MediaLogger.i(TAG, "change mode to AspectRatio.CUSTOM")
+            this.getPlayerViewLogic().setCustomAspectRatioValue(this.customAspectRatioValue)
+        }
+        this.getPlayerViewLogic().onAspectRatioChanged()
+    }
+
+    private onCustomAspectRatioChanged(): void {
+        MediaLogger.i(TAG, "change aspect ratio value by user, the value is " + this.customAspectRatioValue)
+        this.getPlayerViewLogic().setCustomAspectRatioValue(this.customAspectRatioValue)
         this.getPlayerViewLogic().onAspectRatioChanged()
     }
 
     aboutToAppear(): void {
         this.getPlayerViewLogic().aboutToAppear(this.isSupportGesture)
+        this.getPlayerViewLogic().setCustomAspectRatioValue(this.customAspectRatioValue)
     }
 
     aboutToDisappear(): void {

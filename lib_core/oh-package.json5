@@ -20,6 +20,6 @@
   "version": "1.3.2",
   "homepage": "https://github.com/seagazer",
   "dependencies": {
-    "@seagazer/ccplayer-base": "^1.0.1"
+    "@seagazer/ccplayer-base": "^1.0.2"
   }
 }

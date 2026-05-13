@@ -23,6 +23,13 @@ export interface PlayerViewLogicOptions {
     getAspectRatio: () => AspectRatio
 }
 
+const TAG = "[PlayerViewLogic]"
+
+/**
+ *
+ * Author: Seagazer
+ * Date: 2025/5/12
+ */
 export class PlayerViewLogic {
     private tag: string
     private player: CcPlayer
@@ -51,6 +58,7 @@ export class PlayerViewLogic {
     private isShowSurface: boolean = false
     private isFrameReady: boolean = false
     private gestureHandler: GestureHandler | null = null
+    private customAspectRatioValue: number = 1.78 // default is 16:9
 
     private preparedListener = (): void => {
         this.totalDuration = this.player.getDuration()
@@ -98,6 +106,14 @@ export class PlayerViewLogic {
         this.onGestureAction = options.onGestureAction
         this.onDoubleClickAction = options.onDoubleClickAction
         this.getAspectRatioCallback = options.getAspectRatio
+    }
+
+    setCustomAspectRatioValue(value: number) {
+        if (value <= 0) {
+            MediaLogger.e(TAG, "The custom aspect ratio value is invalid!")
+            return
+        }
+        this.customAspectRatioValue = value
     }
 
     getPlayerType(): PlayerType {
@@ -236,6 +252,8 @@ export class PlayerViewLogic {
                 return 2.33
             case AspectRatio.FILL:
                 return this.viewWidth / this.viewHeight
+            case AspectRatio.CUSTOM:
+                return this.customAspectRatioValue
             case AspectRatio.STRETCH:
             case AspectRatio.AUTO:
             default:

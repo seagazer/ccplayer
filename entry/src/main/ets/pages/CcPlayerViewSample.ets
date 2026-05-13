@@ -23,6 +23,7 @@ const TAG = '[CcPlayerViewSample]'
 export struct CcPlayerViewSample {
     private player = new CcPlayer(this.getUIContext().getHostContext()!)
     @State ratio: AspectRatio = AspectRatio.AUTO
+    @State customRatioValue: number = 1
     @State ratioText: string = "AUTO"
     @State totalDuration: number = 0
     @State navigationId: string = ''
@@ -119,6 +120,8 @@ export struct CcPlayerViewSample {
                         player: this.player,
                         asRatio: this.ratio,
                         renderType: XComponentType.SURFACE,
+                        // AspectRatio.Custom时生效，非Custom随便填个正数值即可，由于@link局限性，即时非必填参数必须在此声明
+                        customAspectRatioValue: this.customRatioValue,
                         // onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
                         //     // 用户可以参考下面代码自己手动处理手势事件
                         //     // this.gestureOverlay.setGestureType(type)
