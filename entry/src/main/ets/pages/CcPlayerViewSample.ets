@@ -267,6 +267,10 @@ export struct CcPlayerViewSample {
                             this.ratioText = "4:3"
                         }
                     })
+                }
+                .width("100%")
+                .justifyContent(FlexAlign.SpaceEvenly)
+                Row() {
                     CButton({
                         text: "FILL",
                         onAction: () => {
@@ -279,6 +283,14 @@ export struct CcPlayerViewSample {
                         onAction: () => {
                             this.ratio = AspectRatio.STRETCH
                             this.ratioText = "STRETCH"
+                        }
+                    })
+                    CButton({
+                        text: "Custom",
+                        onAction: () => {
+                            this.customRatioValue = 1
+                            this.ratio = AspectRatio.CUSTOM
+                            this.ratioText = "Custom 1:1"
                         }
                     })
                 }

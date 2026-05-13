@@ -75,6 +75,7 @@ struct ItemPage {
     uri: string = ""
     @Watch('onPageChanged') @Prop curPageIndex: number = 0
     @State ratio: AspectRatio = AspectRatio.AUTO
+    @State customAspectRatioValue: number = 1
     @State currentPosition: number = 0
     @State totalDuration: number = 0
     private preparedListener = () => {
@@ -118,6 +119,7 @@ struct ItemPage {
                 asRatio: this.ratio,
                 renderType: XComponentType.SURFACE,
                 isSupportGesture: false,
+                customAspectRatioValue: this.customAspectRatioValue,
                 onSurfaceCreated: () => {
                     Logger.d(TAG, "page " + this.pageIndex + " is surface ready")
                     let src = MediaSourceFactory.createAssets('', this.uri)

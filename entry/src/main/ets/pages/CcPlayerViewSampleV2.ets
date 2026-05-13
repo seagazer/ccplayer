@@ -16,7 +16,6 @@ import common from '@ohos.app.ability.common';
 import wantAgent from '@ohos.app.ability.wantAgent';
 import { CButton } from './CButton';
 import { PiPWindow, window } from '@kit.ArkUI';
-import { IjkPlayer } from '@seagazer/ccplayer-ijk';
 
 const TAG = '[CcPlayerViewSampleV2]'
 
@@ -24,6 +23,7 @@ const TAG = '[CcPlayerViewSampleV2]'
 export struct CcPlayerViewSampleV2 {
     private player = new CcPlayer(this.getUIContext().getHostContext()!)
     @Local ratio: AspectRatio = AspectRatio.AUTO
+    @Local customRatioValue: number = 1
     @Local ratioText: string = "AUTO"
     @Local totalDuration: number = 0
     @Param navigationId: string = ''
@@ -125,6 +125,8 @@ export struct CcPlayerViewSampleV2 {
                         player: this.player,
                         asRatio: this.ratio,
                         renderType: XComponentType.SURFACE,
+                        // 如果需要使用AspectRatio.Custom，需要设置该属性
+                        customAspectRatioValue: this.customRatioValue,
                         // onGestureAction: (type: GestureType, percent: number, isTouchUp: boolean) => {
                         //     // 用户可以参考下面代码自己手动处理手势事件
                         //     // this.gestureOverlay.setGestureType(type)
@@ -277,6 +279,11 @@ export struct CcPlayerViewSampleV2 {
                             this.ratioText = "4:3"
                         }
                     })
+                }
+                .width("100%")
+                .justifyContent(FlexAlign.SpaceEvenly)
+
+                Row() {
                     CButton({
                         text: "FILL",
                         onAction: () => {
@@ -289,6 +296,14 @@ export struct CcPlayerViewSampleV2 {
                         onAction: () => {
                             this.ratio = AspectRatio.STRETCH
                             this.ratioText = "STRETCH"
+                        }
+                    })
+                    CButton({
+                        text: "Custom",
+                        onAction: () => {
+                            this.customRatioValue = 1
+                            this.ratio = AspectRatio.CUSTOM
+                            this.ratioText = "Custom 1:1"
                         }
                     })
                 }
