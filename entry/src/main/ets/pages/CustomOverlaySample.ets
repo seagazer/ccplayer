@@ -15,6 +15,7 @@ export struct CustomOverlaySample {
     @State seekPercent: number = 0
     @State volumePercent: number = 0
     @State brightnessPercent: number = 0
+    @State customAs: number = 1
     private controlOverlay?: CustomControlOverlay = undefined;
     private firstFrameListener = () => {
         this.isLoading = false
@@ -114,6 +115,7 @@ export struct CustomOverlaySample {
                     asRatio: this.ratio,
                     renderType: XComponentType.SURFACE,
                     onGestureAction: this.handleGesture,
+                    customAspectRatioValue:this.customAs,
                     onGestureUIListener: (visible) => {
                         this.gestureOverlayVisible = visible
                     },
