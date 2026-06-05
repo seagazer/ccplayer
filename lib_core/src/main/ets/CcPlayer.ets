@@ -308,14 +308,12 @@ export class CcPlayer implements IPlayer, IAvSession, IPip, IMediaExt {
     }
 
     addOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer {
-        this.player.removeOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
         this.player.addOnAudioFocusChangedListener(listener)
         return this
     }
 
     removeOnAudioFocusChangedListener(listener: (event: AudioFocusEvent) => void): IPlayer {
         this.player.removeOnAudioFocusChangedListener(listener)
-        this.player.addOnAudioFocusChangedListener(this.defaultAudioFocusChangedListener)
         return this
     }
 

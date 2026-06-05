@@ -16,6 +16,7 @@ export class MediaSource {
     rawAssetsPath?: string = undefined
     httpHeaders?: Record<string, string> = undefined
     strategy?: media.PlaybackStrategy = undefined
+    private released = false
 
     constructor(type: MediaSourceType, title: string, cover?: string | PixelMap, httpHeaders?: Record<string, string>,
         strategy?: media.PlaybackStrategy) {
@@ -27,11 +28,22 @@ export class MediaSource {
     }
 
     release(context: Context) {
-        if (this.url && this.url.startsWith("fd")) {
-            let fd = Number.parseInt(this.url.split("//")[1])
-            fs.closeSync(fd)
-        } else if (this.rawAssetsPath) {
-            context.resourceManager.closeRawFdSync(this.rawAssetsPath)
+        if (this.released) {
+            return
+        }
+        this.released = true
+        try {
+            if (this.url && this.url.startsWith("fd://")) {
+                let fd = Number.parseInt(this.url.split("//")[1])
+                if (!Number.isNaN(fd)) {
+                    fs.closeSync(fd)
+                }
+            } else if (this.rawAssetsPath) {
+                context.resourceManager.closeRawFdSync(this.rawAssetsPath)
+            }
+        } catch (e) {
+            this.released = false
+            throw e
         }
     }
 }

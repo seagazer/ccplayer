@@ -78,36 +78,48 @@ export class CcPlayerPool {
      * Release the player. This method will detach the player from running cache or recycle the instance.
      * @param player The instance of player.{@link CcPlayer}
      */
-    public recycle(player: CcPlayer): void {
+    public async recycle(player: CcPlayer): Promise<void> {
         if (!(player instanceof ReuseCcPlayer)) {
             MediaLogger.attentionW(TAG, "The instance of player is not get from CcPlayerPool.")
             return
         }
-        let innerPlayer = player as ReuseCcPlayer
-        if (innerPlayer.isPlaying()) {
-            innerPlayer.stop()
-        }
-        innerPlayer.reset()
-        MediaLogger.d(TAG, "release the player= " + innerPlayer.id)
-        let index = this.runningCache.indexOf(innerPlayer)
+        const innerPlayer = player as ReuseCcPlayer
+        const index = this.runningCache.indexOf(innerPlayer)
         if (index < 0) {
             MediaLogger.attentionW(TAG, "The player is not in running cache, skip recycle.")
             return
         }
+
         this.runningCache.splice(index, 1)
-        this.idleCache.push(innerPlayer)
-        this.checkSize()
+        MediaLogger.d(TAG, "detach player from running cache= " + innerPlayer.id)
+
+        try {
+            if (innerPlayer.isPlaying()) {
+                await innerPlayer.stop()
+            }
+            await innerPlayer.reset()
+            this.idleCache.push(innerPlayer)
+            MediaLogger.d(TAG, "recycle the player= " + innerPlayer.id)
+            await this.checkSize()
+        } catch (e) {
+            MediaLogger.attentionE(TAG, "recycle player error= " + JSON.stringify(e))
+            try {
+                await innerPlayer.release()
+            } catch (releaseErr) {
+                MediaLogger.attentionE(TAG, "release failed during recycle error= " + JSON.stringify(releaseErr))
+            }
+        }
     }
 
-    private checkSize() {
-        let totalSize = this.idleCache.length + this.runningCache.length
+    private async checkSize() {
+        const totalSize = this.idleCache.length + this.runningCache.length
         if (totalSize > this.cacheSize) {
-            let overSize = totalSize - this.cacheSize
-            let recycleSize = Math.min(overSize, this.idleCache.length)
+            const overSize = totalSize - this.cacheSize
+            const recycleSize = Math.min(overSize, this.idleCache.length)
             for (let i = 0; i < recycleSize; i++) {
-                let player = this.idleCache.shift()
+                const player = this.idleCache.shift()
                 if (player) {
-                    player.release()
+                    await player.release()
                     MediaLogger.d(TAG, "recycle the player= " + player.id)
                 }
             }
