@@ -111,7 +111,7 @@ export struct CcPlayerView {
     /**
      * Set the ratio value of the video view at AspectRatio.Custom mode, default is 1.78(16:9).
      */
-    @Link @Watch("onCustomAspectRatioChanged") customAspectRatioValue: number
+    @Prop @Watch("onCustomAspectRatioChanged") customAspectRatioValue: number
     /**
      * The id of XComponent for IjkPlayer mode.
      */
