@@ -1,6 +1,9 @@
 import fs from '@ohos.file.fs'
 import media from '@ohos.multimedia.media'
+import { MediaLogger } from '../../../../../Index'
 import { MediaSourceType } from './MediaSourceType'
+
+const TAG = "[MediaSource]"
 
 /**
  * The data source for media.
@@ -43,7 +46,7 @@ export class MediaSource {
             }
         } catch (e) {
             this.released = false
-            throw e
+            MediaLogger.e(TAG, "release error= " + JSON.stringify(e))
         }
     }
 }
