@@ -1,3 +1,8 @@
+# 1.3.3
+- CcPlayerView的customAspectRatioValue改成可选字段
+- 优化细节问题
+- targetSdkVersion更新至6.1.0（API23）
+
 # 1.3.2
 - 移除3.1/3.2兼容性代码，降低库体积
 - 优化重构，大面积完善和剥离历史代码
