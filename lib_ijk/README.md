@@ -18,7 +18,7 @@ ohpm install @seagazer/ccplayer-ijk
 
 ## 注意事项
 
-- 插件基于 @ohos/ijkplayer 2.0.6 版本，无法独立使用，需结合@seagazer/ccplayer 1.2.6及以上版本使用，具体使用说明参考@seagazer/ccplayer。
+- 插件基于 @ohos/ijkplayer，无法独立使用，需结合@seagazer/ccplayer 1.2.6及以上版本使用，具体使用说明参考@seagazer/ccplayer。
 - 播放前需要申请网络权限。
 
 
@@ -140,4 +140,4 @@ struct IjkSample {
 
 更多使用场景和示例，可以参考本库代码仓的 entry 示例工程：
 https://github.com/seagazer/ccplayer
-使用过程中存在任何相关问题欢迎各位开发者提Issue和PR，或者加群反馈（Q群:1051643574），欢迎大家一起共建完善该库。
+使用过程中存在任何相关问题欢迎各位开发者提Issue和PR，欢迎大家一起共建完善该库。

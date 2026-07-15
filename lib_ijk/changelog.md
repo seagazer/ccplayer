@@ -1,3 +1,9 @@
+# 1.0.6
+- 更新@seagazer/ccplayer-base至1.0.2
+- 更新@ohos/ijkplayer至2.0.9
+- targetSdkVersion更新至6.1.0（API23）
+- 修复部分问题
+
 # 1.0.5
 - 增加多路视频同时播放，多路并行需要同时使用多实例方式
 - 新增setXComponentId/getXComponentId接口
